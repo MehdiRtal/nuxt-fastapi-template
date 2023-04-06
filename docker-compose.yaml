@@ -1,0 +1,17 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgresql:latest
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+  frontend:
+    build: ./frontend
+    ports:
+      - "80:3000"
+    depends_on:
+      - backend
