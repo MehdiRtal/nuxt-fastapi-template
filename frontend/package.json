@@ -10,7 +10,6 @@
     "devDependencies": {
         "@nuxt/devtools": "^0.3.2",
         "@nuxt/image": "^0.7.1",
-        "@nuxtjs/google-fonts": "^3.0.0",
         "@nuxtjs/turnstile": "^0.3.0",
         "@unocss/nuxt": "^0.50.6",
         "nuxt": "^3.3.3",

@@ -1,20 +1,15 @@
+import {defineNuxtConfig} from "nuxt/config";
+
 export default defineNuxtConfig({
     telemetry: false,
     modules: [
         "@nuxt/devtools",
-        "@nuxtjs/google-fonts",
         "@nuxtjs/turnstile",
         "@unocss/nuxt",
         "nuxt-headlessui",
         "nuxt-api-party",
         "nuxt-gtag",
     ],
-    googleFonts: {
-        display: "swap",
-        families: {
-            Roboto: true,
-        },
-    },
     turnstile: {
         siteKey: process.env.TURNSTILE_SITE_KEY,
         secretKey: process.env.TURNSTILE_SECRET_KEY,
