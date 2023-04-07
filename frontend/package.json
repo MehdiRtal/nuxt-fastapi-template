@@ -4,18 +4,18 @@
         "dev": "nuxt dev",
         "generate": "nuxt generate",
         "build": "nuxt build",
-        "preview": "nuxt preview"
+        "preview": "nuxt preview",
+        "postinstall": "nuxt prepare"
     },
     "devDependencies": {
-        "@mdi/font": "^7.2.96",
-        "@nuxt/devtools": "^0.2.5",
+        "@nuxt/devtools": "^0.3.2",
+        "@nuxt/image": "^0.7.1",
         "@nuxtjs/google-fonts": "^3.0.0",
-        "@nuxtjs/turnstile": "^0.1.3",
-        "nuxt": "^3.3.2",
+        "@nuxtjs/turnstile": "^0.3.0",
+        "@unocss/nuxt": "^0.50.6",
+        "nuxt": "^3.3.3",
         "nuxt-api-party": "^0.10.1",
         "nuxt-gtag": "^0.4.0",
-        "@nuxt/image": "^0.7.1",
-        "@nuxtjs/tailwindcss": "^6.6.5",
-        "nuxt-icon": "^0.3.3"
+        "nuxt-headlessui": "^1.1.1"
     }
 }

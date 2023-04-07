@@ -2,13 +2,12 @@ export default defineNuxtConfig({
     telemetry: false,
     modules: [
         "@nuxt/devtools",
-        "@nuxt/image",
         "@nuxtjs/google-fonts",
         "@nuxtjs/turnstile",
-        "@nuxtjs/tailwindcss",
+        "@unocss/nuxt",
+        "nuxt-headlessui",
         "nuxt-api-party",
         "nuxt-gtag",
-        "nuxt-icon",
     ],
     googleFonts: {
         display: "swap",
