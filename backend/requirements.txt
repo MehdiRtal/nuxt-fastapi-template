@@ -1,0 +1,10 @@
+tweepy
+fastapi
+uvicorn[standard]
+python-jose[cryptography]
+passlib[bcrypt]
+sqlmodel
+psycopg2
+email_validator
+jinja2
+orjson
