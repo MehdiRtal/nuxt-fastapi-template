@@ -1,4 +1,4 @@
-FROM node:gallium
+FROM node:lts-alpine
 
 WORKDIR /app
 
