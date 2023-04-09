@@ -1,3 +1,3 @@
 <template>
-    <button pa-2>Base class</button>
+    <button>Base class</button>
 </template>
