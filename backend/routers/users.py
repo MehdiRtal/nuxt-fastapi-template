@@ -120,10 +120,6 @@ def change_current_user_password(current_user: CurrentUser, current_password: st
     session.refresh(current_user)
     return current_user
 
-@router.get("/me/buy-credits", response_class=RedirectResponse)
-def buy_current_user_credits(current_user: CurrentUser, quantity: int):
-    return create_payment(quantity, current_user.email, {"user_id": current_user.id})
-
 @router.get("/me", response_model=UserRead)
 def get_current_user(current_user: CurrentUser):
     return current_user

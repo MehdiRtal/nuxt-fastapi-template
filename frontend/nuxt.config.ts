@@ -3,11 +3,14 @@ export default defineNuxtConfig({
     modules: [
         "@nuxt/devtools",
         "@nuxtjs/turnstile",
-        "@unocss/nuxt",
+        "@nuxtjs/tailwindcss",
         "nuxt-headlessui",
         "nuxt-api-party",
         "nuxt-gtag",
     ],
+    headlessui: {
+        prefix: "",
+    },
     turnstile: {
         siteKey: process.env.TURNSTILE_SITE_KEY,
         secretKey: process.env.TURNSTILE_SECRET_KEY,

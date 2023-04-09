@@ -1,6 +1,4 @@
-from fastapi import Depends
 from sqlmodel import SQLModel, create_engine, Session
-from typing import Annotated
 
 from config import settings
 

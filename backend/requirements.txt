@@ -1,5 +1,6 @@
 fastapi
 uvicorn[standard]
+alembic
 python-jose[cryptography]
 passlib[bcrypt]
 sqlmodel

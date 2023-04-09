@@ -8,10 +8,13 @@
         "postinstall": "nuxt prepare"
     },
     "devDependencies": {
+        "@heroicons/vue": "^2.0.17",
         "@nuxt/devtools": "^0.3.2",
         "@nuxt/image": "^0.7.1",
+        "@nuxtjs/tailwindcss": "^6.6.5",
         "@nuxtjs/turnstile": "^0.3.0",
-        "@unocss/nuxt": "^0.50.6",
+        "@tailwindcss/aspect-ratio": "^0.4.2",
+        "@tailwindcss/forms": "^0.5.3",
         "nuxt": "^3.3.3",
         "nuxt-api-party": "^0.10.1",
         "nuxt-gtag": "^0.4.0",

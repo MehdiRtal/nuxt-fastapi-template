@@ -21,7 +21,7 @@ CurrentUser = Annotated[User, Depends(get_current_user)]
 
 def verify_token(token: str):
     try:
-        payload = jwt.decode(token, settings.JWT_SECRET, algorithms=settings.JWT_ALGORITHM)
+        payload = jwt.decode(token, settings.JWT_SECRET, algorithms=settings.JWT_ALGORITHM, audience="token")
     except JWTError:
         raise HTTPException(status_code=401, detail="Invalid token")
     else:
