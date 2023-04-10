@@ -10,13 +10,13 @@ class Settings(BaseSettings):
     TURNSTILE_SECRET_KEY = str
     TURNSTILE_SITE_KEY = str
 
-    EMAIL_HOST = str
-    EMAIL_PORT = int
-    EMAIL_USERNAME = str
-    EMAIL_PASSWORD = str
-    EMAIL_FROM = EmailStr
+    # EMAIL_HOST = str
+    # EMAIL_PORT = int
+    # EMAIL_USERNAME = str
+    # EMAIL_PASSWORD = str
+    # EMAIL_FROM = EmailStr
 
     class Config:
-        env_file = "../.env"
+        env_file = ".env"
 
 settings = Settings()

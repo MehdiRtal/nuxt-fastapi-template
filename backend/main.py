@@ -3,16 +3,16 @@ import uvicorn
 from fastapi.responses import ORJSONResponse
 from fastapi.exceptions import HTTPException, RequestValidationError
 from contextlib import asynccontextmanager
-from database import create_db_and_tables
+from database import init_db
 from routers import auth, users, products, categories, orders, accounts
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    create_db_and_tables()
+    init_db()
     yield
 
-app = FastAPI(title="Tweety", version="1.0.0", lifespan=lifespan, default_response_class=ORJSONResponse)
+app = FastAPI(title="API", version="1.0.0", lifespan=lifespan, default_response_class=ORJSONResponse)
 
 @app.exception_handler(HTTPException)
 def http_exception_handler(request, exception: HTTPException):
@@ -30,4 +30,4 @@ app.include_router(categories.router)
 app.include_router(accounts.router)
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", port="8000", log_level="debug", reload=True)
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, log_level="debug", reload=True)

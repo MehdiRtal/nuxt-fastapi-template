@@ -5,7 +5,7 @@ from config import settings
 
 engine = create_engine(settings.DATABASE_URL)
 
-def create_db_and_tables():
+def init_db():
     SQLModel.metadata.create_all(engine)
 
 def get_session():

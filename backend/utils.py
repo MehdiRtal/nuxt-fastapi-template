@@ -19,6 +19,7 @@ def generate_jwt(payload: dict, audience: str = None, expiry_time: int = 30):
     return jwt.encode(payload, settings.JWT_SECRET, algorithm=settings.JWT_ALGORITHM)
 
 def send_email(email_to: str, subject: str, template: str, context: dict):
+    return
     message = MIMEMultipart("alternative")
     message["Subject"] = subject
     env = Environment(loader=FileSystemLoader("templates"), autoescape=True, auto_reload=False)

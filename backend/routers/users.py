@@ -7,7 +7,7 @@ from sqlmodel import select
 from models import *
 from database import Session, get_session
 from dependencies import CurrentUser
-from utils import pwd_context, create_payment
+from utils import pwd_context
 
 
 router = APIRouter(tags=["Users"], prefix="/users")
