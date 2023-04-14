@@ -16,4 +16,5 @@ def generate_jwt(payload: dict, audience: str = None, expiry_time: int = 30):
 
 def send_verify(email_to: str):
     client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
-    client.verify.v2.services(settings.TWILIO_VERIFY_SERVICE_SID).verifications.create(to=email_to, channel="email")
+    verification = client.verify.v2.services(settings.TWILIO_VERIFY_SERVICE_SID).verifications.create(to=email_to, channel="email")
+    return verification.sid

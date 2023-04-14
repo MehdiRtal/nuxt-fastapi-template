@@ -23,6 +23,7 @@ class User(UserBase, table=True):
     balance: int = Field(default=0)
     is_verified: bool = Field(default=False)
     is_superuser: bool = Field(default=False)
+    is_active: bool = Field(default=True)
 
 class UserCreate(UserBase):
     password: constr(regex="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$")
@@ -31,6 +32,8 @@ class UserRead(UserBase):
     id: int
     balance: int
     is_verified: bool
+    is_superuser: bool
+    is_active: bool
 
 class UserUpdate(BaseModel):
     username: Optional[str] = None
@@ -38,6 +41,8 @@ class UserUpdate(BaseModel):
     password: Optional[str] = Field(default=None, regex="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$")
     balance: Optional[int] = None
     is_verified: Optional[bool] = None
+    is_superuser: Optional[bool] = None
+    is_active: Optional[bool] = None
 
 
 class OderBase(BaseModel):
