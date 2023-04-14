@@ -22,6 +22,7 @@ class User(UserBase, table=True):
     password: str
     balance: int = Field(default=0)
     is_verified: bool = Field(default=False)
+    is_superuser: bool = Field(default=False)
 
 class UserCreate(UserBase):
     password: constr(regex="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$")

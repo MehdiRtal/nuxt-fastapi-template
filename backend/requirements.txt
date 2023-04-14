@@ -9,3 +9,4 @@ email_validator
 jinja2
 orjson
 python-multipart
+twilio

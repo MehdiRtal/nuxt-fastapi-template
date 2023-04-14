@@ -4,8 +4,8 @@ from sqlalchemy.exc import IntegrityError
 
 from models import *
 from database import Session, get_session
-from dependencies import verify_token, verify_turnstile_token
-from utils import pwd_context, generate_jwt, send_email
+from dependencies import verify_turnstile_token, VerifyUser
+from utils import pwd_context, generate_jwt, send_verify
 
 
 router = APIRouter(tags=["Authentication"], prefix="/auth")
@@ -20,7 +20,7 @@ def register(user: UserCreate, background_tasks: BackgroundTasks, session: Sessi
         session.refresh(db_user)
     except IntegrityError:
         raise HTTPException(status_code=400, detail="Username or email already in use")
-    background_tasks.add_task(send_email, email_to=db_user.email, subject="Verify your account", template="verify.html", context={"token": generate_jwt({"user_id": db_user.id})})
+    background_tasks.add_task(send_verify, email_to=db_user.email)
     return db_user
 
 @router.post("/login", response_model=UserRead, dependencies=[Depends(verify_turnstile_token)])
@@ -41,13 +41,12 @@ def logout(response: Response):
     response.delete_cookie(key="session_id")
     return {"status": "success", "message": "Logged out"}
 
-@router.post("/verify/{token}")
-def verify(token: int = Depends(verify_token), session: Session = Depends(get_session)):
-    db_user = session.get(User, token)
-    if db_user.is_verified:
+@router.post("/verify/{verification_sid}/{verification_code}")
+def verify(verify_user: VerifyUser, session: Session = Depends(get_session)):
+    if verify_user.is_verified:
         raise HTTPException(status_code=400, detail="User already verified")
-    db_user.is_verified = True
-    session.add(db_user)
+    verify_user.is_verified = True
+    session.add(verify_user)
     session.commit()
     return {"status": "success", "message": "User verified"}
 
@@ -57,13 +56,12 @@ def forgot_password(email: EmailStr, background_tasks: BackgroundTasks, session:
     db_user = session.exec(statement).first()
     if not db_user:
         raise HTTPException(status_code=404, detail="User not found")
-    background_tasks.add_task(send_email, email_to=db_user.email, subject="Reset your password", template="reset_password.html", context={"token": generate_jwt({"user_id": db_user.id})})
+    background_tasks.add_task(send_verify, email_to=db_user.email)
     return {"status": "success", "message": "Email sent"}
 
-@router.post("/reset-password/{token}")
-def reset_password(password: str, token: int = Depends(verify_token), session: Session = Depends(get_session)):
-    db_user = session.get(User, token)
-    db_user.password = pwd_context.hash(password)
-    session.add(db_user)
+@router.post("/reset-password/{verification_sid}/{verification_code}")
+def reset_password(verify_user: VerifyUser, password: str, session: Session = Depends(get_session)):
+    verify_user.password = pwd_context.hash(password)
+    session.add(verify_user)
     session.commit()
     return {"status": "success", "message": "Password reset"}
