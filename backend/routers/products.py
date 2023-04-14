@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from typing import List
 
-from models import *
+from models import Product, ProductCreate, ProductRead, ProductUpdate
 from database import DBSession
 
 

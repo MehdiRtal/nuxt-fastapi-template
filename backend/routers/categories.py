@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from typing import List
 
-from models import *
+from models import Category, CategoryCreate, CategoryRead, CategoryUpdate
 from database import DBSession
 
 

@@ -3,7 +3,7 @@ from typing import List
 from sqlalchemy.exc import IntegrityError
 from sqlmodel import select
 
-from models import *
+from models import User, UserCreate, UserRead, UserUpdate, Order, OrderCreate, OrderRead, OrderUpdate, Product
 from database import DBSession
 from dependencies import CurrentUser
 from utils import pwd_context

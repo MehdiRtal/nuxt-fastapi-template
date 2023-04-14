@@ -1,8 +1,9 @@
 from fastapi import APIRouter, HTTPException, Response, Depends, Form
 from sqlmodel import select, or_
 from sqlalchemy.exc import IntegrityError
+from pydantic import EmailStr
 
-from models import *
+from models import User, UserCreate, UserRead
 from database import DBSession
 from dependencies import VerifyUser, verify_turnstile_token
 from utils import pwd_context, generate_jwt, send_verify
