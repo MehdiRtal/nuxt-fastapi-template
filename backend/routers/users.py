@@ -1,5 +1,4 @@
 from fastapi import APIRouter, HTTPException, Depends, BackgroundTasks
-from fastapi.responses import RedirectResponse
 from typing import List
 from sqlalchemy.exc import IntegrityError
 from sqlmodel import select
@@ -11,54 +10,6 @@ from utils import pwd_context
 
 
 router = APIRouter(tags=["Users"], prefix="/users")
-
-@router.get("/me/accounts", response_model=List[AccountRead])
-def get_current_user_accounts(current_user: CurrentUser, limit: int = 100, offset: int = 0, session: Session = Depends(get_session)):
-    statement = select(Account).where(Account.user_id == current_user.id).offset(offset).limit(limit)
-    db_accounts = session.exec(statement).all()
-    if not db_accounts:
-        raise HTTPException(status_code=404, detail="No accounts found")
-    return db_accounts
-
-@router.get("/me/accounts/{account_id}", response_model=AccountRead)
-def get_current_user_account(current_user: CurrentUser, account_id: int, session: Session = Depends(get_session)):
-    statement = select(Account).where(Account.user_id == current_user.id).where(Account.id == account_id)
-    db_account = session.exec(statement).first()
-    if not db_account:
-        raise HTTPException(status_code=404, detail="Account not found")
-    return db_account
-
-@router.post("/me/accounts", status_code=201, response_model=AccountRead)
-def create_current_user_account(current_user: CurrentUser, account: AccountCreate, session: Session = Depends(get_session)):
-    account.user_id = current_user.id 
-    db_account = Account(**account.dict())
-    session.add(db_account)
-    session.commit()
-    session.refresh(db_account)
-    return db_account
-
-@router.patch("/me/accounts/{account_id}", response_model=AccountRead)
-def update_current_user_account(current_user: CurrentUser, account_id: int, account: AccountUpdate, session: Session = Depends(get_session)):
-    statement = select(Account).where(Account.user_id == current_user.id).where(Account.id == account_id)
-    db_account = session.exec(statement).first()
-    if not db_account:
-        raise HTTPException(status_code=404, detail="Account not found")
-    for key, value in account.dict(exclude_unset=True).items():
-        setattr(db_account, key, value)
-    session.add(db_account)
-    session.commit()
-    session.refresh(db_account)
-    return db_account
-
-@router.delete("/me/accounts/{account_id}", response_model=AccountRead)
-def delete_current_user_account(current_user: CurrentUser, account_id: int, session: Session = Depends(get_session)):
-    statement = select(Account).where(Account.user_id == current_user.id).where(Account.id == account_id)
-    db_account = session.exec(statement).first()
-    if not db_account:
-        raise HTTPException(status_code=404, detail="Account not found")
-    session.delete(db_account)
-    session.commit()
-    return db_account
 
 @router.get("/me/orders", response_model=List[OrderRead])
 def get_current_user_orders(current_user: CurrentUser, limit: int = 100, offset: int = 0, session: Session = Depends(get_session)):

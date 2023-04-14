@@ -1,8 +1,6 @@
-from logging.config import fileConfig
-
-from sqlmodel import SQLModel, create_engine
-
 from alembic import context
+from logging.config import fileConfig
+from sqlmodel import SQLModel, create_engine
 
 from config import settings
 from models import *

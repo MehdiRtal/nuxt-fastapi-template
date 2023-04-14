@@ -1,20 +1,20 @@
 from fastapi import HTTPException, Cookie, Depends
+from sqlmodel import select
 from jose import jwt, JWTError
 import requests
 from typing import Annotated
 from twilio.rest import Client
-from sqlmodel import select
 
 from config import settings
 from models import *
 from database import Session, get_session
 
 
-def get_current_user(session_id: str = Cookie(default=None), session: Session = Depends(get_session)):
+def get_current_user(session_id: str = Cookie(None), session: Session = Depends(get_session)):
     try:
         payload = jwt.decode(session_id, settings.JWT_SECRET, algorithms=settings.JWT_ALGORITHM)
     except JWTError:
-        raise HTTPException(status_code=401, detail="Invalid token")
+        raise HTTPException(status_code=401, detail="Invalid session_id")
     else:
         db_user = session.get(User, payload["user_id"])
         return db_user

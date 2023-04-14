@@ -4,7 +4,7 @@ from fastapi.responses import ORJSONResponse
 from fastapi.exceptions import HTTPException, RequestValidationError
 from contextlib import asynccontextmanager
 from database import init_db
-from routers import auth, users, products, categories, orders, accounts
+from routers import auth, users, products, categories, orders
 
 
 @asynccontextmanager
@@ -27,7 +27,6 @@ app.include_router(users.router)
 app.include_router(orders.router)
 app.include_router(products.router)
 app.include_router(categories.router)
-app.include_router(accounts.router)
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8000, log_level="debug", reload=True)

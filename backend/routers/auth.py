@@ -4,7 +4,7 @@ from sqlalchemy.exc import IntegrityError
 
 from models import *
 from database import Session, get_session
-from dependencies import verify_turnstile_token, VerifyUser
+from dependencies import VerifyUser, verify_turnstile_token
 from utils import pwd_context, generate_jwt, send_verify
 
 
@@ -33,7 +33,7 @@ def login(response: Response, username: str = Form(), password: str = Form(), se
         raise HTTPException(status_code=400, detail="Incorrect password")
     if not db_user.is_verified:
         raise HTTPException(status_code=400, detail="User not verified")
-    response.set_cookie(key="session_id", value=generate_jwt({"user_id": db_user.id}, audience="login"))
+    response.set_cookie(key="session_id", value=generate_jwt({"user_id": db_user.id}))
     return db_user
 
 @router.post("/logout")
