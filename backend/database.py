@@ -10,8 +10,8 @@ engine = create_engine(settings.DATABASE_URL)
 def init_db():
     SQLModel.metadata.create_all(engine)
 
-def get_session():
+def get_db():
     with Session(engine) as session:
         yield session
 
-DBSession = Annotated[Session, Depends(get_session)]
+Database = Annotated[Session, Depends(get_db)]
