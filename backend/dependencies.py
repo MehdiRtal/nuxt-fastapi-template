@@ -21,14 +21,14 @@ def get_current_user(db: Database, session_id: str = Cookie(None)):
 
 CurrentUser = Annotated[User, Depends(get_current_user)]
 
-def get_verify_user(db: Database, verification_sid: str, verification_code: str):
-    client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
-    verification_check = client.verify.services(settings.TWILIO_VERIFY_SERVICE_SID).verification_checks.create(verification_sid=verification_sid, code=verification_code)
-    if verification_check.status != "approved":
-        raise HTTPException(status_code=403, detail="Invalid verification code")
-    statement = select(User).where(User.email == verification_check.to)
-    db_user = db.exec(statement).first()
-    return db_user
+def get_verify_user(db: Database, token: str):
+    try:
+        payload = jwt.decode(token, settings.JWT_SECRET, algorithms=settings.JWT_ALGORITHM)
+    except JWTError:
+        raise HTTPException(status_code=401, detail="Invalid token")
+    else:
+        db_user = db.get(User, payload["user_id"])
+        return db_user
 
 VerifyUser = Annotated[User, Depends(get_verify_user)]
 

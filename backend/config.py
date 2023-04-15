@@ -10,9 +10,7 @@ class Settings(BaseSettings):
     JWT_SECRET : str
     JWT_ALGORITHM : str
 
-    TWILIO_ACCOUNT_SID : str
-    TWILIO_AUTH_TOKEN : str
-    TWILIO_VERIFY_SERVICE_SID : str
+    SENDGRID_API_KEY : str
 
     TURNSTILE_SECRET_KEY = str
     TURNSTILE_SITE_KEY = str
