@@ -1,8 +1,11 @@
-from pydantic import BaseSettings, EmailStr, PostgresDsn
+from pydantic import BaseSettings, EmailStr, PostgresDsn, RedisDsn
 
 
 class Settings(BaseSettings):
     DATABASE_URL: PostgresDsn
+
+    CELERY_BROKER_URL: RedisDsn
+    CELERY_RESULT_BACKEND: RedisDsn
 
     JWT_SECRET : str
     JWT_ALGORITHM : str

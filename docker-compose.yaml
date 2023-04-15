@@ -15,13 +15,28 @@ services:
     environment:
       - PGADMIN_DEFAULT_EMAIL=${PGADMIN_EMAIL}
       - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASSWORD}
-    # depends_on:
-    #   - db
-    # backend:
-    #   build: ./backend
-    #   depends_on:
-    #     - db
-    # frontend:
-    #   build: ./frontend
-    #   depends_on:
-    #     - backend
+    depends_on:
+      - db
+  redis:
+    image: redis:alpine
+  celery:
+    build: ./backend
+    command: celery -A celery.celery worker -l info
+    depends_on:
+      - backend
+      - redis
+  flower:
+    build: ./backend
+    command: celery -A celery.celery flower
+    depends_on:
+      - backend
+      - redis
+      - celery
+  backend:
+    build: ./backend
+    depends_on:
+      - db
+  frontend:
+    build: ./frontend
+    depends_on:
+      - backend

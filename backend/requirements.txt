@@ -10,3 +10,4 @@ jinja2
 orjson
 python-multipart
 twilio
+celery
