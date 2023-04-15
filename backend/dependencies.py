@@ -1,9 +1,7 @@
-from fastapi import HTTPException, Cookie, Depends
-from sqlmodel import select
+from fastapi import HTTPException, Cookie, Depends, Request
 from jose import jwt, JWTError
 import requests
 from typing import Annotated
-from twilio.rest import Client
 
 from config import settings
 from models import *
@@ -21,9 +19,9 @@ def get_current_user(db: Database, session_id: str = Cookie(None)):
 
 CurrentUser = Annotated[User, Depends(get_current_user)]
 
-def get_verify_user(db: Database, token: str):
+def get_verify_user(db: Database, request: Request, token: str):
     try:
-        payload = jwt.decode(token, settings.JWT_SECRET, algorithms=settings.JWT_ALGORITHM)
+        payload = jwt.decode(token, settings.JWT_SECRET, algorithms=settings.JWT_ALGORITHM, audience=request.scope["route"].name)
     except JWTError:
         raise HTTPException(status_code=401, detail="Invalid token")
     else:
