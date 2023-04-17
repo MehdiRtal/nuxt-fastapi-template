@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 import uvicorn
 from fastapi.responses import ORJSONResponse
 from fastapi.exceptions import HTTPException, RequestValidationError
@@ -16,11 +16,11 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title="API", version="1.0.0", lifespan=lifespan, default_response_class=ORJSONResponse)
 
 @app.exception_handler(HTTPException)
-def http_exception_handler(request, exception: HTTPException):
+def http_exception_handler(request: Request, exception: HTTPException):
     return ORJSONResponse({"status": "error", "message": exception.detail}, status_code=exception.status_code)
 
 @app.exception_handler(RequestValidationError)
-def validation_exception_handler(request, exception: RequestValidationError):
+def validation_exception_handler(request: Request, exception: RequestValidationError):
     return ORJSONResponse({"status": "error", "message": exception.errors()}, status_code=422)
 
 app.include_router(auth.router)

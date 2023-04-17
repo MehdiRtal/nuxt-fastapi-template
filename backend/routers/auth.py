@@ -21,7 +21,7 @@ def register(db: Database, user: UserCreate, background_tasks: BackgroundTasks):
         db.refresh(db_user)
     except IntegrityError:
         raise HTTPException(status_code=400, detail="Username or email already in use")
-    background_tasks.add_task(send_email, "", user.email, "d-9b9b2f1b5b4a4b8e9b9b2f1b5b4b8e9b", {"username": user.username, "token": generate_jwt({"user_id": db_user.id}, audience="auth:verify")})
+    background_tasks.add_task(send_email, "", user.email, "d-9b9b2f1b5b4a4b8e9b9b2f1b5b4b8e9b", {"username": user.username, "token": generate_jwt({"user_id": db_user.id}, audience="vertify")})
     return db_user
 
 @router.post("/login", response_model=UserRead, dependencies=[Depends(verify_turnstile_token)])
@@ -44,7 +44,7 @@ def logout(response: Response):
     response.delete_cookie(key="session_id")
     return {"status": "success", "message": "Logged out"}
 
-@router.post("/verify/{token}", name="auth:verify")
+@router.post("/verify/{token}")
 def verify(db: Database, verify_user: VerifyUser):
     if verify_user.is_verified:
         raise HTTPException(status_code=400, detail="User already verified")
@@ -61,10 +61,10 @@ def forgot_password(db: Database, email: EmailStr, background_tasks: BackgroundT
         raise HTTPException(status_code=404, detail="User not found")
     if not db_user.is_active:
         raise HTTPException(status_code=400, detail="User not active")
-    background_tasks.add_task(send_email, "", db_user.email, "d-9b9b2f1b5b4a4b8e9b9b2f1b5b4b8e9b", {"username": db_user.username, "token": generate_jwt({"user_id": db_user.id}, audience="auth:reset-password")})
+    background_tasks.add_task(send_email, "", db_user.email, "d-9b9b2f1b5b4a4b8e9b9b2f1b5b4b8e9b", {"username": db_user.username, "token": generate_jwt({"user_id": db_user.id}, audience="reset_password")})
     return {"status": "success", "message": "Email sent"}
 
-@router.post("/reset-password/{token}", name="auth:reset-password")
+@router.post("/reset-password/{token}")
 def reset_password(db: Database, verify_user: VerifyUser, password: str):
     verify_user.password = pwd_context.hash(password)
     db.add(verify_user)
