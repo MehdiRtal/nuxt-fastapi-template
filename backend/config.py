@@ -5,7 +5,7 @@ class Settings(BaseSettings):
     DATABASE_URL: PostgresDsn
 
     CELERY_BROKER_URL: RedisDsn
-    CELERY_RESULT_BACKEND: RedisDsn
+    CELERY_BACKEND_URL: RedisDsn
 
     JWT_SECRET : str
     JWT_ALGORITHM : str

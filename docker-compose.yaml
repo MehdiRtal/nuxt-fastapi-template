@@ -21,13 +21,13 @@ services:
     image: redis:alpine
   celery:
     build: ./backend
-    command: celery -A celery.celery worker -l info
+    command: celery -A worker worker -l info
     depends_on:
       - backend
       - redis
   flower:
     build: ./backend
-    command: celery -A celery.celery flower
+    command: celery -A worker flower
     depends_on:
       - backend
       - redis

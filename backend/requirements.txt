@@ -10,4 +10,4 @@ jinja2
 orjson
 python-multipart
 sendgrid
-celery
+celery[redis]
