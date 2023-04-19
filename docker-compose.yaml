@@ -34,9 +34,11 @@ services:
       - celery
   backend:
     build: ./backend
+    command: gunicorn main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000
     depends_on:
       - db
   frontend:
     build: ./frontend
+    command: node .output/server/index.mjs
     depends_on:
       - backend

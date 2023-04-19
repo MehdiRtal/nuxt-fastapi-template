@@ -22,7 +22,7 @@ def get_order(db: Database, order_id: int):
     return db_order
 
 @router.post("/", status_code=201, response_model=OrderRead)
-def create_order(db: Database, order: OrderCreate):
+def add_order(db: Database, order: OrderCreate):
     db_order = Order(**order.dict())
     db.add(db_order)
     db.commit()

@@ -22,7 +22,7 @@ def get_category(db: Database, category_id: int):
     return db_category
 
 @router.post("/", status_code=201, response_model=CategoryRead)
-def create_category(db: Database, category: CategoryCreate):
+def add_category(db: Database, category: CategoryCreate):
     db_category = Category(**category.dict())
     db.add(db_category)
     db.commit()

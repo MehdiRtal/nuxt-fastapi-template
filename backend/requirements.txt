@@ -1,5 +1,6 @@
 fastapi
 uvicorn[standard]
+gunicorn
 alembic
 python-jose[cryptography]
 passlib[bcrypt]

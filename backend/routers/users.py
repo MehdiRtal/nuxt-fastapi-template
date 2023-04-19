@@ -28,7 +28,7 @@ def get_current_user_order(db: Database, current_user: CurrentUser, order_id: in
     return db_order
 
 @router.post("/me/orders", status_code=201, response_model=OrderRead)
-def create_current_user_order(db: Database, current_user: CurrentUser, order: OrderCreate):
+def add_current_user_order(db: Database, current_user: CurrentUser, order: OrderCreate):
     order.user_id = current_user.id
     db_product = db.get(Product, order.product_id)
     current_user.balance -= db_product.price * order.quantity
@@ -107,7 +107,7 @@ def get_user(db: Database, user_id: int):
     return db_user
 
 @router.post("/", status_code=201, response_model=UserRead)
-def create_user(db: Database, user: UserCreate):
+def add_user(db: Database, user: UserCreate):
     try:
         user.password = pwd_context.hash(user.password)
         db_user = User(**user.dict())

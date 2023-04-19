@@ -22,7 +22,7 @@ def get_product(db: Database, product_id: int):
     return db_product
 
 @router.post("/", status_code=201, response_model=ProductRead)
-def create_product(db: Database, product: ProductCreate):
+def add_product(db: Database, product: ProductCreate):
     db_product = Product(**product.dict())
     db.add(db_product)
     db.commit()
