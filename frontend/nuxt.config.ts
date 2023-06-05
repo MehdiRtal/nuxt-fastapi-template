@@ -3,13 +3,20 @@ export default defineNuxtConfig({
     modules: [
         "@nuxt/devtools",
         "@nuxtjs/turnstile",
-        "@nuxtjs/tailwindcss",
-        "nuxt-headlessui",
         "nuxt-api-party",
         "nuxt-gtag",
+        "nuxt-quasar-ui",
+        "@unocss/nuxt",
+        "@vueuse/nuxt",
     ],
-    headlessui: {
-        prefix: "",
+    quasar: {
+        config: {
+            ripple: false,
+        },
+        extras: {
+            fontIcons: ["material-icons"],
+        },
+        iconSet: "material-icons",
     },
     turnstile: {
         siteKey: process.env.TURNSTILE_SITE_KEY,
