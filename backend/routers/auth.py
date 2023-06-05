@@ -21,7 +21,7 @@ def register(db: Database, user: UserCreate, background_tasks: BackgroundTasks):
         db.refresh(db_user)
     except IntegrityError:
         raise HTTPException(status_code=400, detail="Username or email already in use")
-    background_tasks.add_task(send_email, "", user.email, "d-9b9b2f1b5b4a4b8e9b9b2f1b5b4b8e9b", {"username": user.username, "token": generate_jwt({"user_id": db_user.id}, audience="vertify")})
+    background_tasks.add_task(send_email, "", user.email, "d-9b9b2f1b5b4a4b8e9b9b2f1b5b4b8e9b", {"username": user.username, "token": generate_jwt({"user_id": db_user.id}, audience="verify")})
     return db_user
 
 @router.post("/login", response_model=UserRead, dependencies=[Depends(verify_turnstile_token)])
