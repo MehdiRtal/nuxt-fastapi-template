@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException
 from typing import List
 from sqlalchemy.exc import IntegrityError
 from sqlmodel import select

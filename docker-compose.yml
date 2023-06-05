@@ -6,10 +6,12 @@ services:
     command: tunnel run
     environment:
       - TUNNEL_TOKEN=${TUNNEL_TOKEN}
+
   db:
     image: postgresql:alpine
     environment:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+
   pgadmin:
     image: dpage/pgadmin4:latest
     environment:
@@ -17,14 +19,17 @@ services:
       - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASSWORD}
     depends_on:
       - db
+
   redis:
     image: redis:alpine
+
   celery:
     build: ./backend
     command: celery -A worker worker -l info
     depends_on:
       - backend
       - redis
+
   flower:
     build: ./backend
     command: celery -A worker flower
@@ -32,11 +37,13 @@ services:
       - backend
       - redis
       - celery
+
   backend:
     build: ./backend
     command: gunicorn main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000
     depends_on:
       - db
+
   frontend:
     build: ./frontend
     command: node .output/server/index.mjs
