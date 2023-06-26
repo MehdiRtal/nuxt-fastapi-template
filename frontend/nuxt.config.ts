@@ -7,6 +7,7 @@ export default defineNuxtConfig({
         "nuxt-gtag",
         "@unocss/nuxt",
         "@vueuse/nuxt",
+        "nuxt-lodash",
     ],
     turnstile: {
         siteKey: process.env.TURNSTILE_SITE_KEY,
