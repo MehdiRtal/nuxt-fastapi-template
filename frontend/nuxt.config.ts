@@ -4,7 +4,6 @@ export default defineNuxtConfig({
         "@nuxt/devtools",
         "@nuxtjs/turnstile",
         "nuxt-api-party",
-        "nuxt-gtag",
         "@unocss/nuxt",
         "@vueuse/nuxt",
         "nuxt-lodash",
@@ -19,9 +18,5 @@ export default defineNuxtConfig({
                 url: process.env.API_URL!,
             },
         },
-    },
-    gtag: {
-        id: process.env.GTAG_ID,
-        loadingStrategy: "async",
     },
 });

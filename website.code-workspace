@@ -10,5 +10,14 @@
             "path": "."
         }
     ],
-    "settings": {}
+    "settings": {
+        "[python]": {
+            "editor.defaultFormatter": "ms-python.python"
+        },
+        "[dockercompose]": {
+            "editor.defaultFormatter": "ms-azuretools.vscode-docker"
+        },
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.formatOnSave": true
+    }
 }

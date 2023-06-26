@@ -9,12 +9,18 @@
     },
     "devDependencies": {
         "@nuxt/devtools": "^0.6.4",
+        "@nuxtjs/eslint-config-typescript": "^12.0.0",
         "@nuxtjs/turnstile": "^0.4.0",
+        "@typescript-eslint/eslint-plugin": "^5.60.1",
         "@unocss/nuxt": "^0.53.4",
         "@vueuse/nuxt": "^10.2.0",
+        "eslint": "^8.43.0",
+        "eslint-config-prettier": "^8.8.0",
+        "eslint-plugin-vue": "^9.15.1",
         "nuxt": "^3.6.0",
         "nuxt-api-party": "^0.12.0",
-        "nuxt-gtag": "^0.5.7",
-        "nuxt-lodash": "^2.5.0"
+        "nuxt-lodash": "^2.5.0",
+        "prettier": "^2.8.8",
+        "vue-eslint-parser": "^9.3.1"
     }
 }
