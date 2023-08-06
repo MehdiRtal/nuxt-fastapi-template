@@ -5,7 +5,7 @@ import orjson
 
 
 def orjson_dumps(v, *, default):
-    return orjson.dumps(v, default=default).decode()
+    return orjson.dumps(v, default).decode()
 
 class BaseModel(SQLModel):
     class Config:
@@ -18,12 +18,12 @@ class UserBase(BaseModel):
     email: EmailStr = Field(unique=True, index=True)
 
 class User(UserBase, table=True):
-    id: Optional[int] = Field(default=None, primary_key=True)
+    id: Optional[int] = Field(None, primary_key=True)
     password: str
-    balance: int = Field(default=0)
-    is_verified: bool = Field(default=False)
-    is_superuser: bool = Field(default=False)
-    is_active: bool = Field(default=True)
+    balance: int = Field(0)
+    is_verified: bool = Field(False)
+    is_superuser: bool = Field(False)
+    is_active: bool = Field(True)
 
 class UserCreate(UserBase):
     password: constr(regex="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$")
@@ -38,7 +38,7 @@ class UserRead(UserBase):
 class UserUpdate(BaseModel):
     username: Optional[str] = None
     email: Optional[EmailStr] = None
-    password: Optional[str] = Field(default=None, regex="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$")
+    password: Optional[str] = Field(None, regex="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$")
     balance: Optional[int] = None
     is_verified: Optional[bool] = None
     is_superuser: Optional[bool] = None
@@ -46,13 +46,13 @@ class UserUpdate(BaseModel):
 
 
 class OderBase(BaseModel):
-    user_id: Optional[int] = Field(default=None, foreign_key="user.id")
-    product_id: Optional[int] = Field(default=None, foreign_key="product.id")
+    user_id: Optional[int] = Field(None, foreign_key="user.id")
+    product_id: Optional[int] = Field(None, foreign_key="product.id")
     quantity: int
 
 class Order(OderBase, table=True):
-    id: Optional[int] = Field(default=None, primary_key=True)
-    status: str = Field(default="pending")
+    id: Optional[int] = Field(None, primary_key=True)
+    status: str = Field("pending")
 
 class OrderRead(OderBase):
     id: int
@@ -69,10 +69,10 @@ class OrderUpdate(BaseModel):
 class ProductBase(BaseModel):
     name: str
     price: int
-    category_id: Optional[int] = Field(default=None, foreign_key="category.id")
+    category_id: Optional[int] = Field(None, foreign_key="category.id")
 
 class Product(ProductBase, table=True):
-    id: Optional[int] = Field(default=None, primary_key=True)
+    id: Optional[int] = Field(None, primary_key=True)
 
 class ProductRead(ProductBase):
     id: int
@@ -90,7 +90,7 @@ class CategoryBase(BaseModel):
     name: str
 
 class Category(CategoryBase, table=True):
-    id: Optional[int] = Field(default=None, primary_key=True)
+    id: Optional[int] = Field(None, primary_key=True)
 
 class CategoryRead(CategoryBase):
     id: int

@@ -8,6 +8,9 @@ export default defineNuxtConfig({
         "@vueuse/nuxt",
         "nuxt-lodash",
     ],
+    runtimeConfig: {
+        nitroPort: process.env.NITRO_PORT,
+    },
     turnstile: {
         siteKey: process.env.TURNSTILE_SITE_KEY,
         secretKey: process.env.TURNSTILE_SECRET_KEY,

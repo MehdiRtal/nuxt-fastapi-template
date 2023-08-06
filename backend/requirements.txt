@@ -1,5 +1,6 @@
 fastapi
 gunicorn
+uvicorn
 sqlmodel
 psycopg2
 alembic

@@ -4,35 +4,29 @@ services:
   tunnel:
     image: cloudflare/cloudflared:latest
     command: tunnel run
+    env_file: ./.env
     environment:
       - TUNNEL_TOKEN=${TUNNEL_TOKEN}
 
   db:
     image: postgres:alpine
+    env_file: ./.env
     environment:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-
-  pgadmin:
-    image: dpage/pgadmin4:latest
-    environment:
-      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_EMAIL}
-      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASSWORD}
-    depends_on:
-      - db
 
   redis:
     image: redis:alpine
 
   celery:
     build: ./backend
-    command: celery -A worker worker -l info
+    command: celery worker --app worker
     depends_on:
       - backend
       - redis
 
   flower:
     build: ./backend
-    command: celery -A worker flower
+    command: celery flower --app worker
     depends_on:
       - backend
       - redis
@@ -40,9 +34,10 @@ services:
 
   backend:
     build: ./backend
-    command: gunicorn main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000
+    command: gunicorn main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind :8000
     depends_on:
       - db
+      - flower
 
   frontend:
     build: ./frontend
