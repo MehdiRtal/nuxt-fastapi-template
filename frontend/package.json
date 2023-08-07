@@ -15,7 +15,7 @@
         "@unocss/nuxt": "^0.54.0",
         "@vueuse/nuxt": "^10.2.0",
         "eslint": "^8.43.0",
-        "eslint-config-prettier": "^8.8.0",
+        "eslint-config-prettier": "^9.0.0",
         "eslint-plugin-vue": "^9.15.1",
         "nuxt": "^3.6.0",
         "nuxt-api-party": "^0.13.0",
