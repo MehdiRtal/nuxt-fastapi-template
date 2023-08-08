@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException
 from typing import List
 
 from models import Category, CategoryCreate, CategoryRead, CategoryUpdate
-from database import Database
+from databases import Database
 
 
 router = APIRouter(tags=["Categories"], prefix="/categories")

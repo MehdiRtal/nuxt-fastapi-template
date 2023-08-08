@@ -4,7 +4,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlmodel import select
 
 from models import User, UserCreate, UserRead, UserUpdate, Order, OrderCreate, OrderRead, OrderUpdate, Product
-from database import Database
+from databases import Database
 from dependencies import CurrentUser
 from utils import pwd_context
 

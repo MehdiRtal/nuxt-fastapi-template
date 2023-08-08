@@ -1,18 +1,19 @@
-from fastapi import APIRouter, HTTPException, Response, Depends, Form, BackgroundTasks
+from fastapi import APIRouter, HTTPException, Response, Depends, Form
 from sqlmodel import select, or_
 from sqlalchemy.exc import IntegrityError
 from pydantic import EmailStr
 
 from models import User, UserCreate, UserRead
-from database import Database
+from databases import Database
 from dependencies import VerifyUser, verify_turnstile_token
 from utils import pwd_context, generate_jwt, send_email
+from queues import low_queue
 
 
 router = APIRouter(tags=["Authentication"], prefix="/auth")
 
 @router.post("/register", status_code=201, response_model=UserRead, dependencies=[Depends(verify_turnstile_token)])
-def register(db: Database, user: UserCreate, background_tasks: BackgroundTasks):
+def register(db: Database, user: UserCreate):
     try:
         user.password = pwd_context.hash(user.password)
         db_user = User(**user.dict())
@@ -21,7 +22,7 @@ def register(db: Database, user: UserCreate, background_tasks: BackgroundTasks):
         db.refresh(db_user)
     except IntegrityError:
         raise HTTPException(status_code=400, detail="Username or email already in use")
-    background_tasks.add_task(send_email, "", user.email, "d-9b9b2f1b5b4a4b8e9b9b2f1b5b4b8e9b", {"username": user.username, "token": generate_jwt({"user_id": db_user.id}, audience="verify")})
+    low_queue.enqueue(send_email, "", user.email, "d-9b9b2f1b5b4a4b8e9b9b2f1b5b4b8e9b", {"username": user.username, "token": generate_jwt({"user_id": db_user.id}, audience="verify")})
     return db_user
 
 @router.post("/login", response_model=UserRead, dependencies=[Depends(verify_turnstile_token)])
@@ -54,14 +55,14 @@ def verify(db: Database, verify_user: VerifyUser):
     return {"status": "success", "message": "User verified"}
 
 @router.post("/forgot-password", dependencies=[Depends(verify_turnstile_token)])
-def forgot_password(db: Database, email: EmailStr, background_tasks: BackgroundTasks):
+def forgot_password(db: Database, email: EmailStr):
     statement = select(User).where(User.email == email)
     db_user = db.exec(statement).first()
     if not db_user:
         raise HTTPException(status_code=404, detail="User not found")
     if not db_user.is_active:
         raise HTTPException(status_code=400, detail="User not active")
-    background_tasks.add_task(send_email, "", db_user.email, "d-9b9b2f1b5b4a4b8e9b9b2f1b5b4b8e9b", {"username": db_user.username, "token": generate_jwt({"user_id": db_user.id}, audience="reset_password")})
+    low_queue.enqueue(send_email, "", db_user.email, "d-9b9b2f1b5b4a4b8e9b9b2f1b5b4b8e9b", {"username": db_user.username, "token": generate_jwt({"user_id": db_user.id}, audience="reset_password")})
     return {"status": "success", "message": "Email sent"}
 
 @router.post("/reset-password/{token}")

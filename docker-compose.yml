@@ -1,46 +1,38 @@
 version: "3.9"
 
 services:
-  tunnel:
-    image: cloudflare/cloudflared:latest
-    command: tunnel run
-    env_file: ./.env
-    environment:
-      - TUNNEL_TOKEN=${TUNNEL_TOKEN}
+    tunnel:
+        image: cloudflare/cloudflared:latest
+        command: tunnel run
+        env_file: ./.env
+        environment:
+            - TUNNEL_TOKEN=${TUNNEL_TOKEN}
 
-  db:
-    image: postgres:alpine
-    env_file: ./.env
-    environment:
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    db:
+        image: postgres:alpine
+        env_file: ./.env
+        environment:
+            - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
 
-  redis:
-    image: redis:alpine
+    redis:
+        image: redis:alpine
 
-  celery:
-    build: ./backend
-    command: celery worker --app worker
-    depends_on:
-      - backend
-      - redis
+    worker:
+        build: ./backend
+        command: rq worker low medium high
+        depends_on:
+            - backend
+            - redis
 
-  flower:
-    build: ./backend
-    command: celery flower --app worker
-    depends_on:
-      - backend
-      - redis
-      - celery
+    backend:
+        build: ./backend
+        command: gunicorn main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind :8000
+        depends_on:
+            - db
+            - worker
 
-  backend:
-    build: ./backend
-    command: gunicorn main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind :8000
-    depends_on:
-      - db
-      - flower
-
-  frontend:
-    build: ./frontend
-    command: node .output/server/index.mjs
-    depends_on:
-      - backend
+    frontend:
+        build: ./frontend
+        command: node .output/server/index.mjs
+        depends_on:
+            - backend

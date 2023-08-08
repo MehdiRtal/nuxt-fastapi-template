@@ -4,7 +4,8 @@ uvicorn
 sqlmodel
 psycopg2
 alembic
-celery[redis]
+redis
+rq
 python-jose[cryptography]
 passlib[bcrypt]
 sendgrid

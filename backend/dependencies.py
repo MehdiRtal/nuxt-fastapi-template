@@ -5,7 +5,7 @@ from typing import Annotated
 
 from config import settings
 from models import *
-from database import Database
+from databases import Database
 
 
 def get_current_user(db: Database, session_id: str = Cookie(None)):
