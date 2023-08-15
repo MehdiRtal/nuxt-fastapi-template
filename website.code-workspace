@@ -18,7 +18,7 @@
             "editor.defaultFormatter": "redhat.vscode-yaml"
         },
         "[dockercompose]": {
-            "editor.defaultFormatter": "redhat.vscode-yaml"
+            "editor.defaultFormatter": "ms-azuretools.vscode-docker"
         },
         "editor.defaultFormatter": "esbenp.prettier-vscode",
         "editor.formatOnSave": true

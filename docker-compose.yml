@@ -19,14 +19,14 @@ services:
 
   worker:
     build: ./backend
-    command: rq worker low medium high
+    command: rq worker-pool low medium high -n 8
     depends_on:
       - backend
       - redis
 
   backend:
     build: ./backend
-    command: gunicorn main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind :8000
+    command: gunicorn main:app --workers 8 --worker-class uvicorn.workers.UvicornWorker --bind :8000
     depends_on:
       - db
       - worker
