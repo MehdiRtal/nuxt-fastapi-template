@@ -1,9 +1,13 @@
-from redis import Redis
+import redis
 from rq import Queue
 
+from config import settings
 
-low_queue = Queue(name="low", connection=Redis())
 
-medium_queue = Queue(name="medium", connection=Redis())
+connection = redis.from_url(settings.WORKER_URL)
 
-high_queue = Queue(name="high", connection=Redis())
+low_queue = Queue(name="low", connection=connection)
+
+medium_queue = Queue(name="medium", connection=connection)
+
+high_queue = Queue(name="high", connection=connection)

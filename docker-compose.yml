@@ -4,13 +4,11 @@ services:
   tunnel:
     image: cloudflare/cloudflared:latest
     command: tunnel run
-    env_file: ./.env
     environment:
       - TUNNEL_TOKEN=${TUNNEL_TOKEN}
 
   db:
     image: postgres:alpine
-    env_file: ./.env
     environment:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
 

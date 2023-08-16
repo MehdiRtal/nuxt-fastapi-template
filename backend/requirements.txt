@@ -6,6 +6,7 @@ psycopg2
 alembic
 redis
 rq
+pydantic-settings
 python-jose[cryptography]
 passlib[bcrypt]
 sendgrid
