@@ -17,7 +17,8 @@ services:
 
   worker:
     build: ./backend
-    command: rq worker-pool low medium high -n 8
+    env_file: ./backend/.env
+    command: rq worker-pool -u ${WORKER_URL} low medium high -n 8
     depends_on:
       - backend
       - redis
