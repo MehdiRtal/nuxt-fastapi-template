@@ -26,7 +26,7 @@ def run_migrations_offline() -> None:
 
     """
     context.configure(
-        url=settings.DATABASE_URL,
+        url=settings.POSTGRES_URL,
         target_metadata=target_metadata,
     )
 
@@ -40,7 +40,7 @@ def run_migrations_online() -> None:
     and associate a connection with the context.
 
     """
-    engine = create_engine(settings.DATABASE_URL)
+    engine = create_engine(settings.POSTGRES_URL)
 
     with engine.connect() as connection:
         context.configure(

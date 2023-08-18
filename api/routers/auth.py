@@ -6,7 +6,8 @@ from pydantic import EmailStr
 from models import User, UserCreate, UserRead, Success
 from databases import Database
 from dependencies import VerifyUser, verify_turnstile_token
-from utils import pwd_context, generate_jwt, send_email
+from utils import pwd_context, generate_jwt
+from tasks import send_email
 from queues import low_queue
 
 
@@ -37,7 +38,7 @@ def login(db: Database, response: Response, username: str = Form(), password: st
         raise HTTPException(status_code=400, detail="User not verified")
     if not db_user.is_active:
         raise HTTPException(status_code=400, detail="User not active")
-    response.set_cookie(key="session_id", value=generate_jwt({"user_id": db_user.id}))
+    response.set_cookie(key="session_id", value=generate_jwt({"user_id": db_user.id}, secret=db_user.password))
     return db_user
 
 @router.post("/logout")

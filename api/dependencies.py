@@ -4,17 +4,18 @@ import requests
 from typing import Annotated
 
 from config import settings
-from models import *
+from models import User
 from databases import Database
 
 
 def get_current_user(db: Database, session_id: Annotated[str, Cookie()] = None):
     try:
-        payload = jwt.decode(session_id, settings.JWT_SECRET, algorithms=settings.JWT_ALGORITHM)
+        payload = jwt.get_unverified_header(session_id)
+        db_user = db.get(User, payload["user_id"])
+        jwt.decode(session_id, db_user.password, algorithms=settings.JWT_ALGORITHM)
     except JWTError:
         raise HTTPException(status_code=401, detail="Invalid session_id")
     else:
-        db_user = db.get(User, payload["user_id"])
         return db_user
 
 CurrentUser = Annotated[User, Depends(get_current_user)]
