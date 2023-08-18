@@ -13,6 +13,11 @@ class BaseModel(SQLModel):
         json_dumps = orjson_dumps
 
 
+class Success(BaseModel):
+    status: str = "success"
+    message: str
+
+
 class UserBase(BaseModel):
     username: str = Field(unique=True, index=True)
     email: EmailStr = Field(unique=True, index=True)

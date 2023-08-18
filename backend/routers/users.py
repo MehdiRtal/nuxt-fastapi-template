@@ -32,7 +32,7 @@ def add_current_user_order(db: Database, current_user: CurrentUser, order: Order
     order.user_id = current_user.id
     db_product = db.get(Product, order.product_id)
     current_user.balance -= db_product.price * order.quantity
-    db_order = Order(**order.dict())
+    db_order = Order(**order.model_dump())
     db.add(db_order)
     db.commit()
     db.refresh(db_order)
@@ -44,7 +44,7 @@ def update_current_user_order(db: Database, current_user: CurrentUser, order_id:
     db_order = db.exec(statement).first()
     if not db_order:
         raise HTTPException(status_code=404, detail="Order not found")
-    for key, value in order.dict(exclude_unset=True).items():
+    for key, value in order.model_dump(exclude_unset=True).items():
         setattr(db_order, key, value)
     db.add(db_order)
     db.commit()
@@ -77,7 +77,7 @@ def get_current_user(current_user: CurrentUser):
 
 @router.patch("/me", response_model=UserRead)
 def update_current_user(db: Database, current_user: CurrentUser, user: UserUpdate):
-    for key, value in user.dict(exclude_unset=True).items():
+    for key, value in user.model_dump(exclude_unset=True).items():
         setattr(current_user, key, value)
     db.add(current_user)
     db.commit()
@@ -110,7 +110,7 @@ def get_user(db: Database, user_id: int):
 def add_user(db: Database, user: UserCreate):
     try:
         user.password = pwd_context.hash(user.password)
-        db_user = User(**user.dict())
+        db_user = User(**user.model_dump())
         db.add(db_user)
         db.commit()
         db.refresh(db_user)
@@ -123,7 +123,7 @@ def update_user(db: Database, user_id: int, user: UserUpdate):
     db_user = db.get(User, user_id)
     if not db_user:
         raise HTTPException(status_code=404, detail="User not found")
-    for key, value in user.dict(exclude_unset=True).items():
+    for key, value in user.model_dump(exclude_unset=True).items():
         setattr(db_user, key, value)
     db.add(db_user)
     db.commit()

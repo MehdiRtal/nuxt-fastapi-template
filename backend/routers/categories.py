@@ -23,7 +23,7 @@ def get_category(db: Database, category_id: int):
 
 @router.post("/", status_code=201, response_model=CategoryRead)
 def add_category(db: Database, category: CategoryCreate):
-    db_category = Category(**category.dict())
+    db_category = Category(**category.model_dump())
     db.add(db_category)
     db.commit()
     db.refresh(db_category)
@@ -34,7 +34,7 @@ def update_category(db: Database, category_id: int, category: CategoryUpdate):
     db_category = db.get(Category, category_id)
     if not db_category:
         raise HTTPException(status_code=404, detail="Category not found")
-    for key, value in category.dict(exclude_unset=True).items():
+    for key, value in category.model_dump(exclude_unset=True).items():
         setattr(db_category, key, value)
     db.add(db_category)
     db.commit()

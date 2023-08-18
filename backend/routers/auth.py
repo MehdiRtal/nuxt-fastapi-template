@@ -3,7 +3,7 @@ from sqlmodel import select, or_
 from sqlalchemy.exc import IntegrityError
 from pydantic import EmailStr
 
-from models import User, UserCreate, UserRead
+from models import User, UserCreate, UserRead, Success
 from databases import Database
 from dependencies import VerifyUser, verify_turnstile_token
 from utils import pwd_context, generate_jwt, send_email
@@ -16,7 +16,7 @@ router = APIRouter(tags=["Authentication"], prefix="/auth")
 def register(db: Database, user: UserCreate):
     try:
         user.password = pwd_context.hash(user.password)
-        db_user = User(**user.dict())
+        db_user = User(**user.model_dump())
         db.add(db_user)
         db.commit()
         db.refresh(db_user)
@@ -43,7 +43,7 @@ def login(db: Database, response: Response, username: str = Form(), password: st
 @router.post("/logout")
 def logout(response: Response):
     response.delete_cookie(key="session_id")
-    return {"status": "success", "message": "Logged out"}
+    return Success(message="User logged out")
 
 @router.post("/verify/{token}")
 def verify(db: Database, verify_user: VerifyUser):
@@ -52,7 +52,7 @@ def verify(db: Database, verify_user: VerifyUser):
     verify_user.is_verified = True
     db.add(verify_user)
     db.commit()
-    return {"status": "success", "message": "User verified"}
+    return Success(message="User verified")
 
 @router.post("/forgot-password", dependencies=[Depends(verify_turnstile_token)])
 def forgot_password(db: Database, email: EmailStr):
@@ -63,11 +63,11 @@ def forgot_password(db: Database, email: EmailStr):
     if not db_user.is_active:
         raise HTTPException(status_code=400, detail="User not active")
     low_queue.enqueue(send_email, "", db_user.email, "d-9b9b2f1b5b4a4b8e9b9b2f1b5b4b8e9b", {"username": db_user.username, "token": generate_jwt({"user_id": db_user.id}, audience="reset_password")})
-    return {"status": "success", "message": "Email sent"}
+    return Success(message="Password reset email sent")
 
 @router.post("/reset-password/{token}")
 def reset_password(db: Database, verify_user: VerifyUser, password: str):
     verify_user.password = pwd_context.hash(password)
     db.add(verify_user)
     db.commit()
-    return {"status": "success", "message": "Password reset"}
+    return Success(message="Password reset")

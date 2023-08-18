@@ -23,7 +23,7 @@ def get_order(db: Database, order_id: int):
 
 @router.post("/", status_code=201, response_model=OrderRead)
 def add_order(db: Database, order: OrderCreate):
-    db_order = Order(**order.dict())
+    db_order = Order(**order.model_dump())
     db.add(db_order)
     db.commit()
     db.refresh(db_order)
@@ -34,7 +34,7 @@ def update_order(db: Database, order_id: int, order: OrderUpdate):
     db_order = db.get(Order, order_id)
     if not db_order:
         raise HTTPException(status_code=404, detail="Order not found")
-    for key, value in order.dict(exclude_unset=True).items():
+    for key, value in order.model_dump(exclude_unset=True).items():
         setattr(db_order, key, value)
     db.add(db_order)
     db.commit()

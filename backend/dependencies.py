@@ -8,7 +8,7 @@ from models import *
 from databases import Database
 
 
-def get_current_user(db: Database, session_id: str = Cookie(None)):
+def get_current_user(db: Database, session_id: Annotated[str, Cookie()] = None):
     try:
         payload = jwt.decode(session_id, settings.JWT_SECRET, algorithms=settings.JWT_ALGORITHM)
     except JWTError:

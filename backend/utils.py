@@ -2,8 +2,7 @@ from passlib.context import CryptContext
 from jose import jwt
 from datetime import datetime, timedelta
 from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import *
-
+from sendgrid.helpers.mail import Mail
 
 from config import settings
 

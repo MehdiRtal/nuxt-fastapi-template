@@ -5,7 +5,7 @@ from pydantic_settings import BaseSettings
 class Settings(BaseSettings):
     DATABASE_URL: PostgresDsn
 
-    WORKER_URL: RedisDsn
+    RQ_URL: RedisDsn
 
     JWT_SECRET : str
     JWT_ALGORITHM : str

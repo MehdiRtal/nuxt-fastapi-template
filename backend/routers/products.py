@@ -23,7 +23,7 @@ def get_product(db: Database, product_id: int):
 
 @router.post("/", status_code=201, response_model=ProductRead)
 def add_product(db: Database, product: ProductCreate):
-    db_product = Product(**product.dict())
+    db_product = Product(**product.model_dump())
     db.add(db_product)
     db.commit()
     db.refresh(db_product)
@@ -34,7 +34,7 @@ def update_product(db: Database, product_id: int, product: ProductUpdate):
     db_product = db.get(Product, product_id)
     if not db_product:
         raise HTTPException(status_code=404, detail="Product not found")
-    for key, value in product.dict(exclude_unset=True).items():
+    for key, value in product.model_dump(exclude_unset=True).items():
         setattr(db_product, key, value)
     db.add(db_product)
     db.commit()

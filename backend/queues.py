@@ -4,7 +4,7 @@ from rq import Queue
 from config import settings
 
 
-connection = redis.from_url(settings.WORKER_URL)
+connection = redis.from_url(settings.RQ_URL)
 
 low_queue = Queue(name="low", connection=connection)
 

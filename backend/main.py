@@ -12,7 +12,7 @@ async def lifespan(app: FastAPI):
     init_db()
     yield
 
-app = FastAPI(title="API", version="1.0.0", lifespan=lifespan, default_response_class=ORJSONResponse)
+app = FastAPI(title="API", lifespan=lifespan, default_response_class=ORJSONResponse)
 
 @app.exception_handler(HTTPException)
 def http_exception_handler(request: Request, exception: HTTPException):
@@ -30,4 +30,4 @@ app.include_router(categories.router)
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("main:app", host="127.0.0.1", port=8000, log_level="debug", reload=True)
+    uvicorn.run("main:app", host="localhost", port=8000, log_level="debug", reload=True)
