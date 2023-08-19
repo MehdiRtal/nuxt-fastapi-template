@@ -8,14 +8,12 @@ def orjson_dumps(v, *, default):
     return orjson.dumps(v, default).decode()
 
 class BaseModel(SQLModel):
+    status: str = "success"
+    message: Optional[str] = None
+
     class Config:
         json_loads = orjson.loads
         json_dumps = orjson_dumps
-
-
-class Success(BaseModel):
-    status: str = "success"
-    message: str
 
 
 class Token(BaseModel):
@@ -54,60 +52,3 @@ class UserUpdate(BaseModel):
     is_verified: Optional[bool] = None
     is_superuser: Optional[bool] = None
     is_active: Optional[bool] = None
-
-
-class OderBase(BaseModel):
-    user_id: Optional[int] = Field(None, foreign_key="user.id")
-    product_id: Optional[int] = Field(None, foreign_key="product.id")
-    quantity: int
-
-class Order(OderBase, table=True):
-    id: Optional[int] = Field(None, primary_key=True)
-    status: str = Field("pending")
-
-class OrderRead(OderBase):
-    id: int
-
-class OrderCreate(OderBase):
-    pass
-
-class OrderUpdate(BaseModel):
-    user_id: Optional[int] = None
-    product_id: Optional[int] = None
-    quantity: Optional[int] = None
-
-
-class ProductBase(BaseModel):
-    name: str
-    price: int
-    category_id: Optional[int] = Field(None, foreign_key="category.id")
-
-class Product(ProductBase, table=True):
-    id: Optional[int] = Field(None, primary_key=True)
-
-class ProductRead(ProductBase):
-    id: int
-
-class ProductCreate(ProductBase):
-    pass
-
-class ProductUpdate(BaseModel):
-    name: Optional[str] = None
-    price: Optional[int] = None
-    category_id: Optional[int] = None
-
-
-class CategoryBase(BaseModel):
-    name: str
-
-class Category(CategoryBase, table=True):
-    id: Optional[int] = Field(None, primary_key=True)
-
-class CategoryRead(CategoryBase):
-    id: int
-
-class CategoryCreate(CategoryBase):
-    pass
-
-class CategoryUpdate(BaseModel):
-    name: Optional[str] = None

@@ -7,6 +7,10 @@ class Settings(BaseSettings):
 
     RQ_URL: RedisDsn
 
+    ACCESS_TOKEN_EXPIRE_MINUTES : int
+
+    VERIFY_TOKEN_EXPIRE_MINUTES : int
+
     JWT_SECRET : str
     JWT_ALGORITHM : str
 

@@ -28,7 +28,7 @@ def get_verify_user(db: Database, request: Request, verify_token: str):
     try:
         payload = jwt.decode(verify_token, settings.JWT_SECRET, algorithms=settings.JWT_ALGORITHM, audience=request.scope["route"].name)
     except JWTError:    
-        raise HTTPException(status_code=401, detail="Invalid verification token")
+        raise HTTPException(status_code=401, detail="Invalid verify token")
     else:
         db_user = db.get(User, payload.get("sub"))
         return db_user

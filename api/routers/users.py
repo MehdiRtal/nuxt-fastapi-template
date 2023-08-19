@@ -2,65 +2,14 @@ from fastapi import APIRouter
 from fastapi.exceptions import HTTPException
 from typing import List
 from sqlalchemy.exc import IntegrityError
-from sqlmodel import select
 
-from models import User, UserCreate, UserRead, UserUpdate, Order, OrderCreate, OrderRead, OrderUpdate, Product
+from models import User, UserCreate, UserRead, UserUpdate
 from databases import Database
 from dependencies import CurrentUser
 from utils import pwd_context
 
 
 router = APIRouter(tags=["Users"], prefix="/users")
-
-@router.get("/me/orders", response_model=List[OrderRead])
-def get_current_user_orders(db: Database, current_user: CurrentUser, limit: int = 100, offset: int = 0):
-    statement = select(Order).where(Order.user_id == current_user.id).offset(offset).limit(limit)
-    db_orders = db.exec(statement).all()
-    if not db_orders:
-        raise HTTPException(status_code=404, detail="No orders found")
-    return db_orders
-
-@router.get("/me/orders/{order_id}", response_model=OrderRead)
-def get_current_user_order(db: Database, current_user: CurrentUser, order_id: int):
-    statement = select(Order).where(Order.user_id == current_user.id).where(Order.id == order_id)
-    db_order = db.exec(statement).first()
-    if not db_order:
-        raise HTTPException(status_code=404, detail="Order not found")
-    return db_order
-
-@router.post("/me/orders", status_code=201, response_model=OrderRead)
-def add_current_user_order(db: Database, current_user: CurrentUser, order: OrderCreate):
-    order.user_id = current_user.id
-    db_product = db.get(Product, order.product_id)
-    current_user.balance -= db_product.price * order.quantity
-    db_order = Order(**order.model_dump())
-    db.add(db_order)
-    db.commit()
-    db.refresh(db_order)
-    return db_order
-
-@router.patch("/me/orders/{order_id}", response_model=OrderRead)
-def update_current_user_order(db: Database, current_user: CurrentUser, order_id: int, order: OrderUpdate):
-    statement = select(Order).where(Order.user_id == current_user.id).where(Order.id == order_id)
-    db_order = db.exec(statement).first()
-    if not db_order:
-        raise HTTPException(status_code=404, detail="Order not found")
-    for key, value in order.model_dump(exclude_unset=True).items():
-        setattr(db_order, key, value)
-    db.add(db_order)
-    db.commit()
-    db.refresh(db_order)
-    return db_order
-
-@router.delete("/me/orders/{order_id}", response_model=OrderRead)
-def delete_current_user_order(db: Database, current_user: CurrentUser, order_id: int):
-    statement = select(Order).where(Order.user_id == current_user.id).where(Order.id == order_id)
-    db_order = db.exec(statement).first()
-    if not db_order:
-        raise HTTPException(status_code=404, detail="Order not found")
-    db.delete(db_order)
-    db.commit()
-    return db_order
 
 @router.post("/me/change-password", response_model=UserRead)
 def change_current_user_password(db: Database, current_user: CurrentUser, current_password: str, new_password: str):
