@@ -36,14 +36,12 @@ def login(db: Database, response: Response, username: str = Form(), password: st
         raise HTTPException(status_code=400, detail="Incorrect password")
     if not db_user.is_verified:
         raise HTTPException(status_code=400, detail="User not verified")
-    if not db_user.is_active:
-        raise HTTPException(status_code=400, detail="User not active")
-    response.set_cookie(key="session_id", value=generate_jwt({"user_id": db_user.id}, secret=db_user.password))
+    response.set_cookie(key="auth_token", value=generate_jwt({"user_id": db_user.id}, secret=db_user.password))
     return db_user
 
 @router.post("/logout")
 def logout(response: Response):
-    response.delete_cookie(key="session_id")
+    response.delete_cookie(key="auth_token")
     return Success(message="User logged out")
 
 @router.post("/verify/{token}")
