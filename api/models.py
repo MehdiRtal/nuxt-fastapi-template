@@ -18,6 +18,12 @@ class Success(BaseModel):
     message: str
 
 
+class Token(BaseModel):
+    access_token: str
+    refresh_token: str
+    token_type: str = "bearer"
+
+
 class UserBase(BaseModel):
     username: str = Field(unique=True, index=True)
     email: EmailStr = Field(unique=True, index=True)

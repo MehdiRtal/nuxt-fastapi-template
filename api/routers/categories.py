@@ -1,4 +1,5 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter
+from fastapi.exceptions import HTTPException
 from typing import List
 
 from models import Category, CategoryCreate, CategoryRead, CategoryUpdate

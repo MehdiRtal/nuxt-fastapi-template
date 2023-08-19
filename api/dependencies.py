@@ -1,4 +1,5 @@
-from fastapi import HTTPException, Cookie, Depends, Request
+from fastapi import Request, Depends
+from fastapi.exceptions import HTTPException
 from jose import jwt, JWTError
 import requests
 from typing import Annotated
@@ -6,15 +7,16 @@ from typing import Annotated
 from config import settings
 from models import User
 from databases import Database
+from utils import oauth2_scheme
 
 
-def get_current_user(db: Database, auth_token: Annotated[str, Cookie()] = None):
+def get_current_user(db: Database, access_token: Annotated[str, Depends(oauth2_scheme)]):
     try:
-        payload = jwt.get_unverified_header(auth_token)
-        db_user = db.get(User, payload["user_id"])
-        jwt.decode(auth_token, db_user.password, algorithms=settings.JWT_ALGORITHM)
+        payload = jwt.get_unverified_header(access_token)
+        db_user = db.get(User, payload.get("sub"))
+        jwt.decode(access_token, db_user.password, algorithms=settings.JWT_ALGORITHM)
     except JWTError:
-        raise HTTPException(status_code=401, detail="Invalid auth token")
+        raise HTTPException(status_code=401, detail="Invalid access token")
     else:
         if not db_user.is_active:
             raise HTTPException(status_code=400, detail="User not active")
@@ -22,13 +24,13 @@ def get_current_user(db: Database, auth_token: Annotated[str, Cookie()] = None):
 
 CurrentUser = Annotated[User, Depends(get_current_user)]
 
-def get_verify_user(db: Database, request: Request, token: str):
+def get_verify_user(db: Database, request: Request, verify_token: str):
     try:
-        payload = jwt.decode(token, settings.JWT_SECRET, algorithms=settings.JWT_ALGORITHM, audience=request.scope["route"].name)
+        payload = jwt.decode(verify_token, settings.JWT_SECRET, algorithms=settings.JWT_ALGORITHM, audience=request.scope["route"].name)
     except JWTError:    
-        raise HTTPException(status_code=401, detail="Invalid token")
+        raise HTTPException(status_code=401, detail="Invalid verification token")
     else:
-        db_user = db.get(User, payload["user_id"])
+        db_user = db.get(User, payload.get("sub"))
         return db_user
 
 VerifyUser = Annotated[User, Depends(get_verify_user)]
