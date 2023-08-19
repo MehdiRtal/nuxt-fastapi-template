@@ -4,7 +4,7 @@ from fastapi.exceptions import HTTPException, RequestValidationError
 from contextlib import asynccontextmanager
 
 from databases import init_db
-from routers import auth, users, products, categories, orders
+from routers import auth, users
 
 
 @asynccontextmanager
@@ -12,7 +12,11 @@ async def lifespan(app: FastAPI):
     init_db()
     yield
 
-app = FastAPI(title="API", lifespan=lifespan, default_response_class=ORJSONResponse)
+class CustomORJSONResponse(ORJSONResponse):
+    def render(self, content):
+        return super().render({"status": "success", "data": content})
+
+app = FastAPI(title="API", lifespan=lifespan, default_response_class=CustomORJSONResponse)
 
 @app.exception_handler(HTTPException)
 def http_exception_handler(request: Request, exception: HTTPException):
@@ -24,9 +28,6 @@ def validation_exception_handler(request: Request, exception: RequestValidationE
 
 app.include_router(auth.router)
 app.include_router(users.router)
-app.include_router(orders.router)
-app.include_router(products.router)
-app.include_router(categories.router)
 
 if __name__ == "__main__":
     import uvicorn

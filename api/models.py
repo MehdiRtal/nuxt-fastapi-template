@@ -8,7 +8,6 @@ def orjson_dumps(v, *, default):
     return orjson.dumps(v, default).decode()
 
 class BaseModel(SQLModel):
-    status: str = "success"
     message: Optional[str] = None
 
     class Config:
