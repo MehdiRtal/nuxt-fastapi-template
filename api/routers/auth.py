@@ -10,7 +10,7 @@ from typing import Annotated
 from models import User, UserCreate, Token, BaseModel
 from databases import Database
 from dependencies import VerifyUser, verify_turnstile_token
-from utils import pwd_context, generate_jwt
+from utils import pwd_context, generate_access_token, generate_verify_token
 from tasks import send_email
 from queues import low_queue
 
@@ -31,7 +31,7 @@ class Auth:
             self.db.refresh(db_user)
         except IntegrityError:
             raise HTTPException(status_code=400, detail="Username or email already in use")
-        low_queue.enqueue(send_email, "", user.email, "d-9b9b2f1b5b4a4b8e9b9b2f1b5b4b8e9b", {"username": user.username, "token": generate_jwt({"sub": db_user.id}, audience="verify")})
+        low_queue.enqueue(send_email, "", user.email, "d-9b9b2f1b5b4a4b8e9b9b2f1b5b4b8e9b", {"username": user.username, "token": generate_verify_token(db_user.id, audience="verify")})
         return {"message": "Verification email sent"}
 
     @router.post("/login", dependencies=[Depends(verify_turnstile_token)])
@@ -42,7 +42,7 @@ class Auth:
             raise HTTPException(status_code=400, detail="Incorrect username or password")
         if not db_user.is_verified:
             raise HTTPException(status_code=400, detail="User not verified")
-        return {"access_token": generate_jwt({"sub": db_user.id}, secret=db_user.password)}
+        return {"access_token": generate_access_token(db_user.id, secret=db_user.password)}
 
     @router.post("/logout")
     def logout():
@@ -65,7 +65,7 @@ class Auth:
             raise HTTPException(status_code=404, detail="User not found")
         if not db_user.is_active:
             raise HTTPException(status_code=400, detail="User not active")
-        low_queue.enqueue(send_email, "", db_user.email, "d-9b9b2f1b5b4a4b8e9b9b2f1b5b4b8e9b", {"username": db_user.username, "token": generate_jwt({"sub": db_user.id}, audience="reset_password")})
+        low_queue.enqueue(send_email, "", db_user.email, "d-9b9b2f1b5b4a4b8e9b9b2f1b5b4b8e9b", {"username": db_user.username, "token": generate_verify_token(db_user.id, audience="reset_password")})
         return {"message": "Password reset email sent"}
 
     @router.post("/reset-password/{verify_token}")
