@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends
 from fastapi.exceptions import HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
+from fastapi_restful.cbv import cbv
 from sqlmodel import select, or_
 from sqlalchemy.exc import IntegrityError
 from pydantic import EmailStr
@@ -16,56 +17,60 @@ from queues import low_queue
 
 router = APIRouter(tags=["Authentication"], prefix="/auth")
 
-@router.post("/register", status_code=201, response_model=BaseModel, dependencies=[Depends(verify_turnstile_token)])
-def register(db: Database, user: UserCreate):
-    try:
-        user.password = pwd_context.hash(user.password)
-        db_user = User(**user.model_dump())
-        db.add(db_user)
-        db.commit()
-        db.refresh(db_user)
-    except IntegrityError:
-        raise HTTPException(status_code=400, detail="Username or email already in use")
-    low_queue.enqueue(send_email, "", user.email, "d-9b9b2f1b5b4a4b8e9b9b2f1b5b4b8e9b", {"username": user.username, "token": generate_jwt({"sub": db_user.id}, audience="verify")})
-    return {"message": "Verification email sent"}
+@cbv(router)
+class Auth:
+    db: Database
 
-@router.post("/login", response_model=Token, dependencies=[Depends(verify_turnstile_token)])
-def login(db: Database, form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
-    statement = select(User).where(or_(User.username == form_data.username, User.email == form_data.username))
-    db_user = db.exec(statement).first()
-    if not db_user or not pwd_context.verify(form_data.password, db_user.password):
-        raise HTTPException(status_code=400, detail="Incorrect username or password")
-    if not db_user.is_verified:
-        raise HTTPException(status_code=400, detail="User not verified")
-    return {"access_token": generate_jwt({"sub": db_user.id}, secret=db_user.password)}
+    @router.post("/register", status_code=201, dependencies=[Depends(verify_turnstile_token)])
+    def register(self, user: UserCreate) -> BaseModel:
+        try:
+            user.password = pwd_context.hash(user.password)
+            db_user = User(**user.model_dump())
+            self.db.add(db_user)
+            self.db.commit()
+            self.db.refresh(db_user)
+        except IntegrityError:
+            raise HTTPException(status_code=400, detail="Username or email already in use")
+        low_queue.enqueue(send_email, "", user.email, "d-9b9b2f1b5b4a4b8e9b9b2f1b5b4b8e9b", {"username": user.username, "token": generate_jwt({"sub": db_user.id}, audience="verify")})
+        return {"message": "Verification email sent"}
 
-@router.post("/logout", response_model=BaseModel)
-def logout():
-    return {"message": "User logged out"}
+    @router.post("/login", dependencies=[Depends(verify_turnstile_token)])
+    def login(self, form_data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> Token:
+        statement = select(User).where(or_(User.username == form_data.username, User.email == form_data.username))
+        db_user = self.db.exec(statement).first()
+        if not db_user or not pwd_context.verify(form_data.password, db_user.password):
+            raise HTTPException(status_code=400, detail="Incorrect username or password")
+        if not db_user.is_verified:
+            raise HTTPException(status_code=400, detail="User not verified")
+        return {"access_token": generate_jwt({"sub": db_user.id}, secret=db_user.password)}
 
-@router.post("/verify/{verify_token}", response_model=BaseModel)
-def verify(db: Database, verify_user: VerifyUser):
-    if verify_user.is_verified:
-        raise HTTPException(status_code=400, detail="User already verified")
-    verify_user.is_verified = True
-    db.add(verify_user)
-    db.commit()
-    return {"message": "User verified"}
+    @router.post("/logout")
+    def logout():
+        return {"message": "User logged out"}
 
-@router.post("/forgot-password", response_model=BaseModel, dependencies=[Depends(verify_turnstile_token)])
-def forgot_password(db: Database, email: EmailStr):
-    statement = select(User).where(User.email == email)
-    db_user = db.exec(statement).first()
-    if not db_user:
-        raise HTTPException(status_code=404, detail="User not found")
-    if not db_user.is_active:
-        raise HTTPException(status_code=400, detail="User not active")
-    low_queue.enqueue(send_email, "", db_user.email, "d-9b9b2f1b5b4a4b8e9b9b2f1b5b4b8e9b", {"username": db_user.username, "token": generate_jwt({"sub": db_user.id}, audience="reset_password")})
-    return {"message": "Password reset email sent"}
+    @router.post("/verify/{verify_token}")
+    def verify(self, verify_user: VerifyUser) -> BaseModel:
+        if verify_user.is_verified:
+            raise HTTPException(status_code=400, detail="User already verified")
+        verify_user.is_verified = True
+        self.db.add(verify_user)
+        self.db.commit()
+        return {"message": "User verified"}
 
-@router.post("/reset-password/{verify_token}", response_model=BaseModel)
-def reset_password(db: Database, verify_user: VerifyUser, password: str):
-    verify_user.password = pwd_context.hash(password)
-    db.add(verify_user)
-    db.commit()
-    return {"message": "Password reset"}
+    @router.post("/forgot-password", dependencies=[Depends(verify_turnstile_token)])
+    def forgot_password(self, email: EmailStr) -> BaseModel:
+        statement = select(User).where(User.email == email)
+        db_user = self.db.exec(statement).first()
+        if not db_user:
+            raise HTTPException(status_code=404, detail="User not found")
+        if not db_user.is_active:
+            raise HTTPException(status_code=400, detail="User not active")
+        low_queue.enqueue(send_email, "", db_user.email, "d-9b9b2f1b5b4a4b8e9b9b2f1b5b4b8e9b", {"username": db_user.username, "token": generate_jwt({"sub": db_user.id}, audience="reset_password")})
+        return {"message": "Password reset email sent"}
+
+    @router.post("/reset-password/{verify_token}")
+    def reset_password(self, verify_user: VerifyUser, password: str) -> BaseModel:
+        verify_user.password = pwd_context.hash(password)
+        self.db.add(verify_user)
+        self.db.commit()
+        return {"message": "Password reset"}

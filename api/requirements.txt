@@ -4,6 +4,7 @@ uvicorn
 sqlmodel
 psycopg2
 alembic
+fastapi-restful
 redis
 rq
 pydantic-settings

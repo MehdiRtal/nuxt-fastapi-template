@@ -1,6 +1,5 @@
 from sqlmodel import Field, SQLModel
-from typing import Optional
-from pydantic import EmailStr, constr
+from pydantic import ConfigDict, EmailStr, constr
 import orjson
 
 
@@ -8,11 +7,9 @@ def orjson_dumps(v, *, default):
     return orjson.dumps(v, default).decode()
 
 class BaseModel(SQLModel):
-    message: Optional[str] = None
-
-    class Config:
-        json_loads = orjson.loads
-        json_dumps = orjson_dumps
+    message: str | None = None
+    
+    model_config = ConfigDict(json_loads=orjson.loads, json_dumps=orjson_dumps)
 
 
 class Token(BaseModel):
@@ -26,7 +23,7 @@ class UserBase(BaseModel):
     email: EmailStr = Field(unique=True, index=True)
 
 class User(UserBase, table=True):
-    id: Optional[int] = Field(None, primary_key=True)
+    id: int | None = Field(None, primary_key=True)
     password: str
     balance: int = Field(0)
     is_verified: bool = Field(False)
@@ -44,10 +41,10 @@ class UserRead(UserBase):
     is_active: bool
 
 class UserUpdate(BaseModel):
-    username: Optional[str] = None
-    email: Optional[EmailStr] = None
-    password: Optional[str] = Field(None, regex="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$")
-    balance: Optional[int] = None
-    is_verified: Optional[bool] = None
-    is_superuser: Optional[bool] = None
-    is_active: Optional[bool] = None
+    username: str | None = None
+    email: EmailStr | None = None
+    password: str | None = Field(None, regex="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$")
+    balance: int | None = None
+    is_verified: bool | None = None
+    is_superuser: bool | None = None
+    is_active: bool | None = None
