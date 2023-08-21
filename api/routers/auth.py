@@ -30,7 +30,7 @@ class Auth:
             self.db.commit()
             self.db.refresh(db_user)
         except IntegrityError:
-            raise HTTPException(status_code=400, detail="Username or email already in use")
+            raise HTTPException(400, "Username or email already in use")
         low_queue.enqueue(send_email, "", user.email, "d-9b9b2f1b5b4a4b8e9b9b2f1b5b4b8e9b", {"username": user.username, "token": generate_verify_token(db_user.id, audience="verify")})
         return {"message": "Verification email sent"}
 
@@ -39,9 +39,9 @@ class Auth:
         statement = select(User).where(or_(User.username == form_data.username, User.email == form_data.username))
         db_user = self.db.exec(statement).first()
         if not db_user or not pwd_context.verify(form_data.password, db_user.password):
-            raise HTTPException(status_code=400, detail="Incorrect username or password")
+            raise HTTPException(400, "Incorrect username or password")
         if not db_user.is_verified:
-            raise HTTPException(status_code=400, detail="User not verified")
+            raise HTTPException(400, "User not verified")
         return {"access_token": generate_access_token(db_user.id, secret=db_user.password)}
 
     @router.post("/logout")
@@ -51,7 +51,7 @@ class Auth:
     @router.post("/verify/{verify_token}")
     def verify(self, verify_user: VerifyUser) -> BaseModel:
         if verify_user.is_verified:
-            raise HTTPException(status_code=400, detail="User already verified")
+            raise HTTPException(400, "User already verified")
         verify_user.is_verified = True
         self.db.add(verify_user)
         self.db.commit()
@@ -62,9 +62,9 @@ class Auth:
         statement = select(User).where(User.email == email)
         db_user = self.db.exec(statement).first()
         if not db_user:
-            raise HTTPException(status_code=404, detail="User not found")
+            raise HTTPException(404, "User not found")
         if not db_user.is_active:
-            raise HTTPException(status_code=400, detail="User not active")
+            raise HTTPException(400, "User not active")
         low_queue.enqueue(send_email, "", db_user.email, "d-9b9b2f1b5b4a4b8e9b9b2f1b5b4b8e9b", {"username": db_user.username, "token": generate_verify_token(db_user.id, audience="reset_password")})
         return {"message": "Password reset email sent"}
 

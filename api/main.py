@@ -1,10 +1,11 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Depends
 from fastapi.responses import ORJSONResponse
 from fastapi.exceptions import HTTPException, RequestValidationError
 from contextlib import asynccontextmanager
 
 from databases import init_db
 from routers import auth, users
+from dependencies import verify_api_signature
 
 
 @asynccontextmanager
@@ -16,7 +17,7 @@ class CustomORJSONResponse(ORJSONResponse):
     def render(self, content):
         return super().render({"status": "success", "data": content})
 
-app = FastAPI(title="API", lifespan=lifespan, default_response_class=CustomORJSONResponse)
+app = FastAPI(title="API", lifespan=lifespan, default_response_class=CustomORJSONResponse, dependencies=[Depends(verify_api_signature)])
 
 @app.exception_handler(HTTPException)
 def http_exception_handler(request: Request, exception: HTTPException):

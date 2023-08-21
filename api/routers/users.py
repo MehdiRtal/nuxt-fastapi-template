@@ -18,7 +18,7 @@ class Users:
     @router.post("/me/change-password")
     def change_current_user_password(self, current_user: CurrentUser, current_password: str, new_password: str) -> UserRead:
         if not pwd_context.verify(current_password, current_user.password):
-            raise HTTPException(status_code=400, detail="Incorrect password")
+            raise HTTPException(400, "Incorrect password")
         current_user.password = pwd_context.hash(new_password)
         self.db.add(current_user)
         self.db.commit()
@@ -50,14 +50,14 @@ class Users:
     def get_users(self, limit: int = 100, offset: int = 0) -> list[UserRead]:
         db_users = self.db.query(User).offset(offset).limit(limit).all()
         if not db_users:
-            raise HTTPException(status_code=404, detail="No users found")
+            raise HTTPException(404, "No users found")
         return db_users
 
     @router.get("/{user_id}")
     def get_user(self, user_id: int):
         db_user = self.db.get(User, user_id)
         if not db_user:
-            raise HTTPException(status_code=404, detail="User not found")
+            raise HTTPException(404, "User not found")
         return db_user
 
     @router.post("/", status_code=201)
@@ -69,14 +69,14 @@ class Users:
             self.db.commit()
             self.db.refresh(db_user)
         except IntegrityError:
-            raise HTTPException(status_code=400, detail="User already exists")
+            raise HTTPException(400, "User already exists")
         return db_user
 
     @router.patch("/{user_id}")
     def update_user(self, user_id: int, user: UserUpdate) -> UserRead:
         db_user = self.db.get(User, user_id)
         if not db_user:
-            raise HTTPException(status_code=404, detail="User not found")
+            raise HTTPException(404, "User not found")
         for key, value in user.model_dump(exclude_unset=True).items():
             setattr(db_user, key, value)
         self.db.add(db_user)
@@ -88,7 +88,7 @@ class Users:
     def delete_user(self, user_id: int) -> UserRead:
         db_user = self.db.get(User, user_id)
         if not db_user:
-            raise HTTPException(status_code=404, detail="User not found")
+            raise HTTPException(404, "User not found")
         self.db.delete(db_user)
         self.db.commit()
         return db_user
