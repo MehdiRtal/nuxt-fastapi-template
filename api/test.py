@@ -1,7 +1,13 @@
-from jose import jws
-signed = jws.sign({'a': 'b'}, 'secret', algorithm='HS256')
+from jose import jwt 
 
-print(signed)
+secret = "secret"
 
-print(jws.verify(signed, 'secret', algorithms=['HS256']))
+token = jwt.encode({"sub": "123"}, secret, algorithm="HS256")
 
+print(token)
+
+
+payload = jwt.get_unverified_header(token)
+print(payload)
+payload = jwt.decode(token, secret, algorithms=["HS256"])
+print(payload)

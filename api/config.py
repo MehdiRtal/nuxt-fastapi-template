@@ -14,7 +14,7 @@ class Settings(BaseSettings):
     JWT_SECRET : str
     JWT_ALGORITHM : str
 
-    API_SIGNATURE_SECRET : str
+    SIGNATURE_SECRET : str
 
     SENDGRID_API_KEY : str
 
