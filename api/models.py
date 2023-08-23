@@ -7,10 +7,11 @@ def orjson_dumps(v, *, default):
     return orjson.dumps(v, default).decode()
 
 class BaseModel(SQLModel):
-    message: str | None = None
-    
     model_config = ConfigDict(json_loads=orjson.loads, json_dumps=orjson_dumps)
 
+
+class DefaultResponse(BaseModel):
+    message: str
 
 class Token(BaseModel):
     access_token: str

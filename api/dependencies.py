@@ -13,11 +13,11 @@ from databases import Database
 from utils import oauth2_scheme
 
 
-def get_current_user(db: Database, access_token: Annotated[str, Depends(oauth2_scheme)]):
+async def get_current_user(db: Database, access_token: Annotated[str, Depends(oauth2_scheme)]):
     try:
         headers = jwt.get_unverified_header(access_token)
         payload = jwt.get_unverified_claims(access_token)
-        db_user = db.get(User, payload.get("sub"))
+        db_user = await db.get(User, payload.get("sub"))
         jwt.decode(access_token, db_user.password, algorithms=headers.get("alg"))
     except JWTError:
         raise HTTPException(401, "Invalid access token")
@@ -28,14 +28,14 @@ def get_current_user(db: Database, access_token: Annotated[str, Depends(oauth2_s
 
 CurrentUser = Annotated[User, Depends(get_current_user)]
 
-def get_verify_user(request: Request, db: Database, verify_token: str):
+async def get_verify_user(request: Request, db: Database, verify_token: str):
     try:
         headers = jwt.get_unverified_header(verify_token)
         payload = jwt.decode(verify_token, settings.JWT_SECRET, algorithms=headers.get("alg"), audience=request.scope["route"].name)
     except JWTError:    
         raise HTTPException(401, "Invalid verify token")
     else:
-        db_user = db.get(User, payload.get("sub"))
+        db_user = await db.get(User, payload.get("sub"))
         return db_user
 
 VerifyUser = Annotated[User, Depends(get_verify_user)]

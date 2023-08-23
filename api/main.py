@@ -10,14 +10,14 @@ from dependencies import verify_signature
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    init_db()
+    await init_db()
     yield
 
 class CustomORJSONResponse(ORJSONResponse):
     def render(self, content):
-        return super().render({"status": "success", "data": content})
+        return super().render({"status": "success", **content})
 
-app = FastAPI(title="API", lifespan=lifespan, default_response_class=CustomORJSONResponse, dependencies=[Depends(verify_signature)])
+app = FastAPI(title="API", lifespan=lifespan, default_response_class=ORJSONResponse, dependencies=[Depends(verify_signature)])
 
 @app.exception_handler(HTTPException)
 def http_exception_handler(request: Request, exception: HTTPException):

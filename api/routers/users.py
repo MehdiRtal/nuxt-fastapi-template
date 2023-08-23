@@ -16,13 +16,13 @@ class Users:
     db: Database
 
     @router.post("/me/change-password")
-    def change_current_user_password(self, current_user: CurrentUser, current_password: str, new_password: str) -> UserRead:
+    async def change_current_user_password(self, current_user: CurrentUser, current_password: str, new_password: str) -> UserRead:
         if not pwd_context.verify(current_password, current_user.password):
             raise HTTPException(400, "Incorrect password")
         current_user.password = pwd_context.hash(new_password)
         self.db.add(current_user)
-        self.db.commit()
-        self.db.refresh(current_user)
+        await self.db.commit()
+        await self.db.refresh(current_user)
         return current_user
 
     @router.get("/me")
@@ -30,20 +30,20 @@ class Users:
         return current_user
 
     @router.patch("/me")
-    def update_current_user(self, current_user: CurrentUser, user: UserUpdate) -> UserRead:
+    async def update_current_user(self, current_user: CurrentUser, user: UserUpdate) -> UserRead:
         for key, value in user.model_dump(exclude_unset=True).items():
             setattr(current_user, key, value)
         self.db.add(current_user)
-        self.db.commit()
-        self.db.refresh(current_user)
+        await self.db.commit()
+        await self.db.refresh(current_user)
         return current_user
 
     @router.delete("/me")
-    def delete_current_user(self, current_user: CurrentUser) -> UserRead:
+    async def delete_current_user(self, current_user: CurrentUser) -> UserRead:
         current_user.is_active = False
         self.db.add(current_user)
-        self.db.commit()
-        self.db.refresh(current_user)
+        await self.db.commit()
+        await self.db.refresh(current_user)
         return current_user
 
     @router.get("/")
@@ -54,41 +54,41 @@ class Users:
         return db_users
 
     @router.get("/{user_id}")
-    def get_user(self, user_id: int):
-        db_user = self.db.get(User, user_id)
+    async def get_user(self, user_id: int):
+        db_user = await self.db.get(User, user_id)
         if not db_user:
             raise HTTPException(404, "User not found")
         return db_user
 
     @router.post("/", status_code=201)
-    def add_user(self, user: UserCreate) -> UserRead:
+    async def add_user(self, user: UserCreate) -> UserRead:
         try:
             user.password = pwd_context.hash(user.password)
             db_user = User(**user.model_dump())
             self.db.add(db_user)
-            self.db.commit()
-            self.db.refresh(db_user)
+            await self.db.commit()
+            await self.db.refresh(db_user)
         except IntegrityError:
             raise HTTPException(400, "User already exists")
         return db_user
 
     @router.patch("/{user_id}")
-    def update_user(self, user_id: int, user: UserUpdate) -> UserRead:
-        db_user = self.db.get(User, user_id)
+    async def update_user(self, user_id: int, user: UserUpdate) -> UserRead:
+        db_user = await self.db.get(User, user_id)
         if not db_user:
             raise HTTPException(404, "User not found")
         for key, value in user.model_dump(exclude_unset=True).items():
             setattr(db_user, key, value)
         self.db.add(db_user)
-        self.db.commit()
-        self.db.refresh(db_user)
+        await self.db.commit()
+        await self.db.refresh(db_user)
         return db_user
 
     @router.delete("/{user_id}")
-    def delete_user(self, user_id: int) -> UserRead:
-        db_user = self.db.get(User, user_id)
+    async def delete_user(self, user_id: int) -> UserRead:
+        db_user = await self.db.get(User, user_id)
         if not db_user:
             raise HTTPException(404, "User not found")
         self.db.delete(db_user)
-        self.db.commit()
+        await self.db.commit()
         return db_user

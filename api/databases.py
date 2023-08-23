@@ -1,17 +1,21 @@
 from fastapi import Depends
-from sqlmodel import SQLModel, create_engine, Session
+from sqlmodel import SQLModel, create_engine
+from sqlmodel.ext.asyncio.session import AsyncEngine, AsyncSession
+from sqlalchemy.orm import sessionmaker
 from typing import Annotated
 
 from config import settings
 
 
-engine = create_engine(settings.POSTGRES_URL)
+engine = AsyncEngine(create_engine(settings.POSTGRES_URL))
 
-def init_db():
-    SQLModel.metadata.create_all(engine)
+async def init_db():
+    async with engine.begin() as connection:
+        await connection.run_sync(SQLModel.metadata.create_all)
 
-def get_db():
-    with Session(engine) as session:
+async def get_db():
+    session = sessionmaker(bind=engine, class_=AsyncSession)
+    async with session() as session:
         yield session
 
-Database = Annotated[Session, Depends(get_db)]
+Database = Annotated[AsyncSession, Depends(get_db)]
