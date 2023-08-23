@@ -5,9 +5,10 @@ from sqlalchemy.orm import sessionmaker
 from typing import Annotated
 
 from config import settings
+from models import *
 
 
-engine = AsyncEngine(create_engine(settings.POSTGRES_URL))
+engine = AsyncEngine(create_engine(settings.DATABASE_URL))
 
 async def init_db():
     async with engine.begin() as connection:

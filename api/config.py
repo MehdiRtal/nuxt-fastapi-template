@@ -3,7 +3,7 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    POSTGRES_URL: PostgresDsn
+    DATABASE_URL: PostgresDsn
 
     RQ_URL: RedisDsn
 
