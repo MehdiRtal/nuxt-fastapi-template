@@ -2,7 +2,7 @@ fastapi
 gunicorn
 uvicorn
 sqlmodel
-psycopg2
+psycopg2-binary
 alembic
 fastapi-restful
 redis

@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 from fastapi.exceptions import HTTPException
 from fastapi_restful.cbv import cbv
+from sqlmodel import select, or_
 from sqlalchemy.exc import IntegrityError
 
 from models import User, UserCreate, UserRead, UserUpdate
@@ -47,8 +48,10 @@ class Users:
         return current_user
 
     @router.get("/")
-    def get_users(self, limit: int = 100, offset: int = 0) -> list[UserRead]:
-        db_users = self.db.query(User).offset(offset).limit(limit).all()
+    async def get_users(self, limit: int = 100, offset: int = 0) -> list[UserRead]:
+        statement = select(User).offset(offset).limit(limit)
+        db_users = await self.db.exec(statement)
+        db_users = db_users.all()
         if not db_users:
             raise HTTPException(404, "No users found")
         return db_users
