@@ -9,11 +9,14 @@ from typing import Annotated
 
 from config import settings
 from models import User
-from database import Database
+from db import Database
+from redis import Redis
 from utils import oauth2_scheme
 
 
-async def get_current_user(db: Database, access_token: Annotated[str, Depends(oauth2_scheme)]):
+async def get_current_user(db: Database, redis: Redis, access_token: Annotated[str, Depends(oauth2_scheme)]):
+    if await redis.sismember("invalid_access_tokens", access_token):
+        raise HTTPException(401, "Invalid access token")
     try:
         headers = jwt.get_unverified_header(access_token)
         payload = jwt.get_unverified_claims(access_token)
@@ -39,6 +42,9 @@ async def get_verify_user(request: Request, db: Database, verify_token: str):
         return db_user
 
 VerifyUser = Annotated[User, Depends(get_verify_user)]
+
+async def invalidate_access_token(redis: Redis, access_token: Annotated[str, Depends(oauth2_scheme)]):
+    await redis.sadd("invalid_access_tokens", access_token)
 
 def verify_turnstile_token(turnstile_token: str):
     return

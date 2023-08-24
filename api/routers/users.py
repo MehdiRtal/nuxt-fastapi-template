@@ -5,8 +5,8 @@ from sqlmodel import select, or_
 from sqlalchemy.exc import IntegrityError
 
 from models import User, UserCreate, UserRead, UserUpdate
-from database import Database
-from dependencies import CurrentUser
+from db import Database
+from deps import CurrentUser
 from utils import pwd_context
 
 

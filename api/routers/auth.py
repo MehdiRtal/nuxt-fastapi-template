@@ -8,8 +8,8 @@ from pydantic import EmailStr
 from typing import Annotated
 
 from models import User, UserCreate, Token, DefaultResponse
-from database import Database
-from dependencies import VerifyUser, verify_turnstile_token
+from db import Database
+from deps import VerifyUser, verify_turnstile_token, invalidate_access_token
 from utils import pwd_context, generate_access_token, generate_verify_token
 from tasks import send_email
 from queues import low_queue
@@ -45,8 +45,8 @@ class Auth:
             raise HTTPException(400, "User not verified")
         return {"access_token": generate_access_token(db_user.id, secret=db_user.password)}
 
-    @router.post("/logout")
-    def logout():
+    @router.post("/logout", dependencies=[Depends(invalidate_access_token)])
+    def logout() -> DefaultResponse:
         return {"message": "User logged out"}
 
     @router.post("/verify/{verify_token}")

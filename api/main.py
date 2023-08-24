@@ -3,9 +3,9 @@ from fastapi.responses import ORJSONResponse
 from fastapi.exceptions import HTTPException, RequestValidationError
 from contextlib import asynccontextmanager
 
-from database import init_db
+from db import init_db
 from routers import auth, users
-from dependencies import verify_signature
+from deps import verify_signature
 
 
 @asynccontextmanager
