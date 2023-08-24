@@ -5,7 +5,8 @@ sqlmodel
 asyncpg
 alembic
 fastapi-restful
-redis
+redis[hiredis]
+aioredis[hiredis]
 rq
 pydantic-settings
 python-jose[cryptography]

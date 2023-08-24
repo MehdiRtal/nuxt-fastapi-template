@@ -1,8 +1,7 @@
 from alembic import context
-from sqlmodel import SQLModel, create_engine
-from sqlmodel.ext.asyncio.session import AsyncEngine
 import asyncio
 
+from database import engine
 from config import settings
 from models import *
 
@@ -10,7 +9,7 @@ from models import *
 target_metadata = SQLModel.metadata
 
 def run_migrations_offline() :
-    context.configure(url=settings.DATABASE_URL, target_metadata=target_metadata,)
+    context.configure(url=settings.DATABASE_URL, target_metadata=target_metadata)
     with context.begin_transaction():
         context.run_migrations()
 
@@ -20,7 +19,6 @@ def do_run_migrations(connection):
         context.run_migrations()
 
 async def run_migrations_online():
-    engine = AsyncEngine(create_engine(settings.DATABASE_URL))
     async with engine.connect() as connection:
         await connection.run_sync(do_run_migrations)
 

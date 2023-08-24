@@ -8,7 +8,7 @@ from pydantic import EmailStr
 from typing import Annotated
 
 from models import User, UserCreate, Token, DefaultResponse
-from databases import Database
+from database import Database
 from dependencies import VerifyUser, verify_turnstile_token
 from utils import pwd_context, generate_access_token, generate_verify_token
 from tasks import send_email

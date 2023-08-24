@@ -5,6 +5,8 @@ from pydantic_settings import BaseSettings
 class Settings(BaseSettings):
     DATABASE_URL: PostgresDsn
 
+    REDIS_URL: RedisDsn
+
     RQ_URL: RedisDsn
 
     ACCESS_TOKEN_EXPIRE_MINUTES : int

@@ -9,7 +9,7 @@ from typing import Annotated
 
 from config import settings
 from models import User
-from databases import Database
+from database import Database
 from utils import oauth2_scheme
 
 
