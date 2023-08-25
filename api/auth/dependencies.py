@@ -12,7 +12,9 @@ from redis import Redis
 from .utils import oauth2_scheme
 
 
-async def get_current_user(db: Database, redis: Redis, access_token: Annotated[str, Depends(oauth2_scheme)]):
+AccessToken = Annotated[str, Depends(oauth2_scheme)]
+
+async def get_current_user(db: Database, redis: Redis, access_token: AccessToken):
     if await redis.sismember("invalid_access_tokens", access_token):
         raise HTTPException(401, "Invalid access token")
     try:
@@ -41,7 +43,7 @@ async def get_verify_user(request: Request, db: Database, verify_token: str):
 
 VerifyUser = Annotated[User, Depends(get_verify_user)]
 
-async def invalidate_access_token(redis: Redis, access_token: Annotated[str, Depends(oauth2_scheme)]):
+async def invalidate_access_token(redis: Redis, access_token: AccessToken):
     await redis.sadd("invalid_access_tokens", access_token)
 
 def verify_turnstile_token(turnstile_token: str):
