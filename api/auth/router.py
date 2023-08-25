@@ -16,7 +16,7 @@ from utils import pwd_context
 
 from .utils import generate_access_token, generate_verify_token
 from .models import Token
-from .dependencies import VerifyUser, verify_turnstile_token, blacklist_access_token
+from .dependencies import VerifyUser, valid_turnstile_token, blacklist_access_token
 
 
 router = APIRouter(tags=["Authentication"], prefix="/auth")
@@ -25,7 +25,7 @@ router = APIRouter(tags=["Authentication"], prefix="/auth")
 class Auth:
     db: Database
 
-    @router.post("/register", status_code=201, dependencies=[Depends(verify_turnstile_token)])
+    @router.post("/register", status_code=201, dependencies=[Depends(valid_turnstile_token)])
     async def register(self, user: UserCreate) -> DefaultResponse:
         try:
             user.password = pwd_context.hash(user.password)
@@ -38,7 +38,7 @@ class Auth:
         low_queue.enqueue(send_email, "", user.email, "d-9b9b2f1b5b4a4b8e9b9b2f1b5b4b8e9b", {"username": user.username, "token": generate_verify_token(db_user.id, audience="verify")})
         return {"message": "Verification email sent"}
 
-    @router.post("/login", dependencies=[Depends(verify_turnstile_token)])
+    @router.post("/login", dependencies=[Depends(valid_turnstile_token)])
     async def login(self, form_data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> Token:
         statement = select(User).where(or_(User.username == form_data.username, User.email == form_data.username))
         db_user = await self.db.exec(statement)
@@ -62,7 +62,7 @@ class Auth:
         await self.db.commit()
         return {"message": "User verified"}
 
-    @router.post("/forgot-password", dependencies=[Depends(verify_turnstile_token)])
+    @router.post("/forgot-password", dependencies=[Depends(valid_turnstile_token)])
     async def forgot_password(self, email: EmailStr) -> DefaultResponse:
         statement = select(User).where(User.email == email)
         db_user = await self.db.exec(statement)

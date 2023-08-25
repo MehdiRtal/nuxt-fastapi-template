@@ -4,7 +4,7 @@ from fastapi.exceptions import HTTPException, RequestValidationError
 from contextlib import asynccontextmanager
 
 from database import init_db
-from dependencies import verify_signature
+from dependencies import valid_signature
 import auth
 import users
 import items
@@ -18,7 +18,7 @@ class CustomORJSONResponse(ORJSONResponse):
     def render(self, content):
         return super().render({"status": "success", **content})
 
-app = FastAPI(title="API", lifespan=lifespan, default_response_class=ORJSONResponse, dependencies=[Depends(verify_signature)])
+app = FastAPI(title="API", lifespan=lifespan, default_response_class=ORJSONResponse, dependencies=[Depends(valid_signature)])
 
 @app.exception_handler(HTTPException)
 def http_exception_handler(request: Request, exception: HTTPException):

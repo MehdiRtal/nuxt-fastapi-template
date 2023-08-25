@@ -15,7 +15,7 @@ from .utils import oauth2_scheme
 AccessToken = Annotated[str, Depends(oauth2_scheme)]
 
 async def get_current_user(db: Database, redis: Redis, access_token: AccessToken):
-    if await redis.sismember("invalid_access_tokens", access_token):
+    if await redis.sismember("blacklisted_access_tokens", access_token):
         raise HTTPException(401, "Invalid access token")
     try:
         headers = jwt.get_unverified_header(access_token)
@@ -46,7 +46,7 @@ VerifyUser = Annotated[User, Depends(get_verify_user)]
 async def blacklist_access_token(redis: Redis, access_token: AccessToken):
     await redis.sadd("blacklisted_access_tokens", access_token)
 
-def verify_turnstile_token(turnstile_token: str):
+def valid_turnstile_token(turnstile_token: str):
     return
     body = {
         "secret": settings.TURNSTILE_SECRET_KEY,
