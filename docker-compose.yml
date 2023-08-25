@@ -7,7 +7,7 @@ services:
     environment:
       - TUNNEL_TOKEN=${TUNNEL_TOKEN}
 
-  postgres:
+  posdbtgres:
     image: postgres:alpine
     environment:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
@@ -21,7 +21,12 @@ services:
       - PGADMIN_DEFAULT_EMAIL=${PGADMIN_EMAIL}
       - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASSWORD}
     depends_on:
-      - postgres
+      - db
+  
+  redisinsight:
+    image: redislabs/redisinsight:latest
+    depends_on:
+      - redis
 
   rq:
     image: python:3.11-alpine
@@ -30,7 +35,7 @@ services:
     depends_on:
       - redis
 
-  rq-dashboard:
+  rqdashboard:
     image: python:3.11-alpine
     env_file: ./api/.env
     command: pip install rq-dashboard && rq-dashboard -u ${RQ_URL} -p 80
@@ -41,7 +46,7 @@ services:
     build: ./api
     command: gunicorn main:app --workers 8 --worker-class uvicorn.workers.UvicornWorker --bind :8000
     depends_on:
-      - postgres
+      - db
       - rq
 
   frontend:
