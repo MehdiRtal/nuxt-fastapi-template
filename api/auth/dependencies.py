@@ -1,17 +1,15 @@
 from fastapi import Request, Depends
-from fastapi.param_functions import Header
 from fastapi.exceptions import HTTPException
 from jose import jwt, JWTError
-import hmac
-import hashlib
 import requests
 from typing import Annotated
 
 from config import settings
-from models import User
-from db import Database
+from users.models import User
+from database import Database
 from redis import Redis
-from utils import oauth2_scheme
+
+from .utils import oauth2_scheme
 
 
 async def get_current_user(db: Database, redis: Redis, access_token: Annotated[str, Depends(oauth2_scheme)]):
@@ -55,10 +53,3 @@ def verify_turnstile_token(turnstile_token: str):
     r = requests.post("https://challenges.cloudflare.com/turnstile/v0/siteverify", json=body)
     if not r.json()["success"]:
         raise HTTPException(403, "Invalid turnstile token")
-    
-async def verify_signature(request: Request, x_signature: Annotated[str, Header()]):
-    return
-    body = await request.body()
-    signature = hmac.new(bytes(settings.SIGNATURE_SECRET), body, hashlib.sha512).hexdigest()
-    if not hmac.compare_digest(signature, x_signature):
-        raise HTTPException(403, "Invalid signature")

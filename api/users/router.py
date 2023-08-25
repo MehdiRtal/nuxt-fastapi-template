@@ -1,13 +1,14 @@
 from fastapi import APIRouter
 from fastapi.exceptions import HTTPException
 from fastapi_restful.cbv import cbv
-from sqlmodel import select, or_
+from sqlmodel import select
 from sqlalchemy.exc import IntegrityError
 
-from models import User, UserCreate, UserRead, UserUpdate
 from database import Database
-from dependencies import CurrentUser
 from utils import pwd_context
+from auth.dependencies import CurrentUser
+
+from .models import User, UserCreate, UserRead, UserUpdate
 
 
 router = APIRouter(tags=["Users"], prefix="/users")

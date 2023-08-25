@@ -7,12 +7,16 @@ from sqlalchemy.exc import IntegrityError
 from pydantic import EmailStr
 from typing import Annotated
 
-from models import User, UserCreate, Token, DefaultResponse
+from models import DefaultResponse
+from users.models import User, UserCreate
 from database import Database
-from dependencies import VerifyUser, verify_turnstile_token, invalidate_access_token
-from utils import pwd_context, generate_access_token, generate_verify_token
 from tasks import send_email
 from queues import low_queue
+from utils import pwd_context
+
+from .utils import generate_access_token, generate_verify_token
+from .models import Token
+from .dependencies import VerifyUser, verify_turnstile_token, invalidate_access_token
 
 
 router = APIRouter(tags=["Authentication"], prefix="/auth")

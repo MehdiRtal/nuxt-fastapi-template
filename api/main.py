@@ -3,10 +3,10 @@ from fastapi.responses import ORJSONResponse
 from fastapi.exceptions import HTTPException, RequestValidationError
 from contextlib import asynccontextmanager
 
-from db import init_db
-from routers import auth, users
-from deps import verify_signature
-
+from database import init_db
+from dependencies import verify_signature
+import auth
+import users
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):

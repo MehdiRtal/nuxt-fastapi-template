@@ -1,7 +1,7 @@
 from alembic import context
 import asyncio
 
-from db import engine
+from database import engine
 from config import settings
 from models import *
 
