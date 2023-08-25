@@ -3,7 +3,7 @@ import asyncio
 
 from database import engine
 from config import settings
-from models import *
+from models import SQLModel
 
 
 target_metadata = SQLModel.metadata
