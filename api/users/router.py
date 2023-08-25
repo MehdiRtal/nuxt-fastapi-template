@@ -17,16 +17,6 @@ router = APIRouter(tags=["Users"], prefix="/users")
 class Users:
     db: Database
 
-    @router.post("/me/change-password")
-    async def change_current_user_password(self, current_user: CurrentUser, current_password: str, new_password: str) -> UserRead:
-        if not pwd_context.verify(current_password, current_user.password):
-            raise HTTPException(400, "Incorrect password")
-        current_user.password = pwd_context.hash(new_password)
-        self.db.add(current_user)
-        await self.db.commit()
-        await self.db.refresh(current_user)
-        return current_user
-
     @router.get("/me")
     def get_current_user(current_user: CurrentUser):
         return current_user
@@ -43,6 +33,16 @@ class Users:
     @router.delete("/me")
     async def delete_current_user(self, current_user: CurrentUser) -> UserRead:
         current_user.is_active = False
+        self.db.add(current_user)
+        await self.db.commit()
+        await self.db.refresh(current_user)
+        return current_user
+
+    @router.post("/me/change-password")
+    async def change_current_user_password(self, current_user: CurrentUser, current_password: str, new_password: str) -> UserRead:
+        if not pwd_context.verify(current_password, current_user.password):
+            raise HTTPException(400, "Incorrect password")
+        current_user.password = pwd_context.hash(new_password)
         self.db.add(current_user)
         await self.db.commit()
         await self.db.refresh(current_user)

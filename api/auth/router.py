@@ -16,7 +16,7 @@ from utils import pwd_context
 
 from .utils import generate_access_token, generate_verify_token
 from .models import Token
-from .dependencies import VerifyUser, verify_turnstile_token, invalidate_access_token
+from .dependencies import VerifyUser, verify_turnstile_token, blacklist_access_token
 
 
 router = APIRouter(tags=["Authentication"], prefix="/auth")
@@ -49,7 +49,7 @@ class Auth:
             raise HTTPException(400, "User not verified")
         return {"access_token": generate_access_token(db_user.id, secret=db_user.password)}
 
-    @router.post("/logout", dependencies=[Depends(invalidate_access_token)])
+    @router.post("/logout", dependencies=[Depends(blacklist_access_token)])
     def logout() -> DefaultResponse:
         return {"message": "User logged out"}
 

@@ -43,8 +43,8 @@ async def get_verify_user(request: Request, db: Database, verify_token: str):
 
 VerifyUser = Annotated[User, Depends(get_verify_user)]
 
-async def invalidate_access_token(redis: Redis, access_token: AccessToken):
-    await redis.sadd("invalid_access_tokens", access_token)
+async def blacklist_access_token(redis: Redis, access_token: AccessToken):
+    await redis.sadd("blacklisted_access_tokens", access_token)
 
 def verify_turnstile_token(turnstile_token: str):
     return

@@ -7,6 +7,7 @@ from database import init_db
 from dependencies import verify_signature
 import auth
 import users
+import items
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -29,6 +30,7 @@ def validation_exception_handler(request: Request, exception: RequestValidationE
 
 app.include_router(auth.router)
 app.include_router(users.router)
+app.include_router(items.router)
 
 if __name__ == "__main__":
     import uvicorn
