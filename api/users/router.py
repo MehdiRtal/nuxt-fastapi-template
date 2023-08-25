@@ -5,7 +5,7 @@ from sqlmodel import select
 from sqlalchemy.exc import IntegrityError
 
 from database import Database
-from utils import pwd_context
+from auth.utils import pwd_context
 from auth.dependencies import CurrentUser
 
 from .models import User, UserCreate, UserRead, UserUpdate

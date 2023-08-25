@@ -9,6 +9,5 @@ def orjson_dumps(v, *, default):
 class BaseModel(SQLModel):
     model_config = ConfigDict(json_loads=orjson.loads, json_dumps=orjson_dumps)
 
-
 class DefaultResponse(BaseModel):
     message: str

@@ -1,5 +1,6 @@
 from pydantic import PostgresDsn, RedisDsn
 from pydantic_settings import BaseSettings
+import os
 
 
 class Settings(BaseSettings):
@@ -23,4 +24,4 @@ class Settings(BaseSettings):
     TURNSTILE_SECRET_KEY = str
     TURNSTILE_SITE_KEY = str
 
-settings = Settings(_env_file="./.env")
+settings = Settings(_env_file=os.path.join(os.path.dirname(__file__), ".env"))
