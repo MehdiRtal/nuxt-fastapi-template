@@ -7,6 +7,7 @@ from sqlalchemy.exc import IntegrityError
 from database import Database
 from auth.utils import pwd_context
 from auth.dependencies import CurrentUser
+from items.models import Item, ItemCreate, ItemRead, ItemUpdate
 
 from .models import User, UserCreate, UserRead, UserUpdate
 
@@ -16,6 +17,58 @@ router = APIRouter(tags=["Users"], prefix="/users")
 @cbv(router)
 class Users:
     db: Database
+
+    @router.get("/me/items")
+    async def get_current_user_items(self, current_user: CurrentUser, limit: int = 100, offset: int = 0) -> list[ItemRead]:
+        statement = select(Item).where(Item.user_id == current_user.id).offset(offset).limit(limit)
+        db_items = await self.db.exec(statement)
+        db_items = db_items.all()
+        if not db_items:
+            raise HTTPException(status_code=404, detail="No items found")
+        return db_items
+
+    @router.get("/me/items/{item_id}")
+    async def get_current_user_item(self, current_user: CurrentUser, item_id: int) -> ItemRead:
+        statement = select(Item).where(Item.user_id == current_user.id).where(Item.id == item_id)
+        db_item = await self.db.exec(statement)
+        db_item = db_item.first()
+        if not db_item:
+            raise HTTPException(status_code=404, detail="Item not found")
+        return db_item
+
+    @router.post("/me/items", status_code=201)
+    async def add_current_user_item(self, current_user: CurrentUser, item: ItemCreate) -> ItemRead:
+        item.user_id = current_user.id
+        db_item = Item(**item.model_dump())
+        self.db.add(db_item)
+        await self.db.commit()
+        await self.db.refresh(db_item)
+        return db_item
+
+    @router.patch("/me/items/{item_id}")
+    async def update_current_user_item(self, current_user: CurrentUser, item_id: int, item: ItemUpdate) -> ItemRead:
+        statement = select(Item).where(Item.user_id == current_user.id).where(Item.id == item_id)
+        db_item = await self.db.exec(statement)
+        db_item = db_item.first()
+        if not db_item:
+            raise HTTPException(status_code=404, detail="Item not found")
+        for key, value in item.model_dump(exclude_unset=True).items():
+            setattr(db_item, key, value)
+        await self.db.add(db_item)
+        await self.db.commit()
+        await self.db.refresh(db_item)
+        return db_item
+
+    @router.delete("/me/items/{item_id}")
+    async def delete_current_user_item(self, current_user: CurrentUser, item_id: int) -> ItemRead:
+        statement = select(Item).where(Item.user_id == current_user.id).where(Item.id == item_id)
+        db_item = await self.db.exec(statement)
+        db_item = db_item.first()
+        if not db_item:
+            raise HTTPException(status_code=404, detail="Item not found")
+        await self.db.delete(db_item)
+        await self.db.commit()
+        return db_item
 
     @router.get("/me")
     def get_current_user(current_user: CurrentUser):
