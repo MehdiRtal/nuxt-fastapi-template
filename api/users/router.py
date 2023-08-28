@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from fastapi.exceptions import HTTPException
 from fastapi_restful.cbv import cbv
 from sqlmodel import select
@@ -8,6 +8,7 @@ from database import Database
 from auth.utils import pwd_context
 from auth.dependencies import CurrentUser
 from items.models import Item, ItemCreate, ItemRead, ItemUpdate
+from auth.dependencies import require_superuser
 
 from .models import User, UserCreate, UserRead, UserUpdate
 
@@ -70,6 +71,16 @@ class Users:
         await self.db.commit()
         return db_item
 
+    @router.post("/me/change-password")
+    async def change_current_user_password(self, current_user: CurrentUser, current_password: str, new_password: str) -> UserRead:
+        if not pwd_context.verify(current_password, current_user.password):
+            raise HTTPException(400, "Incorrect password")
+        current_user.password = pwd_context.hash(new_password)
+        self.db.add(current_user)
+        await self.db.commit()
+        await self.db.refresh(current_user)
+        return current_user
+
     @router.get("/me")
     def get_current_user(current_user: CurrentUser):
         return current_user
@@ -91,17 +102,7 @@ class Users:
         await self.db.refresh(current_user)
         return current_user
 
-    @router.post("/me/change-password")
-    async def change_current_user_password(self, current_user: CurrentUser, current_password: str, new_password: str) -> UserRead:
-        if not pwd_context.verify(current_password, current_user.password):
-            raise HTTPException(400, "Incorrect password")
-        current_user.password = pwd_context.hash(new_password)
-        self.db.add(current_user)
-        await self.db.commit()
-        await self.db.refresh(current_user)
-        return current_user
-
-    @router.get("/")
+    @router.get("/", dependencies=[Depends(require_superuser)])
     async def get_users(self, limit: int = 100, offset: int = 0) -> list[UserRead]:
         statement = select(User).offset(offset).limit(limit)
         db_users = await self.db.exec(statement)
@@ -110,14 +111,14 @@ class Users:
             raise HTTPException(404, "No users found")
         return db_users
 
-    @router.get("/{user_id}")
+    @router.get("/{user_id}", dependencies=[Depends(require_superuser)])
     async def get_user(self, user_id: int):
         db_user = await self.db.get(User, user_id)
         if not db_user:
             raise HTTPException(404, "User not found")
         return db_user
 
-    @router.post("/", status_code=201)
+    @router.post("/", status_code=201, dependencies=[Depends(require_superuser)])
     async def add_user(self, user: UserCreate) -> UserRead:
         try:
             user.password = pwd_context.hash(user.password)
@@ -129,7 +130,7 @@ class Users:
             raise HTTPException(400, "User already exists")
         return db_user
 
-    @router.patch("/{user_id}")
+    @router.patch("/{user_id}", dependencies=[Depends(require_superuser)])
     async def update_user(self, user_id: int, user: UserUpdate) -> UserRead:
         db_user = await self.db.get(User, user_id)
         if not db_user:
@@ -141,7 +142,7 @@ class Users:
         await self.db.refresh(db_user)
         return db_user
 
-    @router.delete("/{user_id}")
+    @router.delete("/{user_id}", dependencies=[Depends(require_superuser)])
     async def delete_user(self, user_id: int) -> UserRead:
         db_user = await self.db.get(User, user_id)
         if not db_user:

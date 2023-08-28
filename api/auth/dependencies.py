@@ -43,6 +43,10 @@ async def get_verify_user(request: Request, db: Database, verify_token: str):
 
 VerifyUser = Annotated[User, Depends(get_verify_user)]
 
+def require_superuser(current_user: CurrentUser):
+    if not current_user.is_superuser:
+        raise HTTPException(401, "User does not have required permissions")
+
 async def blacklist_access_token(redis: Redis, access_token: AccessToken):
     await redis.sadd("blacklisted_access_tokens", access_token)
 
