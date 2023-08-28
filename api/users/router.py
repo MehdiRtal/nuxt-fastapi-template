@@ -16,7 +16,7 @@ from .models import User, UserCreate, UserRead, UserUpdate
 router = APIRouter(tags=["Users"], prefix="/users")
 
 @cbv(router)
-class Users:
+class UsersRouter:
     db: Database
 
     @router.get("/me/items")

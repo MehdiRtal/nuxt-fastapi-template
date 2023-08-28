@@ -22,7 +22,7 @@ from .dependencies import VerifyUser, valid_turnstile_token, blacklist_access_to
 router = APIRouter(tags=["Authentication"], prefix="/auth")
 
 @cbv(router)
-class Auth:
+class AuthRouter:
     db: Database
 
     @router.post("/register", status_code=201, dependencies=[Depends(valid_turnstile_token)])

@@ -13,7 +13,7 @@ from .models import Item, ItemCreate, ItemRead, ItemUpdate
 router = APIRouter(tags=["Items"], prefix="/items", dependencies=[Depends(require_superuser)])
 
 @cbv(router)
-class Items:
+class ItemsRouter:
     db: Database
 
     @router.get("/")
