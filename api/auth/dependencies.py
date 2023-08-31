@@ -1,7 +1,6 @@
 from fastapi import Request, Depends
 from fastapi.exceptions import HTTPException
 from jose import jwt, JWTError
-import requests
 from typing import Annotated
 
 from config import settings
@@ -49,13 +48,3 @@ def require_superuser(current_user: CurrentUser):
 
 async def blacklist_access_token(redis: Redis, access_token: AccessToken):
     await redis.sadd("blacklisted_access_tokens", access_token)
-
-def valid_turnstile_token(turnstile_token: str):
-    return
-    body = {
-        "secret": settings.TURNSTILE_SECRET_KEY,
-        "response": turnstile_token,
-    }
-    r = requests.post("https://challenges.cloudflare.com/turnstile/v0/siteverify", json=body)
-    if not r.json()["success"]:
-        raise HTTPException(403, "Invalid turnstile token")

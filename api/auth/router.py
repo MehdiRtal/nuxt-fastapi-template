@@ -10,13 +10,12 @@ from typing import Annotated
 from models import DefaultResponse
 from users.models import User, UserCreate
 from database import Database
-from tasks import send_email
-from queues import low_queue
-from utils import pwd_context
+from utils import send_email
+from dependencies import valid_turnstile_token
 
-from .utils import generate_access_token, generate_verify_token
+from .utils import generate_access_token, generate_verify_token, pwd_context
 from .models import Token
-from .dependencies import VerifyUser, valid_turnstile_token, blacklist_access_token
+from .dependencies import VerifyUser,  blacklist_access_token
 
 
 router = APIRouter(tags=["Authentication"], prefix="/auth")
@@ -35,7 +34,7 @@ class AuthRouter:
             await self.db.refresh(db_user)
         except IntegrityError:
             raise HTTPException(400, "Username or email already in use")
-        low_queue.enqueue(send_email, "", user.email, "d-9b9b2f1b5b4a4b8e9b9b2f1b5b4b8e9b", {"username": user.username, "token": generate_verify_token(db_user.id, audience="verify")})
+        send_email("", user.email, "d-9b9b2f1b5b4a4b8e9b9b2f1b5b4b8e9b", {"username": user.username, "token": generate_verify_token(db_user.id, audience="verify")})
         return {"message": "Verification email sent"}
 
     @router.post("/login", dependencies=[Depends(valid_turnstile_token)])
@@ -71,7 +70,7 @@ class AuthRouter:
             raise HTTPException(404, "User not found")
         if not db_user.is_active:
             raise HTTPException(400, "User not active")
-        low_queue.enqueue(send_email, "", db_user.email, "d-9b9b2f1b5b4a4b8e9b9b2f1b5b4b8e9b", {"username": db_user.username, "token": generate_verify_token(db_user.id, audience="reset_password")})
+        send_email("", db_user.email, "d-9b9b2f1b5b4a4b8e9b9b2f1b5b4b8e9b", {"username": db_user.username, "token": generate_verify_token(db_user.id, audience="reset_password")})
         return {"message": "Password reset email sent"}
 
     @router.post("/reset-password/{verify_token}")
