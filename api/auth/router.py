@@ -49,7 +49,7 @@ class AuthRouter:
         return {"access_token": generate_access_token(db_user.id, secret=db_user.password)}
 
     @router.post("/logout", dependencies=[Depends(blacklist_access_token)])
-    def logout() -> DefaultResponse:
+    async def logout() -> DefaultResponse:
         return {"message": "User logged out"}
 
     @router.post("/verify/{verify_token}")

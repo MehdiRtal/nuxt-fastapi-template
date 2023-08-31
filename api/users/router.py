@@ -82,7 +82,7 @@ class UsersRouter:
         return current_user
 
     @router.get("/me")
-    def get_current_user(current_user: CurrentUser):
+    async def get_current_user(current_user: CurrentUser):
         return current_user
 
     @router.patch("/me")
