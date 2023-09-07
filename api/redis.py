@@ -6,9 +6,9 @@ from typing import Annotated
 from config import settings
 
 
-async def get_redis():
-    redis = aioredis.from_url(settings.REDIS_URL)
+async def get_redis_session():
+    redis = aioredis.from_url(settings.REDIS_URL, decode_responses=True)
     async with redis.client() as session:
         yield session
 
-Redis = Annotated[Session, Depends(get_redis)]
+Redis = Annotated[Session, Depends(get_redis_session)]

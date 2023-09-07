@@ -14,9 +14,9 @@ async def init_db():
     async with engine.begin() as connection:
         await connection.run_sync(SQLModel.metadata.create_all)
 
-async def get_db():
+async def get_db_session():
     Session = sessionmaker(bind=engine, class_=AsyncSession)
     async with Session() as session:
         yield session
 
-Database = Annotated[AsyncSession, Depends(get_db)]
+Database = Annotated[AsyncSession, Depends(get_db_session)]

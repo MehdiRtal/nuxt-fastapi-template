@@ -25,7 +25,7 @@ class UsersRouter:
         db_items = await self.db.exec(statement)
         db_items = db_items.all()
         if not db_items:
-            raise HTTPException(status_code=404, detail="No items found")
+            raise HTTPException(404, "No items found")
         return db_items
 
     @router.get("/me/items/{item_id}")
@@ -34,7 +34,7 @@ class UsersRouter:
         db_item = await self.db.exec(statement)
         db_item = db_item.first()
         if not db_item:
-            raise HTTPException(status_code=404, detail="Item not found")
+            raise HTTPException(404, "Item not found")
         return db_item
 
     @router.post("/me/items", status_code=201)
@@ -52,7 +52,7 @@ class UsersRouter:
         db_item = await self.db.exec(statement)
         db_item = db_item.first()
         if not db_item:
-            raise HTTPException(status_code=404, detail="Item not found")
+            raise HTTPException(404, "Item not found")
         for key, value in item.model_dump(exclude_unset=True).items():
             setattr(db_item, key, value)
         await self.db.add(db_item)
@@ -66,7 +66,7 @@ class UsersRouter:
         db_item = await self.db.exec(statement)
         db_item = db_item.first()
         if not db_item:
-            raise HTTPException(status_code=404, detail="Item not found")
+            raise HTTPException(404, "Item not found")
         await self.db.delete(db_item)
         await self.db.commit()
         return db_item
