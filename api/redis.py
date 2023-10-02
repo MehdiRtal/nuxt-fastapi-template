@@ -1,14 +1,15 @@
 from fastapi import Depends
-import aioredis
-from aioredis import Redis as Session
+from aioredis.client import Redis as RedisClient
 from typing import Annotated
 
 from config import settings
 
 
+client = RedisClient.from_url(settings.REDIS_URL)
+
 async def get_redis_session():
-    redis = aioredis.from_url(settings.REDIS_URL, decode_responses=True)
+    redis = client
     async with redis.client() as session:
         yield session
 
-Redis = Annotated[Session, Depends(get_redis_session)]
+Redis = Annotated[RedisClient, Depends(get_redis_session)]
