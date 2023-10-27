@@ -6,7 +6,7 @@ from typing import Annotated
 from config import settings
 from users.models import User
 from database import Database
-from redis import Redis
+from redis_ import Redis
 
 from .utils import oauth2_scheme
 
@@ -34,7 +34,7 @@ async def get_verify_user(request: Request, db: Database, verify_token: str):
     try:
         headers = jwt.get_unverified_header(verify_token)
         payload = jwt.decode(verify_token, settings.JWT_SECRET, algorithms=headers.get("alg"), audience=request.scope["route"].name)
-    except JWTError:    
+    except JWTError:
         raise HTTPException(401, "Invalid verify token")
     else:
         db_user = await db.get(User, payload.get("sub"))

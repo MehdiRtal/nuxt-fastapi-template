@@ -5,7 +5,6 @@ from sqlalchemy.orm import sessionmaker
 from typing import Annotated
 
 from config import settings
-from models import SQLModel
 
 
 engine = AsyncEngine(create_engine(settings.DATABASE_URL))

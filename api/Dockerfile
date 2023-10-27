@@ -1,10 +1,14 @@
 FROM python:3.11-alpine
 
+RUN pip install poetry
+
+ENV POETRY_VIRTUALENVS_CREATE=0
+
 WORKDIR /app
 
-COPY requirements.txt ./
+COPY pyproject.toml ./
 
-RUN pip install --no-cache-dir -r requirements.txt
+RUN poetry install --no-root --no-interaction --no-cache
 
 COPY ./ ./
 

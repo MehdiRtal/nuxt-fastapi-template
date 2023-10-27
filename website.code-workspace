@@ -14,9 +14,6 @@
         "[python]": {
             "editor.defaultFormatter": "ms-python.python"
         },
-        "[yaml]": {
-            "editor.defaultFormatter": "redhat.vscode-yaml"
-        },
         "[dockercompose]": {
             "editor.defaultFormatter": "ms-azuretools.vscode-docker"
         },

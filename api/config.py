@@ -10,6 +10,8 @@ class Settings(BaseSettings):
 
     RQ_URL: RedisDsn
 
+    CACHE_URL: RedisDsn
+
     ACCESS_TOKEN_EXPIRE_MINUTES : int
 
     VERIFY_TOKEN_EXPIRE_MINUTES : int
