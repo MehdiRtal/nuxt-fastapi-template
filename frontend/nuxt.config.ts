@@ -7,7 +7,7 @@ export default defineNuxtConfig({
         "@unocss/nuxt",
         "@vueuse/nuxt",
         "nuxt-lodash",
-        "nuxt-seo-kit"
+        "@nuxtseo/module",
     ],
     runtimeConfig: {
         nitroPort: process.env.NITRO_PORT,
