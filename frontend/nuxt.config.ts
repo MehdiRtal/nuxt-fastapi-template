@@ -4,10 +4,11 @@ export default defineNuxtConfig({
         "@nuxt/devtools",
         "@nuxtjs/turnstile",
         "nuxt-api-party",
-        "@unocss/nuxt",
+        // "@unocss/nuxt",
         "@vueuse/nuxt",
         "nuxt-lodash",
         "@nuxtseo/module",
+        "@nuxt/ui",
     ],
     runtimeConfig: {
         nitroPort: process.env.NITRO_PORT,

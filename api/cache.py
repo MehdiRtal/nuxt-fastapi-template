@@ -1,4 +1,4 @@
-import redis
+from redis.client import Redis
 from typing import Any
 import orjson
 from fastapi_cache import FastAPICache
@@ -9,7 +9,7 @@ from fastapi_cache import Coder
 from config import settings
 
 
-connection = redis.from_url(settings.CACHE_URL)
+connection = Redis.from_url(settings.CACHE_URL)
 
 class ORJSONCoder(Coder):
     @classmethod
