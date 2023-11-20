@@ -11,13 +11,14 @@
         }
     ],
     "settings": {
-        "[python]": {
-            "editor.defaultFormatter": "ms-python.python"
-        },
         "[dockercompose]": {
             "editor.defaultFormatter": "ms-azuretools.vscode-docker"
         },
+        "editor.quickSuggestions": {
+            "strings": "on"
+        },
         "editor.defaultFormatter": "esbenp.prettier-vscode",
-        "editor.formatOnSave": true
+        "editor.formatOnSave": true,
+        "tailwindCSS.classAttributes": ["class", "className", "ngClass", "ui"]
     }
 }

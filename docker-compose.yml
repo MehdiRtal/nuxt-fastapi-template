@@ -30,7 +30,7 @@ services:
     depends_on:
       - redis-stack
 
-  rqdashboard:
+  rq-dashboard:
     image: python:3.11-alpine
     env_file: ./api/.env
     command: pip install rq-dashboard && rq-dashboard -u ${RQ_URL} -p 80

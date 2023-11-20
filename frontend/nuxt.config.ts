@@ -1,15 +1,20 @@
 export default defineNuxtConfig({
     telemetry: false,
     modules: [
+        "@nuxtjs/eslint-module",
         "@nuxt/devtools",
         "@nuxtjs/turnstile",
         "nuxt-api-party",
-        // "@unocss/nuxt",
         "@vueuse/nuxt",
         "nuxt-lodash",
         "@nuxtseo/module",
         "@nuxt/ui",
+        "nuxt-primevue",
     ],
+    css: ["primevue/resources/themes/lara-light-teal/theme.css"],
+    ui: {
+        icons: ["mdi", "simple-icons"],
+    },
     runtimeConfig: {
         nitroPort: process.env.NITRO_PORT,
     },

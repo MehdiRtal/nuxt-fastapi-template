@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Request, Depends
 from fastapi.exceptions import HTTPException, RequestValidationError
+from fastapi.middleware.gzip import GZipMiddleware
 
 from database import init_db
 from cache import init_cache
@@ -11,6 +12,8 @@ from utils import CustomORJSONResponse, ORJSONResponse
 
 
 app = FastAPI(title="API", default_response_class=CustomORJSONResponse, dependencies=[Depends(valid_signature)])
+
+app.add_middleware(GZipMiddleware)
 
 @app.on_event("startup")
 async def startup():
