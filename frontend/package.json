@@ -23,7 +23,7 @@
         "nuxt": "^3.8.0",
         "nuxt-api-party": "^0.21.0",
         "nuxt-lodash": "^2.5.3",
-        "nuxt-primevue": "^0.1.0",
+        "nuxt-primevue": "^0.2.1",
         "prettier": "^3.0.3",
         "primeicons": "^6.0.1",
         "vue-eslint-parser": "^9.3.2"
