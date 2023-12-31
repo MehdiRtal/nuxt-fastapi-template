@@ -1,13 +1,14 @@
 from fastapi import Depends
-from sqlmodel import SQLModel, create_engine
-from sqlmodel.ext.asyncio.session import AsyncEngine, AsyncSession
+from sqlmodel import SQLModel
+from sqlalchemy.ext.asyncio import create_async_engine
+from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlalchemy.orm import sessionmaker
 from typing import Annotated
 
 from config import settings
 
 
-engine = AsyncEngine(create_engine(settings.DATABASE_URL))
+engine = create_async_engine(str(settings.DATABASE_URL))
 
 async def init_db():
     async with engine.begin() as connection:

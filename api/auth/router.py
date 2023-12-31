@@ -1,7 +1,8 @@
-from fastapi import APIRouter, Depends
+from fastapi import Depends
 from fastapi.exceptions import HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi_restful.cbv import cbv
+from fastapi_restful.inferring_router import InferringRouter
 from sqlmodel import select, or_
 from sqlalchemy.exc import IntegrityError
 from pydantic import EmailStr
@@ -18,7 +19,7 @@ from .models import Token
 from .dependencies import VerifyUser,  blacklist_access_token
 
 
-router = APIRouter(tags=["Authentication"], prefix="/auth")
+router = InferringRouter(tags=["Authentication"], prefix="/auth")
 
 @cbv(router)
 class AuthRouter:

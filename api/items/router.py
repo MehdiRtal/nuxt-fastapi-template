@@ -1,6 +1,7 @@
-from fastapi import APIRouter, Depends
+from fastapi import Depends
 from fastapi.exceptions import HTTPException
 from fastapi_restful.cbv import cbv
+from fastapi_restful.inferring_router import InferringRouter
 from sqlmodel import select
 from sqlalchemy.exc import IntegrityError
 
@@ -10,7 +11,7 @@ from auth.dependencies import require_superuser
 from .models import Item, ItemCreate, ItemRead, ItemUpdate
 
 
-router = APIRouter(tags=["Items"], prefix="/items", dependencies=[Depends(require_superuser)])
+router = InferringRouter(tags=["Items"], prefix="/items", dependencies=[Depends(require_superuser)])
 
 @cbv(router)
 class ItemsRouter:

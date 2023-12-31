@@ -9,7 +9,7 @@ from fastapi_cache import Coder
 from config import settings
 
 
-connection = Redis.from_url(settings.CACHE_URL)
+connection = Redis.from_url(str(settings.CACHE_URL))
 
 class ORJSONCoder(Coder):
     @classmethod

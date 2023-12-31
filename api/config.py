@@ -1,5 +1,5 @@
 from pydantic import PostgresDsn, RedisDsn
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 import os
 
 
@@ -12,18 +12,20 @@ class Settings(BaseSettings):
 
     CACHE_URL: RedisDsn
 
-    ACCESS_TOKEN_EXPIRE_MINUTES : int
+    ACCESS_TOKEN_EXPIRE_MINUTES: int
 
-    VERIFY_TOKEN_EXPIRE_MINUTES : int
+    VERIFY_TOKEN_EXPIRE_MINUTES: int
 
-    JWT_SECRET : str
-    JWT_ALGORITHM : str
+    JWT_SECRET: str
+    JWT_ALGORITHM: str
 
-    SIGNATURE_SECRET : str
+    SIGNATURE_SECRET: str
 
-    SENDGRID_API_KEY : str
+    SENDGRID_API_KEY: str
 
-    TURNSTILE_SECRET_KEY = str
-    TURNSTILE_SITE_KEY = str
+    TURNSTILE_SECRET_KEY: str
+    TURNSTILE_SITE_KEY: str
 
-settings = Settings(_env_file=os.path.join(os.path.dirname(__file__), ".env"))
+    model_config = SettingsConfigDict(env_file=os.path.join(os.path.dirname(__file__), ".env"))
+
+settings = Settings()

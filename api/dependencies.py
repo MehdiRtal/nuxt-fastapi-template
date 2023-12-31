@@ -4,7 +4,7 @@ from fastapi.exceptions import HTTPException
 import hmac
 import hashlib
 from typing import Annotated
-import requests
+import httpx
 
 from config import settings
 
@@ -22,6 +22,6 @@ def valid_turnstile_token(turnstile_token: str):
         "secret": settings.TURNSTILE_SECRET_KEY,
         "response": turnstile_token,
     }
-    r = requests.post("https://challenges.cloudflare.com/turnstile/v0/siteverify", json=body)
+    r = httpx.post("https://challenges.cloudflare.com/turnstile/v0/siteverify", json=body)
     if not r.json()["success"]:
         raise HTTPException(403, "Invalid turnstile token")

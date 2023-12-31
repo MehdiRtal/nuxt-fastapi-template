@@ -6,7 +6,7 @@ from models import BaseModel
 
 class UserBase(BaseModel):
     username: str = Field(unique=True, index=True)
-    email: EmailStr = Field(unique=True, index=True)
+    email: str = Field(unique=True, index=True)
 
 class User(UserBase, table=True):
     id: int | None = Field(None, primary_key=True)
@@ -16,7 +16,7 @@ class User(UserBase, table=True):
     is_superuser: bool = Field(False)
 
 class UserCreate(UserBase):
-    password: constr(regex="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$")
+    password: str = Field(regex="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$")
 
 class UserRead(UserBase):
     id: int
