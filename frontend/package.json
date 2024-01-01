@@ -21,7 +21,7 @@
         "eslint-config-prettier": "^9.0.0",
         "eslint-plugin-vue": "^9.18.1",
         "nuxt": "^3.8.0",
-        "nuxt-api-party": "^0.21.0",
+        "nuxt-api-party": "^0.22.3",
         "nuxt-lodash": "^2.5.3",
         "nuxt-primevue": "^0.2.2",
         "prettier": "^3.0.3",
