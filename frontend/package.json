@@ -10,7 +10,7 @@
     "devDependencies": {
         "@iconify/json": "^2.2.135",
         "@nuxt/devtools": "^1.0.0",
-        "@nuxt/ui": "^2.10.0",
+        "@nuxt/ui": "^2.11.0",
         "@nuxtjs/eslint-config-typescript": "^12.1.0",
         "@nuxtjs/eslint-module": "^4.1.0",
         "@nuxtjs/turnstile": "^0.6.3",
@@ -20,12 +20,11 @@
         "eslint": "^8.52.0",
         "eslint-config-prettier": "^9.0.0",
         "eslint-plugin-vue": "^9.18.1",
-        "nuxt": "^3.8.0",
+        "nuxt": "^3.9.0",
         "nuxt-api-party": "^0.22.3",
         "nuxt-lodash": "^2.5.3",
-        "nuxt-primevue": "^0.2.2",
+        "nuxt-security": "^1.0.0",
         "prettier": "^3.0.3",
-        "primeicons": "^6.0.1",
         "vue-eslint-parser": "^9.3.2"
     }
 }

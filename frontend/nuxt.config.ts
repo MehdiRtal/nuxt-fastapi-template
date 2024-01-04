@@ -9,12 +9,8 @@ export default defineNuxtConfig({
         "nuxt-lodash",
         "@nuxtseo/module",
         "@nuxt/ui",
-        "nuxt-primevue",
+        "nuxt-security",
     ],
-    css: ["primevue/resources/themes/lara-light-teal/theme.css"],
-    ui: {
-        icons: ["mdi", "simple-icons"],
-    },
     runtimeConfig: {
         nitroPort: process.env.NITRO_PORT,
     },
