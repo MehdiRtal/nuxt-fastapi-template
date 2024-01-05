@@ -1,5 +1,5 @@
 export default defineNuxtConfig({
-    telemetry: false,
+    extends: ["@nuxt/ui-pro"],
     modules: [
         "@nuxtjs/eslint-module",
         "@nuxt/devtools",
@@ -11,6 +11,10 @@ export default defineNuxtConfig({
         "@nuxt/ui",
         "nuxt-security",
     ],
+    telemetry: false,
+    ui: {
+        icons: ["mdi", "simple-icons"],
+    },
     runtimeConfig: {
         nitroPort: process.env.NITRO_PORT,
     },

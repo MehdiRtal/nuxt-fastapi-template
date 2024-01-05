@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Request, Depends
 from fastapi.exceptions import HTTPException, RequestValidationError
 from fastapi.middleware.gzip import GZipMiddleware
+from contextlib import asynccontextmanager
 
 from database import init_db
 from cache import init_cache
@@ -11,14 +12,15 @@ import items
 from utils import CustomORJSONResponse, ORJSONResponse
 
 
-app = FastAPI(title="API", default_response_class=CustomORJSONResponse, dependencies=[Depends(valid_signature)])
-
-app.add_middleware(GZipMiddleware)
-
-@app.on_event("startup")
-async def startup():
+@asynccontextmanager
+async def lifespan(app: FastAPI):
     await init_db()
     init_cache()
+    yield
+
+app = FastAPI(title="API", lifespan=lifespan, default_response_class=CustomORJSONResponse, dependencies=[Depends(valid_signature)])
+
+app.add_middleware(GZipMiddleware)
 
 @app.exception_handler(HTTPException)
 def http_exception_handler(request: Request, exception: HTTPException):
