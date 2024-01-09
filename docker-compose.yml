@@ -3,37 +3,40 @@ version: "3.9"
 services:
   tunnel:
     image: cloudflare/cloudflared:latest
-    command: tunnel run
+    env_file: ./api/.env
     environment:
       - TUNNEL_TOKEN=${TUNNEL_TOKEN}
+    command: tunnel run
 
   database:
     image: postgres:alpine
+    env_file: ./api/.env
     environment:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
 
   pgadmin:
     image: dpage/pgadmin4:latest
+    env_file: ./api/.env
     environment:
       - PGADMIN_DEFAULT_EMAIL=${PGADMIN_EMAIL}
       - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASSWORD}
     depends_on:
       - database
 
-  redis-stack:
+  redis:
     image: redis/redis-stack:latest
 
   rq:
     image: python:3.11-alpine
     env_file: ./api/.env
-    command: pip install rq && rq worker-pool -u ${RQ_URL} low medium high -n 8
+    command: sh -c "pip install rq && rq worker-pool -u ${RQ_URL} -n 8"
     depends_on:
-      - redis-stack
+      - redis
 
   rq-dashboard:
     image: python:3.11-alpine
     env_file: ./api/.env
-    command: pip install rq-dashboard && rq-dashboard -u ${RQ_URL} -p 80
+    command: sh -c "pip install rq-dashboard && rq-dashboard -u ${RQ_URL}"
     depends_on:
       - rq
 
