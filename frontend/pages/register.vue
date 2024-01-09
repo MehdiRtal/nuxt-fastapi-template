@@ -4,21 +4,22 @@
             <UAuthForm
                 :fields="fields"
                 :providers="providers"
-                title="Login"
+                title="Register"
                 align="top"
                 :ui="{footer: 'text-center'}"
             >
                 <template #description>
-                    Don't have an account?
-                    <NuxtLink to="/register" class="text-primary font-medium"
-                        >Register</NuxtLink
+                    Already have an account?
+                    <NuxtLink to="/login" class="text-primary font-medium"
+                        >Login</NuxtLink
                     >.
                 </template>
 
-                <template #password-hint>
+                <template #footer>
+                    By signing in, you agree to our
                     <NuxtLink to="#" class="text-primary font-medium"
-                        >Forgot password?</NuxtLink
-                    >
+                        >Terms of Service</NuxtLink
+                    >.
                 </template>
             </UAuthForm>
         </UCard>
@@ -27,6 +28,20 @@
 
 <script setup lang="ts">
     const fields = [
+        {
+            name: "firstName",
+            type: "text",
+            label: "First Name",
+            placeholder: "Enter your first name",
+            required: true,
+        },
+        {
+            name: "lastName",
+            type: "text",
+            label: "Last Name",
+            placeholder: "Enter your last name",
+            required: true,
+        },
         {
             name: "email",
             type: "text",
