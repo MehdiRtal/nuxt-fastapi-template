@@ -50,8 +50,13 @@
     const links = [
         {
             label: "Overview",
+            icon: "i-heroicons-home",
+            to: "/dashboard",
+        },
+        {
+            label: "Items",
             icon: "i-heroicons-square-3-stack-3d",
-            to: "/",
+            to: "/dashboard/items",
         },
     ];
 

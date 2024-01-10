@@ -13,7 +13,7 @@ export default defineNuxtConfig({
     ],
     telemetry: false,
     ui: {
-        icons: ["mdi"],
+        icons: ["mdi", "simple-icons"],
     },
     runtimeConfig: {
         nitroPort: process.env.NITRO_PORT,
