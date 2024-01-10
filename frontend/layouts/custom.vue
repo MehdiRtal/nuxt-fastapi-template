@@ -1,25 +1,23 @@
 <template>
     <div>
         <UHeader>
-            <template #center>
-                <UDocsSearchButton label="Search..." />
-            </template>
-
+            <template #logo>Nuxt FastAPI</template>
             <template #right>
+                <UDocsSearchButton label="" />
                 <UColorModeButton />
             </template>
         </UHeader>
         <UMain>
             <UContainer>
                 <UPage>
+                    <UPageHeader
+                        headline="Page"
+                        title="PageHeader"
+                        description="A responsive header for your pages."
+                    />
+
                     <template #left>
-                        <UAside :links="links">
-                            <UNavigationTree
-                                :links="pageLinks"
-                                default-open
-                                :multiple="false"
-                            />
-                        </UAside>
+                        <UAside :links="links" />
                     </template>
                     <slot />
                 </UPage>
@@ -32,39 +30,19 @@
 <script setup lang="ts">
     const links = [
         {
-            label: "Documentation",
-            icon: "i-heroicons-book-open",
-            to: "/getting-started",
+            label: "Installation",
+            icon: "i-heroicons-home",
+            to: "/getting-started/installation",
         },
         {
-            label: "Playground",
-            icon: "i-simple-icons-stackblitz",
-            to: "/playground",
+            label: "Vertical Navigation",
+            icon: "i-heroicons-chart-bar",
+            to: "/navigation/vertical-navigation",
         },
         {
-            label: "Roadmap",
-            icon: "i-heroicons-academic-cap",
-            to: "/roadmap",
-        },
-        {
-            label: "Pro",
-            icon: "i-heroicons-square-3-stack-3d",
-            to: "/pro",
-        },
-        {
-            label: "Releases",
-            icon: "i-heroicons-rocket-launch",
-            to: "https://github.com/nuxt/ui/releases",
-            target: "_blank",
-        },
-    ];
-
-    const pageLinks = [
-        {
-            icon: "i-heroicons-heart",
-            label: "Learn how to contribute",
-            to: "/getting-started/contributing",
-            target: "_blank",
+            label: "Command Palette",
+            icon: "i-heroicons-command-line",
+            to: "/navigation/command-palette",
         },
     ];
 </script>
