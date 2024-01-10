@@ -1,31 +1,33 @@
 <template>
-    <div class="flex items-center justify-center h-screen">
-        <UCard class="max-w-sm w-full">
-            <UAuthForm
-                :fields="fields"
-                :providers="providers"
-                title="Login"
-                align="top"
-                :ui="{footer: 'text-center'}"
-            >
-                <template #description>
-                    Don't have an account?
-                    <NuxtLink to="/register" class="text-primary font-medium"
-                        >Register</NuxtLink
-                    >.
-                </template>
+    <UCard class="max-w-sm w-full">
+        <UAuthForm
+            :fields="fields"
+            :providers="providers"
+            title="Login"
+            align="top"
+            :ui="{footer: 'text-center'}"
+        >
+            <template #description>
+                Don't have an account?
+                <NuxtLink to="/register" class="text-primary font-medium"
+                    >Register</NuxtLink
+                >.
+            </template>
 
-                <template #password-hint>
-                    <NuxtLink to="#" class="text-primary font-medium"
-                        >Forgot password?</NuxtLink
-                    >
-                </template>
-            </UAuthForm>
-        </UCard>
-    </div>
+            <template #password-hint>
+                <NuxtLink to="/forgot-password" class="text-primary font-medium"
+                    >Forgot password?</NuxtLink
+                >
+            </template>
+        </UAuthForm>
+    </UCard>
 </template>
 
 <script setup lang="ts">
+    definePageMeta({
+        layout: "auth",
+    });
+
     const fields = [
         {
             name: "email",
@@ -47,7 +49,7 @@
         {
             label: "Continue with Google",
             icon: "i-mdi-google",
-            color: "white",
+            color: "gray",
         },
     ];
 </script>
