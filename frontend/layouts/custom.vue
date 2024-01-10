@@ -5,17 +5,21 @@
             <template #right>
                 <UDocsSearchButton label="" />
                 <UColorModeButton />
+                <UButton
+                    icon="i-heroicons-bell-solid"
+                    color="gray"
+                    variant="ghost"
+                />
+                <UButton
+                    icon="i-heroicons-user-solid"
+                    color="gray"
+                    variant="ghost"
+                />
             </template>
         </UHeader>
         <UMain>
             <UContainer>
                 <UPage>
-                    <UPageHeader
-                        headline="Page"
-                        title="PageHeader"
-                        description="A responsive header for your pages."
-                    />
-
                     <template #left>
                         <UAside :links="links" />
                     </template>
@@ -30,19 +34,9 @@
 <script setup lang="ts">
     const links = [
         {
-            label: "Installation",
+            label: "Overview",
             icon: "i-heroicons-home",
-            to: "/getting-started/installation",
-        },
-        {
-            label: "Vertical Navigation",
-            icon: "i-heroicons-chart-bar",
-            to: "/navigation/vertical-navigation",
-        },
-        {
-            label: "Command Palette",
-            icon: "i-heroicons-command-line",
-            to: "/navigation/command-palette",
+            to: "/",
         },
     ];
 </script>

@@ -1,4 +1,6 @@
-<template></template>
+<template>
+    <UPageHeader title="Overview" />
+</template>
 
 <script setup lang="ts">
     definePageMeta({
