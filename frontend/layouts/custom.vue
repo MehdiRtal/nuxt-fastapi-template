@@ -4,19 +4,35 @@
             <template #logo>Nuxt FastAPI</template>
             <template #right>
                 <UDocsSearchButton label="" />
-                <UDropdown :items="links" :popper="{placement: 'bottom-start'}">
+                <UPopover>
                     <UButton
                         icon="i-heroicons-bell-solid"
                         color="gray"
                         variant="ghost"
                     />
-                </UDropdown>
-                <UDropdown :items="links" :popper="{placement: 'bottom-start'}">
+                    <template #panel>
+                        <div class="p-4"></div>
+                    </template>
+                </UPopover>
+                <UDropdown
+                    :items="account"
+                    :popper="{placement: 'bottom-start'}"
+                >
                     <UButton
                         icon="i-heroicons-user-solid"
                         color="gray"
                         variant="ghost"
                     />
+                    <template #account="{item}">
+                        <div class="text-left">
+                            <p>Signed in as</p>
+                            <p
+                                class="truncate font-medium text-gray-900 dark:text-white"
+                            >
+                                {{ item.label }}
+                            </p>
+                        </div>
+                    </template>
                 </UDropdown>
             </template>
         </UHeader>
@@ -66,5 +82,21 @@
             icon: "i-heroicons-cog",
             to: "/",
         },
+    ];
+
+    const account = [
+        [
+            {
+                label: "ben@example.com",
+                slot: "account",
+                disabled: true,
+            },
+        ],
+        [
+            {
+                label: "Logout",
+                icon: "i-heroicons-arrow-left-on-rectangle",
+            },
+        ],
     ];
 </script>
