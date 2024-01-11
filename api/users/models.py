@@ -1,12 +1,12 @@
-from sqlmodel import Field
-from pydantic import EmailStr, constr
+from sqlmodel import Field, AutoString
+from pydantic import EmailStr
 
 from models import BaseModel
 
 
 class UserBase(BaseModel):
     username: str = Field(unique=True, index=True)
-    email: str = Field(unique=True, index=True)
+    email: EmailStr = Field(unique=True, index=True, sa_type=AutoString)
 
 class User(UserBase, table=True):
     id: int | None = Field(None, primary_key=True)

@@ -9,14 +9,14 @@ import httpx
 from config import settings
 
 
-async def valid_signature(request: Request, x_signature: Annotated[str, Header()]):
+async def valid_signature(request: Request, x_signature: Annotated[str, Header()] = None):
     return
     body = await request.body()
     signature = hmac.new(bytes(settings.SIGNATURE_SECRET), body, hashlib.sha512).hexdigest()
     if not hmac.compare_digest(signature, x_signature):
         raise HTTPException(403, "Invalid signature")
 
-def valid_turnstile_token(turnstile_token: str):
+def valid_turnstile_token(turnstile_token: str = None):
     return
     body = {
         "secret": settings.TURNSTILE_SECRET_KEY,
