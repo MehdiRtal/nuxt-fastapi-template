@@ -5,6 +5,7 @@ import orjson
 from typing import Any
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
+from sellix import Sellix
 
 from config import settings
 
@@ -29,3 +30,15 @@ def send_email(email_from: str, email_to: str, template_id: str, dynamic_templat
         message.dynamic_template_data = dynamic_template_data
     sg = SendGridAPIClient(settings.SENDGRID_API_KEY)
     sg.send(message)
+
+def create_payment(quantity: int, email: str, custom_fields: dict):
+    client = Sellix(settings.SELLIX_API_KEY)
+    payment_payload = {
+        "product_id": settings.SELLIX_PRODUCT_ID,
+        "quantity": quantity,
+        "email": email,
+        "custom_fields": custom_fields,
+        "return_url": "https://tweety.app",
+    }
+    payment = client.create_payment(**payment_payload)
+    return payment["data"]["url"]

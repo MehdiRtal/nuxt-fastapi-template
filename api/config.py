@@ -21,6 +21,11 @@ class Settings(BaseSettings):
 
     SIGNATURE_SECRET: str
 
+    SELLIX_API_KEY: str
+
+    GOOGLE_CLIENT_ID: str
+    GOOGLE_CLIENT_SECRET: str
+
     SENDGRID_API_KEY: str
 
     TURNSTILE_SECRET_KEY: str

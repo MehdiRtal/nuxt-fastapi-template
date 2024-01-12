@@ -9,6 +9,8 @@ from auth.dependencies import CurrentUser
 from items.models import Item, ItemCreate, ItemRead, ItemUpdate
 from auth.dependencies import require_superuser
 
+from utils import create_payment
+
 from .models import User, UserCreate, UserRead, UserUpdate
 
 
@@ -75,6 +77,11 @@ async def change_current_user_password(db: Database, current_user: CurrentUser, 
     await db.commit()
     await db.refresh(current_user)
     return current_user
+
+@router.post("/me/create-payment")
+async def create_current_user_payment(db: Database, current_user: CurrentUser, quantity: int):
+    payment = create_payment(quantity, current_user.email, {"user_id": current_user.id})
+    return {"payment_url": payment}
 
 @router.get("/me")
 async def get_current_user(current_user: CurrentUser):

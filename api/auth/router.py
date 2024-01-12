@@ -12,7 +12,7 @@ from database import Database
 from utils import send_email
 from dependencies import valid_turnstile_token
 
-from .utils import generate_access_token, generate_verify_token, pwd_context
+from .utils import generate_access_token, generate_verify_token, pwd_context, oauth
 from .models import Token
 from .dependencies import VerifyUser,  blacklist_access_token
 
