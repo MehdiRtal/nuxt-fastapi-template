@@ -49,8 +49,17 @@ async def authorize_google(request: Request):
     return await oauth.google.authorize_redirect(request, callback_uri)
 
 @router.get("/callback/google")
-async def callback_google(request: Request):
-    return await oauth.google.authorize_access_token(request)
+async def callback_google(request: Request, db: Database):
+    try:
+        token = await oauth.google.authorize_access_token(request)
+        user = UserCreate()
+        db_user = User(**user.model_dump())
+        db.add(db_user)
+        await db.commit()
+        await db.refresh(db_user)
+        return {"verify_token": generate_verify_token(db_user.id, audience="reset_password")}
+    except IntegrityError:
+        return {"access_token": generate_access_token(db_user.id, secret=db_user.password)}
 
 @router.post("/logout", dependencies=[Depends(blacklist_access_token)])
 async def logout() -> DefaultResponse:
