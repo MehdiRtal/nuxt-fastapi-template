@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 from fastapi.exceptions import HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlmodel import select, or_
@@ -42,6 +42,14 @@ async def login(db: Database, form_data: Annotated[OAuth2PasswordRequestForm, De
     if not db_user.is_verified:
         raise HTTPException(400, "User not verified")
     return {"access_token": generate_access_token(db_user.id, secret=db_user.password)}
+
+@router.get("/authorize")
+async def authorize(request: Request, db: Database):
+    return await oauth.google.authorize_redirect(request, "http://localhost:8000/auth/authorize/callback")
+
+@router.get("/callback")
+async def callback(request: Request, db: Database):
+    pass
 
 @router.post("/logout", dependencies=[Depends(blacklist_access_token)])
 async def logout() -> DefaultResponse:
