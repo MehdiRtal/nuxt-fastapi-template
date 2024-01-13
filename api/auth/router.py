@@ -45,11 +45,12 @@ async def login(db: Database, form_data: Annotated[OAuth2PasswordRequestForm, De
 
 @router.get("/authorize")
 async def authorize(request: Request, db: Database):
-    return await oauth.google.authorize_redirect(request, "http://localhost:8000/auth/authorize/callback")
+    callback_url = request.url_for("callback")
+    return await oauth.google.authorize_redirect(request, callback_url)
 
 @router.get("/callback")
 async def callback(request: Request, db: Database):
-    pass
+    return await oauth.google.authorize_access_token(request)
 
 @router.post("/logout", dependencies=[Depends(blacklist_access_token)])
 async def logout() -> DefaultResponse:

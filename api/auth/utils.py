@@ -1,4 +1,4 @@
-from fastapi.security import OAuth2PasswordBearer
+from fastapi.security import OAuth2PasswordBearer, OAuth2AuthorizationCodeBearer
 from passlib.context import CryptContext
 from jose import jwt
 from datetime import datetime, timedelta
@@ -9,6 +9,11 @@ from config import settings
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
+oauth2_code = OAuth2AuthorizationCodeBearer(
+    authorizationUrl="auth/authorize",
+    tokenUrl="auth/callback",
+)
+
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 oauth = OAuth()
@@ -16,6 +21,7 @@ oauth = OAuth()
 oauth.register(
     name="google",
     server_metadata_url="https://accounts.google.com/.well-known/openid-configuration",
+    client_kwargs={"scope": "openid profile email"},
     client_id=settings.GOOGLE_CLIENT_ID,
     client_secret=settings.GOOGLE_CLIENT_SECRET
 )
