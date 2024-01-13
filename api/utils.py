@@ -31,14 +31,15 @@ def send_email(email_from: str, email_to: str, template_id: str, dynamic_templat
     sg = SendGridAPIClient(settings.SENDGRID_API_KEY)
     sg.send(message)
 
-def create_payment(quantity: int, email: str, custom_fields: dict):
+def create_payment(quantity: int, email: str, custom_fields: dict, callback_uri: str, **kwargs):
     client = Sellix(settings.SELLIX_API_KEY)
     payment_payload = {
-        "product_id": settings.SELLIX_PRODUCT_ID,
+        "product_id": "",
         "quantity": quantity,
         "email": email,
         "custom_fields": custom_fields,
-        "return_url": "https://tweety.app",
+        "return_url": callback_uri,
+        **kwargs
     }
     payment = client.create_payment(**payment_payload)
     return payment["data"]["url"]

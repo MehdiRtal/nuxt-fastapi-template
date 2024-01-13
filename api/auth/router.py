@@ -43,13 +43,13 @@ async def login(db: Database, form_data: Annotated[OAuth2PasswordRequestForm, De
         raise HTTPException(400, "User not verified")
     return {"access_token": generate_access_token(db_user.id, secret=db_user.password)}
 
-@router.get("/authorize")
-async def authorize(request: Request, db: Database):
-    callback_url = request.url_for("callback")
-    return await oauth.google.authorize_redirect(request, callback_url)
+@router.get("/authorize/google")
+async def authorize_google(request: Request):
+    callback_uri = request.url_for("callback_google")
+    return await oauth.google.authorize_redirect(request, callback_uri)
 
-@router.get("/callback")
-async def callback(request: Request, db: Database):
+@router.get("/callback/google")
+async def callback_google(request: Request):
     return await oauth.google.authorize_access_token(request)
 
 @router.post("/logout", dependencies=[Depends(blacklist_access_token)])

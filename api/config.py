@@ -22,6 +22,7 @@ class Settings(BaseSettings):
     SIGNATURE_SECRET: str
 
     SELLIX_API_KEY: str
+    SELLIX_SIGNATURE_SECRET: str
 
     GOOGLE_CLIENT_ID: str
     GOOGLE_CLIENT_SECRET: str

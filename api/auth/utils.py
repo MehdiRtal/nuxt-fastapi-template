@@ -7,11 +7,11 @@ from authlib.integrations.starlette_client import OAuth
 from config import settings
 
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 oauth2_code = OAuth2AuthorizationCodeBearer(
-    authorizationUrl="auth/authorize",
-    tokenUrl="auth/callback",
+    authorizationUrl="/auth/authorize",
+    tokenUrl="/auth/callback",
 )
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")

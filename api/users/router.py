@@ -12,6 +12,7 @@ from auth.dependencies import require_superuser
 from utils import create_payment
 
 from .models import User, UserCreate, UserRead, UserUpdate
+from.dependencies import valid_sellix_signature
 
 
 router = APIRouter(tags=["Users"], prefix="/users")
@@ -82,6 +83,10 @@ async def change_current_user_password(db: Database, current_user: CurrentUser, 
 async def create_current_user_payment(db: Database, current_user: CurrentUser, quantity: int):
     payment = create_payment(quantity, current_user.email, {"user_id": current_user.id})
     return {"payment_url": payment}
+
+@router.post("/me/validate-payment", dependencies=[Depends(valid_sellix_signature)])
+async def validate_current_user_payment(db: Database):
+    return
 
 @router.get("/me")
 async def get_current_user(current_user: CurrentUser):
