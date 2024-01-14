@@ -31,14 +31,14 @@ def send_email(email_from: str, email_to: str, template_id: str, dynamic_templat
     sg = SendGridAPIClient(settings.SENDGRID_API_KEY)
     sg.send(message)
 
-def create_payment(quantity: int, email: str, custom_fields: dict, callback_uri: str, **kwargs):
+def create_payment(value: float, email: str, custom_fields: dict, callback_url: str, **kwargs):
     client = Sellix(settings.SELLIX_API_KEY)
     payment_payload = {
-        "product_id": "",
-        "quantity": quantity,
+        "value": value,
+        "currency": "USD",
         "email": email,
         "custom_fields": custom_fields,
-        "return_url": callback_uri,
+        "return_url": callback_url,
         **kwargs
     }
     payment = client.create_payment(**payment_payload)

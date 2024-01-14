@@ -5,12 +5,13 @@ from models import BaseModel
 
 
 class UserBase(BaseModel):
-    username: str = Field(unique=True, index=True)
+    full_name: str
     email: EmailStr = Field(unique=True, index=True, sa_type=AutoString)
 
 class User(UserBase, table=True):
     id: int | None = Field(None, primary_key=True)
     password: str
+    balance: float = Field(0.0)
     is_verified: bool = Field(False)
     is_active: bool = Field(True)
     is_superuser: bool = Field(False)
@@ -20,14 +21,16 @@ class UserCreate(UserBase):
 
 class UserRead(UserBase):
     id: int
+    balance: float
     is_verified: bool
     is_superuser: bool
     is_active: bool
 
 class UserUpdate(BaseModel):
-    username: str | None = None
+    full_name: str | None = None
     email: EmailStr | None = None
     password: str | None = Field(None, regex="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$")
+    balance: float | None = None
     is_verified: bool | None = None
     is_active: bool | None = None
     is_superuser: bool | None = None

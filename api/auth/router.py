@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, Request
 from fastapi.exceptions import HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
-from sqlmodel import select, or_
+from sqlmodel import select
 from sqlalchemy.exc import IntegrityError
 from pydantic import EmailStr
 from typing import Annotated
@@ -29,12 +29,21 @@ async def register(db: Database, user: UserCreate) -> DefaultResponse:
         await db.refresh(db_user)
     except IntegrityError:
         raise HTTPException(400, "Username or email already in use")
-    send_email("", user.email, "d-9b9b2f1b5b4a4b8e9b9b2f1b5b4b8e9b", {"username": user.username, "token": generate_verify_token(db_user.id, audience="verify")})
+    send_email("", user.email, "d-9b9b2f1b5b4a4b8e9b9b2f1b5b4b8e9b", {"full_name": user.full_name, "token": generate_verify_token(db_user.id, audience="verify")})
     return {"message": "Verification email sent"}
+
+@router.post("/verify/{verify_token}")
+async def verify(db: Database, verify_user: VerifyUser) -> DefaultResponse:
+    if verify_user.is_verified:
+        raise HTTPException(400, "User already verified")
+    verify_user.is_verified = True
+    db.add(verify_user)
+    await db.commit()
+    return {"message": "User verified"}
 
 @router.post("/login", dependencies=[Depends(valid_turnstile_token)])
 async def login(db: Database, form_data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> Token:
-    statement = select(User).where(or_(User.username == form_data.username, User.email == form_data.username))
+    statement = select(User).where(User.email == form_data.username)
     db_user = await db.exec(statement)
     db_user = db_user.first()
     if not db_user or not pwd_context.verify(form_data.password, db_user.password):
@@ -43,13 +52,13 @@ async def login(db: Database, form_data: Annotated[OAuth2PasswordRequestForm, De
         raise HTTPException(400, "User not verified")
     return {"access_token": generate_access_token(db_user.id, secret=db_user.password)}
 
-@router.get("/authorize/google")
-async def authorize_google(request: Request):
-    callback_uri = request.url_for("callback_google")
-    return await oauth.google.authorize_redirect(request, callback_uri)
+@router.get("/sso/google")
+async def sso_google(request: Request):
+    callback_url = request.url_for("sso_google_callback")
+    return await oauth.google.authorize_redirect(request, callback_url)
 
-@router.get("/callback/google")
-async def callback_google(request: Request, db: Database):
+@router.get("/sso/google/callback")
+async def sso_google_callback(request: Request, db: Database):
     try:
         token = await oauth.google.authorize_access_token(request)
         user = UserCreate()
@@ -64,15 +73,6 @@ async def callback_google(request: Request, db: Database):
 @router.post("/logout", dependencies=[Depends(blacklist_access_token)])
 async def logout() -> DefaultResponse:
     return {"message": "User logged out"}
-
-@router.post("/verify/{verify_token}")
-async def verify(db: Database, verify_user: VerifyUser) -> DefaultResponse:
-    if verify_user.is_verified:
-        raise HTTPException(400, "User already verified")
-    verify_user.is_verified = True
-    db.add(verify_user)
-    await db.commit()
-    return {"message": "User verified"}
 
 @router.post("/forgot-password", dependencies=[Depends(valid_turnstile_token)])
 async def forgot_password(db: Database, email: EmailStr) -> DefaultResponse:

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 from fastapi.exceptions import HTTPException
 from sqlmodel import select
 from sqlalchemy.exc import IntegrityError
@@ -80,13 +80,18 @@ async def change_current_user_password(db: Database, current_user: CurrentUser, 
     return current_user
 
 @router.post("/me/create-payment")
-async def create_current_user_payment(db: Database, current_user: CurrentUser, quantity: int):
-    payment = create_payment(quantity, current_user.email, {"user_id": current_user.id})
-    return {"payment_url": payment}
+async def create_current_user_payment(request: Request, current_user: CurrentUser, value: float):
+    callback_url = request.url_for("validate_current_user_payment")
+    payment = create_payment(value, current_user.email, {"user_id": current_user.id}, callback_url)
+    return {"payment_url": payment["data"]["url"]}
 
 @router.post("/me/validate-payment", dependencies=[Depends(valid_sellix_signature)])
-async def validate_current_user_payment(db: Database):
-    return
+async def validate_current_user_payment(request: Request, db: Database):
+    body = await request.json()
+    db_user = await db.get(User, body["data"]["custom_fields"]["user_id"])
+    db_user.balance += body["data"]["value"]
+    db.add(db_user)
+    await db.commit()
 
 @router.get("/me")
 async def get_current_user(current_user: CurrentUser):
