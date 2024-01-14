@@ -79,14 +79,14 @@ async def change_current_user_password(db: Database, current_user: CurrentUser, 
     await db.refresh(current_user)
     return current_user
 
-@router.post("/me/create-payment")
-async def create_current_user_payment(request: Request, current_user: CurrentUser, value: float):
-    callback_url = request.url_for("validate_current_user_payment")
+@router.post("/me/payment")
+async def add_current_user_payment(request: Request, current_user: CurrentUser, value: float):
+    callback_url = request.url_for("current_user_payment_callback")
     payment = create_payment(value, current_user.email, {"user_id": current_user.id}, callback_url)
     return {"payment_url": payment["data"]["url"]}
 
-@router.post("/me/validate-payment", dependencies=[Depends(valid_sellix_signature)])
-async def validate_current_user_payment(request: Request, db: Database):
+@router.get("/me/payment/callback", dependencies=[Depends(valid_sellix_signature)])
+async def current_user_payment_callback(request: Request, db: Database):
     body = await request.json()
     db_user = await db.get(User, body["data"]["custom_fields"]["user_id"])
     db_user.balance += body["data"]["value"]
