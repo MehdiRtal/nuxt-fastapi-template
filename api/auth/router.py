@@ -29,7 +29,8 @@ async def register(db: Database, user: UserCreate) -> DefaultResponse:
         await db.refresh(db_user)
     except IntegrityError:
         raise HTTPException(400, "Username or email already in use")
-    send_email("", user.email, "d-9b9b2f1b5b4a4b8e9b9b2f1b5b4b8e9b", {"full_name": user.full_name, "token": generate_verify_token(db_user.id, audience="verify")})
+    verify_token = generate_verify_token(db_user.id, audience="verify")
+    send_email("", user.email, "d-9b9b2f1b5b4a4b8e9b9b2f1b5b4b8e9b", {"full_name": user.full_name, "token": verify_token})
     return {"message": "Verification email sent"}
 
 @router.post("/verify/{verify_token}")
@@ -50,9 +51,10 @@ async def login(db: Database, form_data: Annotated[OAuth2PasswordRequestForm, De
         raise HTTPException(400, "Incorrect username or password")
     if not db_user.is_verified:
         raise HTTPException(400, "User not verified")
-    return {"access_token": generate_access_token(db_user.id, secret=db_user.password)}
+    access_token = generate_access_token(db_user.id, secret=db_user.password)
+    return {"access_token": access_token}
 
-@router.get("/sso/google")
+@router.post("/sso/google")
 async def sso_google(request: Request):
     callback_url = request.url_for("sso_google_callback")
     return await oauth.google.authorize_redirect(request, callback_url)
@@ -66,9 +68,11 @@ async def sso_google_callback(request: Request, db: Database):
         db.add(db_user)
         await db.commit()
         await db.refresh(db_user)
-        return {"verify_token": generate_verify_token(db_user.id, audience="reset_password")}
+        verify_token = generate_verify_token(db_user.id, audience="reset_password")
+        return {"verify_token": verify_token}
     except IntegrityError:
-        return {"access_token": generate_access_token(db_user.id, secret=db_user.password)}
+        access_token = generate_access_token(db_user.id, secret=db_user.password)
+        return {"access_token": access_token}
 
 @router.post("/logout", dependencies=[Depends(blacklist_access_token)])
 async def logout() -> DefaultResponse:
@@ -83,7 +87,8 @@ async def forgot_password(db: Database, email: EmailStr) -> DefaultResponse:
         raise HTTPException(404, "User not found")
     if not db_user.is_active:
         raise HTTPException(400, "User not active")
-    send_email("", db_user.email, "d-9b9b2f1b5b4a4b8e9b9b2f1b5b4b8e9b", {"username": db_user.username, "token": generate_verify_token(db_user.id, audience="reset_password")})
+    verify_token = generate_verify_token(db_user.id, audience="reset_password")
+    send_email("", db_user.email, "d-9b9b2f1b5b4a4b8e9b9b2f1b5b4b8e9b", {"full_name": db_user.full_name, "token": verify_token})
     return {"message": "Password reset email sent"}
 
 @router.post("/reset-password/{verify_token}")
