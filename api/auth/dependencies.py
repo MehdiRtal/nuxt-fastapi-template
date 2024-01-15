@@ -8,13 +8,12 @@ from users.models import User
 from database import Database
 from redis_ import Redis
 
-from .utils import oauth2_scheme, oauth2_code
+from .utils import oauth2_scheme
 
 
 AccessToken = Annotated[str, Depends(oauth2_scheme)]
-AuthorizationCode = Annotated[str, Depends(oauth2_code)]
 
-async def get_current_user(db: Database, redis: Redis, access_token: AccessToken, authorization_code: AuthorizationCode):
+async def get_current_user(db: Database, redis: Redis, access_token: AccessToken):
     if await redis.sismember("blacklisted_access_tokens", access_token):
         raise HTTPException(401, "Invalid access token")
     try:

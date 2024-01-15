@@ -1,6 +1,9 @@
 from models import BaseModel
 
 
-class Token(BaseModel):
+class AccessToken(BaseModel):
     access_token: str
     token_type: str = "bearer"
+
+class VerifyToken(BaseModel):
+    verify_token: str

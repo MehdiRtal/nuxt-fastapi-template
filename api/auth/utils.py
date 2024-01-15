@@ -1,4 +1,4 @@
-from fastapi.security import OAuth2PasswordBearer, OAuth2AuthorizationCodeBearer
+from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
 from jose import jwt
 from datetime import datetime, timedelta
@@ -8,11 +8,6 @@ from config import settings
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
-
-oauth2_code = OAuth2AuthorizationCodeBearer(
-    authorizationUrl="/auth/authorize",
-    tokenUrl="/auth/callback",
-)
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 

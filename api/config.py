@@ -1,4 +1,4 @@
-from pydantic import PostgresDsn, RedisDsn
+from pydantic import PostgresDsn, RedisDsn, HttpUrl
 from pydantic_settings import BaseSettings, SettingsConfigDict
 import os
 
@@ -20,6 +20,8 @@ class Settings(BaseSettings):
     JWT_ALGORITHM: str
 
     SIGNATURE_SECRET: str
+
+    SENTRY_DSN: HttpUrl
 
     SELLIX_API_KEY: str
     SELLIX_SIGNATURE_SECRET: str

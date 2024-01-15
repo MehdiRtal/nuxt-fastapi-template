@@ -10,6 +10,7 @@ from items.models import Item, ItemCreate, ItemRead, ItemUpdate
 from auth.dependencies import require_superuser
 
 from utils import create_payment
+from models import DefaultResponse
 
 from .models import User, UserCreate, UserRead, UserUpdate
 from.dependencies import valid_sellix_signature
@@ -86,15 +87,16 @@ async def add_current_user_payment(request: Request, current_user: CurrentUser, 
     return {"payment_url": payment["data"]["url"]}
 
 @router.get("/me/payment/callback", dependencies=[Depends(valid_sellix_signature)])
-async def current_user_payment_callback(request: Request, db: Database):
+async def current_user_payment_callback(request: Request, db: Database) -> DefaultResponse:
     body = await request.json()
     db_user = await db.get(User, body["data"]["custom_fields"]["user_id"])
     db_user.balance += body["data"]["value"]
     db.add(db_user)
     await db.commit()
+    return {"message": "Payment received"}
 
 @router.get("/me")
-async def get_current_user(current_user: CurrentUser):
+async def get_current_user(current_user: CurrentUser) -> UserRead:
     return current_user
 
 @router.patch("/me")

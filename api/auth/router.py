@@ -13,7 +13,7 @@ from utils import send_email
 from dependencies import valid_turnstile_token
 
 from .utils import generate_access_token, generate_verify_token, pwd_context, oauth
-from .models import Token
+from .models import AccessToken, VerifyToken
 from .dependencies import VerifyUser,  blacklist_access_token
 
 
@@ -43,7 +43,7 @@ async def verify(db: Database, verify_user: VerifyUser) -> DefaultResponse:
     return {"message": "User verified"}
 
 @router.post("/login", dependencies=[Depends(valid_turnstile_token)])
-async def login(db: Database, form_data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> Token:
+async def login(db: Database, form_data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> AccessToken:
     statement = select(User).where(User.email == form_data.username)
     db_user = await db.exec(statement)
     db_user = db_user.first()
@@ -60,7 +60,7 @@ async def sso_google(request: Request):
     return await oauth.google.authorize_redirect(request, callback_url)
 
 @router.get("/sso/google/callback")
-async def sso_google_callback(request: Request, db: Database):
+async def sso_google_callback(request: Request, db: Database) -> AccessToken | VerifyToken:
     try:
         token = await oauth.google.authorize_access_token(request)
         user = UserCreate()

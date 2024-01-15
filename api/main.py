@@ -3,6 +3,7 @@ from fastapi.exceptions import HTTPException, RequestValidationError
 from fastapi.middleware.gzip import GZipMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 from contextlib import asynccontextmanager
+from sentry import init_sentry
 
 from database import init_db
 from cache import init_cache
@@ -17,6 +18,7 @@ from utils import CustomORJSONResponse, ORJSONResponse
 async def lifespan(app: FastAPI):
     await init_db()
     init_cache()
+    init_sentry()
     yield
 
 app = FastAPI(title="API", lifespan=lifespan, default_response_class=CustomORJSONResponse, dependencies=[Depends(valid_signature)])
