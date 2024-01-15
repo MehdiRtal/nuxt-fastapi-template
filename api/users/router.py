@@ -81,7 +81,7 @@ async def change_current_user_password(db: Database, current_user: CurrentUser, 
     return current_user
 
 @router.post("/me/payment")
-async def add_current_user_payment(request: Request, current_user: CurrentUser, value: float):
+async def add_current_user_payment(request: Request, current_user: CurrentUser, value: float) -> dict:
     callback_url = request.url_for("current_user_payment_callback")
     payment = create_payment(value, current_user.email, {"user_id": current_user.id}, callback_url)
     return {"payment_url": payment["data"]["url"]}

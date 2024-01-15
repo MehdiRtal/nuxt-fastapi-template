@@ -13,7 +13,7 @@ from utils import send_email
 from dependencies import valid_turnstile_token
 
 from .utils import generate_access_token, generate_verify_token, pwd_context, oauth
-from .models import AccessToken, VerifyToken
+from .models import AccessToken
 from .dependencies import VerifyUser,  blacklist_access_token
 
 
@@ -28,7 +28,7 @@ async def register(db: Database, user: UserCreate) -> DefaultResponse:
         await db.commit()
         await db.refresh(db_user)
     except IntegrityError:
-        raise HTTPException(400, "Username or email already in use")
+        raise HTTPException(400, "User already exists")
     verify_token = generate_verify_token(db_user.id, audience="verify")
     send_email("", user.email, "d-9b9b2f1b5b4a4b8e9b9b2f1b5b4b8e9b", {"full_name": user.full_name, "token": verify_token})
     return {"message": "Verification email sent"}
@@ -55,12 +55,12 @@ async def login(db: Database, form_data: Annotated[OAuth2PasswordRequestForm, De
     return {"access_token": access_token}
 
 @router.post("/sso/google")
-async def sso_google(request: Request):
+async def sso_google(request: Request) -> dict:
     callback_url = request.url_for("sso_google_callback")
     return await oauth.google.authorize_redirect(request, callback_url)
 
 @router.get("/sso/google/callback")
-async def sso_google_callback(request: Request, db: Database) -> AccessToken | VerifyToken:
+async def sso_google_callback(request: Request, db: Database) -> AccessToken | dict:
     try:
         token = await oauth.google.authorize_access_token(request)
         user = UserCreate()
