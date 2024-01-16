@@ -54,7 +54,7 @@ async def login(db: Database, form_data: Annotated[OAuth2PasswordRequestForm, De
     access_token = generate_access_token(db_user.id, secret=db_user.password)
     return {"access_token": access_token}
 
-@router.post("/sso/google")
+@router.get("/sso/google")
 async def sso_google(request: Request) -> dict:
     callback_url = request.url_for("sso_google_callback")
     return await oauth.google.authorize_redirect(request, callback_url)
@@ -63,6 +63,8 @@ async def sso_google(request: Request) -> dict:
 async def sso_google_callback(request: Request, db: Database) -> AccessToken | dict:
     try:
         user_info = await oauth.google.authorize_access_token(request)
+        return user_info
+        return
         user = UserCreate()
         db_user = User(**user.model_dump())
         db.add(db_user)
