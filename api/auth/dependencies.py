@@ -2,13 +2,14 @@ from fastapi import Request, Depends
 from fastapi.exceptions import HTTPException
 from jose import jwt, JWTError
 from typing import Annotated
+from httpx_oauth.integrations.fastapi import OAuth2AuthorizeCallback
 
 from config import settings
 from users.models import User
-from database import Database
+from db import Database
 from redis_ import Redis
 
-from .utils import oauth2_scheme
+from .utils import oauth2_scheme, google_oauth_client
 
 
 AccessToken = Annotated[str, Depends(oauth2_scheme)]
@@ -48,3 +49,7 @@ async def require_superuser(current_user: CurrentUser):
 
 async def blacklist_access_token(redis: Redis, access_token: AccessToken):
     await redis.sadd("blacklisted_access_tokens", access_token)
+
+google_oauth_callback = OAuth2AuthorizeCallback(google_oauth_client, "sso_google_callback")
+
+GoogleOAuthCallback = Annotated[OAuth2AuthorizeCallback, Depends(google_oauth_callback)]

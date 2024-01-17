@@ -3,9 +3,8 @@ from fastapi.exceptions import HTTPException, RequestValidationError
 from fastapi.middleware.gzip import GZipMiddleware
 from contextlib import asynccontextmanager
 from sentry import init_sentry
-from starlette.middleware.sessions import SessionMiddleware
 
-from database import init_db
+from db import init_db
 from cache import init_cache
 from dependencies import valid_signature
 import auth
@@ -24,7 +23,6 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title="API", lifespan=lifespan, default_response_class=CustomORJSONResponse, dependencies=[Depends(valid_signature)])
 
 app.add_middleware(GZipMiddleware)
-app.add_middleware(SessionMiddleware, secret_key="secret")
 
 @app.exception_handler(HTTPException)
 def http_exception_handler(request: Request, exception: HTTPException):

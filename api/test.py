@@ -21,10 +21,10 @@ class OAuth2Strategy(BaseStrategy):
     def get_json(url, method='GET', *args, **kwargs):
         return httpx.request(method, url, *args, **kwargs)
 
-class AsyncOAuth1App(AsyncOAuth1Mixin):
+class AsyncOAuth1(AsyncOAuth1Mixin):
     client_cls = AsyncOAuth1Client
 
-class AsyncOAuth2App(AsyncOAuth2Mixin):
+class AsyncOAuth2(AsyncOAuth2Mixin):
     client_cls = AsyncOAuth2Client
 
 class FrameworkIntegration(FrameworkIntegration):
@@ -33,8 +33,8 @@ class FrameworkIntegration(FrameworkIntegration):
         return {}
 
 class OAuth(BaseOAuth):
-    oauth1_client_cls = AsyncOAuth1App
-    oauth2_client_cls = AsyncOAuth2App
+    oauth1_client_cls = AsyncOAuth1
+    oauth2_client_cls = AsyncOAuth2
     framework_integration_cls = FrameworkIntegration
 
     def __init__(self, config=None, cache=None, fetch_token=None, update_token=None):
@@ -42,14 +42,15 @@ class OAuth(BaseOAuth):
         self.config = config
 
 async def main():
-    oauth = OAuth(config=OAuth2Strategy())
+    oauth = OAuth()
 
     oauth.register(
         name="google",
-        client_id="377329661037-t2saf5e0g9lun78mst3515t432memqk9.apps.googleusercontent.com",
-        client_secret="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",
+        client_id="692955511020-lgf2s9f9nmnhu9sfinhug6kmf5v3aafg.apps.googleusercontent.com",
+        client_secret="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",
         authorize_url="https://accounts.google.com/o/oauth2/auth",
         access_token_url="https://accounts.google.com/o/oauth2/token",
+        # server_metadata_url="https://accounts.google.com/.well-known/openid-configuration",
         scope="openid profile email"
     )
 
@@ -58,10 +59,8 @@ async def main():
     url = await oauth.google.create_authorization_url(redirect_uri=redirect_uri)
     print(url)
 
-    token = await oauth.google.fetch_access_token(redirect_uri=redirect_uri, authorization_response=input("Enter URL: "))
-    access_token = token["access_token"]
-    user_info = oauth.google.user_data(access_token)
-    print(user_info)
+    token = await oauth.google.fetch_access_token(authorization_response=input("Enter URL: "))
+    print(token)
 
 if __name__ == "__main__":
     import asyncio

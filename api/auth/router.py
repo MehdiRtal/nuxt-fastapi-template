@@ -8,13 +8,13 @@ from typing import Annotated
 
 from models import DefaultResponse
 from users.models import User, UserCreate
-from database import Database
+from db import Database
 from utils import send_email
 from dependencies import valid_turnstile_token
 
-from .utils import generate_access_token, generate_verify_token, pwd_context, oauth
+from .utils import generate_access_token, generate_verify_token, pwd_context, google_oauth_client
 from .models import AccessToken
-from .dependencies import VerifyUser,  blacklist_access_token
+from .dependencies import VerifyUser, blacklist_access_token, GoogleOAuthCallback
 
 
 router = APIRouter(tags=["Authentication"], prefix="/auth")
@@ -57,15 +57,15 @@ async def login(db: Database, form_data: Annotated[OAuth2PasswordRequestForm, De
 @router.get("/sso/google")
 async def sso_google(request: Request) -> dict:
     callback_url = request.url_for("sso_google_callback")
-    return await oauth.google.authorize_redirect(request, callback_url)
+    authorization_url = await google_oauth_client.get_authorization_url(callback_url)
+    return {"authorization_url": authorization_url}
 
 @router.get("/sso/google/callback")
-async def sso_google_callback(request: Request, db: Database) -> AccessToken | dict:
+async def sso_google_callback(db: Database, callback: GoogleOAuthCallback) -> AccessToken | dict:
     try:
-        user_info = await oauth.google.authorize_access_token(request)
-        return user_info
-        return
-        user = UserCreate()
+        token, state = callback
+        user_info = await google_oauth_client.get_id_email(token["access_token"])
+        user = UserCreate(full_name=user_info["name"], email=user_info["email"], password=user_info["sub"])
         db_user = User(**user.model_dump())
         db.add(db_user)
         await db.commit()
