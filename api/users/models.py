@@ -15,6 +15,7 @@ class User(UserBase, table=True):
     is_verified: bool = Field(False)
     is_active: bool = Field(True)
     is_superuser: bool = Field(False)
+    google_oauth_refresh_token: str | None = Field(None)
 
 class UserCreate(UserBase):
     password: str = Field(regex="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$")
@@ -34,3 +35,4 @@ class UserUpdate(BaseModel):
     is_verified: bool | None = None
     is_active: bool | None = None
     is_superuser: bool | None = None
+    google_oauth_refresh_token: str | None = None

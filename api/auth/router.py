@@ -76,6 +76,31 @@ async def sso_google_callback(db: Database, callback: GoogleOAuthCallback) -> Ac
         access_token = generate_access_token(db_user.id, secret=db_user.password)
         return {"access_token": access_token}
 
+@router.get("/link/google")
+async def link_google(request: Request) -> dict:
+    callback_url = request.url_for("link_google_callback")
+    authorization_url = await google_oauth_client.get_authorization_url(callback_url)
+    return {"authorization_url": authorization_url}
+
+@router.get("/link/google/callback")
+async def link_google_callback(db: Database, callback: GoogleOAuthCallback) -> DefaultResponse:
+    token, state = callback
+    user_info = await google_oauth_client.get_id_email(token["access_token"])
+    statement = select(User).where(User.email == user_info["email"])
+    db_user = await db.exec(statement)
+    db_user = db_user.first()
+    if not db_user:
+        raise HTTPException(404, "User not found")
+    if not db_user.is_verified:
+        raise HTTPException(400, "User not verified")
+    if not db_user.is_active:
+        raise HTTPException(400, "User not active")
+    db_user.google_oauth_refresh_token = token["refresh_token"]
+    db.add(db_user)
+    await db.commit()
+    await db.refresh(db_user)
+    return {"message": "Google account linked"}
+
 @router.post("/logout", dependencies=[Depends(blacklist_access_token)])
 async def logout() -> DefaultResponse:
     return {"message": "User logged out"}

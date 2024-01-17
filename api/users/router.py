@@ -4,7 +4,7 @@ from sqlmodel import select
 from sqlalchemy.exc import IntegrityError
 
 from db import Database
-from auth.utils import pwd_context
+from auth.utils import pwd_context, google_oauth_client
 from auth.dependencies import CurrentUser
 from items.models import Item, ItemCreate, ItemRead, ItemUpdate
 from auth.dependencies import require_superuser
@@ -94,6 +94,15 @@ async def current_user_payment_callback(request: Request, db: Database) -> Defau
     db.add(db_user)
     await db.commit()
     return {"message": "Payment received"}
+
+@router.post("/me/unlink/google")
+async def unlink_current_user_google(db: Database, current_user: CurrentUser) -> UserRead:
+    await google_oauth_client.revoke_token(current_user.google_oauth_refresh_token, "refresh_token")
+    current_user.google_oauth_refresh_token = None
+    db.add(current_user)
+    await db.commit()
+    await db.refresh(current_user)
+    return current_user
 
 @router.get("/me")
 async def get_current_user(current_user: CurrentUser) -> UserRead:
