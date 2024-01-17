@@ -1,5 +1,5 @@
 from pydantic import PostgresDsn, RedisDsn, HttpUrl
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic_settings import BaseSettings
 import os
 
 
@@ -34,6 +34,9 @@ class Settings(BaseSettings):
     TURNSTILE_SECRET_KEY: str
     TURNSTILE_SITE_KEY: str
 
-    model_config = SettingsConfigDict(env_file=os.path.join(os.path.dirname(__file__), ".env"))
+env = os.getenv("ENVIRONMENT", "dev")
 
-settings = Settings()
+if env == "dev":
+    settings = Settings(_env_file=os.path.join(os.path.dirname(__file__), "dev.env"))
+elif env == "prod":
+    settings = Settings(_env_file=os.path.join(os.path.dirname(__file__), "prod.env"))

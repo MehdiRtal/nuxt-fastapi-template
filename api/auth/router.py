@@ -67,21 +67,22 @@ async def sso_google_callback(db: Database, callback: GoogleOAuthCallback) -> Ac
     statement = select(User).where(User.email == email)
     db_user = await db.exec(statement)
     db_user = db_user.first()
-    if not db_user:
+    if db_user:
+        if not db_user.google_oauth_refresh_token:
+            raise HTTPException(400, "Google OAuth not linked")
+        db_user.google_oauth_refresh_token = token["refresh_token"]
+        db.add(db_user)
+        await db.commit()
+        await db.refresh(db_user)
+        access_token = generate_access_token(db_user.id, secret=db_user.password)
+        return {"access_token": access_token}
+    else:
         db_user = User(full_name="", email=email, password="", google_oauth_refresh_token=token["refresh_token"])
         db.add(db_user)
         await db.commit()
         await db.refresh(db_user)
         verify_token = generate_verify_token(db_user.id, audience="reset_password")
         return {"verify_token": verify_token}
-    if not db_user.google_oauth_refresh_token:
-        raise HTTPException(400, "Google OAuth not linked")
-    db_user.google_oauth_refresh_token = token["refresh_token"]
-    db.add(db_user)
-    await db.commit()
-    await db.refresh(db_user)
-    access_token = generate_access_token(db_user.id, secret=db_user.password)
-    return {"access_token": access_token}
 
 @router.get("/link/google")
 async def link_google(request: Request) -> dict:
