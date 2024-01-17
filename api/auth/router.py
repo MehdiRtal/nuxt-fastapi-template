@@ -64,15 +64,18 @@ async def sso_google(request: Request) -> dict:
 async def sso_google_callback(db: Database, callback: GoogleOAuthCallback) -> AccessToken | dict:
     try:
         token, state = callback
-        user_info = await google_oauth_client.get_id_email(token["access_token"])
-        user = UserCreate(full_name=user_info["name"], email=user_info["email"], password=user_info["sub"])
-        db_user = User(**user.model_dump(), google_oauth_refresh_token=token["refresh_token"])
+        id, email = await google_oauth_client.get_id_email(token["access_token"])
+        db_user = User(full_name="", email=email, password="", google_oauth_refresh_token=token["refresh_token"])
         db.add(db_user)
         await db.commit()
         await db.refresh(db_user)
         verify_token = generate_verify_token(db_user.id, audience="reset_password")
         return {"verify_token": verify_token}
     except IntegrityError:
+        await db.close()
+        statement = select(User).where(User.email == email)
+        db_user = await db.exec(statement)
+        db_user = db_user.first()
         if not db_user.google_oauth_refresh_token:
             raise HTTPException(400, "Google OAuth not linked")
         db_user.google_oauth_refresh_token = token["refresh_token"]
@@ -91,8 +94,8 @@ async def link_google(request: Request) -> dict:
 @router.get("/link/google/callback")
 async def link_google_callback(db: Database, callback: GoogleOAuthCallback) -> DefaultResponse:
     token, state = callback
-    user_info = await google_oauth_client.get_id_email(token["access_token"])
-    statement = select(User).where(User.email == user_info["email"])
+    id, email = await google_oauth_client.get_id_email(token["access_token"])
+    statement = select(User).where(User.email == email)
     db_user = await db.exec(statement)
     db_user = db_user.first()
     if not db_user:
