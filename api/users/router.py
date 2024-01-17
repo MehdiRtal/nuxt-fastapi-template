@@ -97,6 +97,8 @@ async def current_user_payment_callback(request: Request, db: Database) -> Defau
 
 @router.post("/me/unlink/google")
 async def unlink_current_user_google(db: Database, current_user: CurrentUser) -> UserRead:
+    if not current_user.google_oauth_refresh_token:
+        raise HTTPException(400, "Google OAuth not linked")
     await google_oauth_client.revoke_token(current_user.google_oauth_refresh_token, "refresh_token")
     current_user.google_oauth_refresh_token = None
     db.add(current_user)

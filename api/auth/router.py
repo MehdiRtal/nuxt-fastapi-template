@@ -66,13 +66,19 @@ async def sso_google_callback(db: Database, callback: GoogleOAuthCallback) -> Ac
         token, state = callback
         user_info = await google_oauth_client.get_id_email(token["access_token"])
         user = UserCreate(full_name=user_info["name"], email=user_info["email"], password=user_info["sub"])
-        db_user = User(**user.model_dump())
+        db_user = User(**user.model_dump(), google_oauth_refresh_token=token["refresh_token"])
         db.add(db_user)
         await db.commit()
         await db.refresh(db_user)
         verify_token = generate_verify_token(db_user.id, audience="reset_password")
         return {"verify_token": verify_token}
     except IntegrityError:
+        if not db_user.google_oauth_refresh_token:
+            raise HTTPException(400, "Google OAuth not linked")
+        db_user.google_oauth_refresh_token = token["refresh_token"]
+        db.add(db_user)
+        await db.commit()
+        await db.refresh(db_user)
         access_token = generate_access_token(db_user.id, secret=db_user.password)
         return {"access_token": access_token}
 
@@ -99,7 +105,7 @@ async def link_google_callback(db: Database, callback: GoogleOAuthCallback) -> D
     db.add(db_user)
     await db.commit()
     await db.refresh(db_user)
-    return {"message": "Google account linked"}
+    return {"message": "Google OAuth linked"}
 
 @router.post("/logout", dependencies=[Depends(blacklist_access_token)])
 async def logout() -> DefaultResponse:
