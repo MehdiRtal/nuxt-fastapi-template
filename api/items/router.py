@@ -3,7 +3,7 @@ from fastapi.exceptions import HTTPException
 from sqlmodel import select
 from sqlalchemy.exc import IntegrityError
 
-from db import Database
+from database import Database
 from auth.dependencies import require_superuser
 
 from .models import Item, ItemCreate, ItemRead, ItemUpdate

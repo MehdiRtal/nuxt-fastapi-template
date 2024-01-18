@@ -6,7 +6,7 @@ from httpx_oauth.integrations.fastapi import OAuth2AuthorizeCallback
 
 from config import settings
 from users.models import User
-from db import Database
+from database import Database
 from redis_ import Redis
 
 from .utils import oauth2_scheme, google_oauth_client

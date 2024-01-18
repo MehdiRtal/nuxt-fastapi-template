@@ -34,8 +34,7 @@ class Settings(BaseSettings):
     TURNSTILE_SECRET_KEY: str
     TURNSTILE_SITE_KEY: str
 
-env = os.getenv("ENVIRONMENT", "dev")
-
+env = os.getenv("ENV", "dev")
 if env == "dev":
     settings = Settings(_env_file=os.path.join(os.path.dirname(__file__), "dev.env"))
 elif env == "prod":

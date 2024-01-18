@@ -8,7 +8,7 @@ from typing import Annotated
 
 from models import DefaultResponse
 from users.models import User, UserCreate
-from db import Database
+from database import Database
 from utils import send_email
 from dependencies import valid_turnstile_token
 
