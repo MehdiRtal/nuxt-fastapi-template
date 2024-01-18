@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Request, Depends
-from fastapi.exceptions import HTTPException, RequestValidationError
+from fastapi.exceptions import RequestValidationError
+from starlette.exceptions import HTTPException
 from fastapi.middleware.gzip import GZipMiddleware
 from starlette.middleware.errors import ServerErrorMiddleware
 from contextlib import asynccontextmanager
@@ -19,7 +20,8 @@ from config import env
 async def lifespan(app: FastAPI):
     await init_db()
     init_cache()
-    init_sentry()
+    if env != "dev":
+        init_sentry()
     yield
 
 app = FastAPI(
