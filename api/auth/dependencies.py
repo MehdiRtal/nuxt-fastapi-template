@@ -50,6 +50,24 @@ async def require_superuser(current_user: CurrentUser):
 async def blacklist_access_token(redis: Redis, access_token: AccessToken):
     await redis.sadd("blacklisted_access_tokens", access_token)
 
-google_oauth_callback = OAuth2AuthorizeCallback(google_oauth_client, "sso_google_callback")
+class CustomOAuth2AuthorizeCallback(OAuth2AuthorizeCallback):
+    def __init__(self, client, route_name = None, redirect_url = None):
+        self.client = client
+        self.route_name = route_name
+        self.redirect_url = redirect_url
 
-GoogleOAuthCallback = Annotated[OAuth2AuthorizeCallback, Depends(google_oauth_callback)]
+    async def __call__(self, request: Request, code: str = None, code_verifier: str = None, state: str = None, error: str = None):
+        if code is None or error is not None:
+            raise HTTPException(400, error if error is not None else None)
+        if self.route_name:
+            redirect_url = str(request.url_for(self.route_name))
+        elif self.redirect_url:
+            redirect_url = self.redirect_url
+        else:
+            redirect_url = str(request.url_for(request.scope["route"].name))
+        access_token = await self.client.get_access_token(code, redirect_url, code_verifier)
+        return access_token, state
+
+google_oauth_callback = CustomOAuth2AuthorizeCallback(google_oauth_client)
+
+GoogleOAuthCallback = Annotated[CustomOAuth2AuthorizeCallback, Depends(google_oauth_callback)]

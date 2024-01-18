@@ -22,7 +22,14 @@ async def lifespan(app: FastAPI):
     init_sentry()
     yield
 
-app = FastAPI(title="API", lifespan=lifespan, default_response_class=CustomORJSONResponse, dependencies=[Depends(valid_signature)])
+app = FastAPI(
+    title="API",
+    lifespan=lifespan,
+    default_response_class=CustomORJSONResponse,
+    dependencies=[Depends(valid_signature)],
+    docs_url="/docs" if env == "dev" else None,
+    redoc_url="/redoc" if env == "dev" else None
+)
 
 app.add_middleware(GZipMiddleware)
 
@@ -42,4 +49,10 @@ app.include_router(items.router)
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("main:app", host="localhost", port=8000, log_level="debug" if env == "dev" else None, reload=True)
+    uvicorn.run(
+        "main:app",
+        host="localhost",
+        port=8000,
+        log_level="debug" if env == "dev" else None,
+        reload=True
+    )

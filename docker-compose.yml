@@ -3,20 +3,20 @@ version: "3.9"
 services:
   tunnel:
     image: cloudflare/cloudflared:latest
-    env_file: ./api/.env
+    env_file: ./api/prod.env
     environment:
       - TUNNEL_TOKEN=${TUNNEL_TOKEN}
     command: tunnel run
 
   database:
     image: postgres:alpine
-    env_file: ./api/.env
+    env_file: ./api/prod.env
     environment:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
 
   pgadmin:
     image: dpage/pgadmin4:latest
-    env_file: ./api/.env
+    env_file: ./api/prod.env
     environment:
       - PGADMIN_DEFAULT_EMAIL=${PGADMIN_EMAIL}
       - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASSWORD}
@@ -28,14 +28,14 @@ services:
 
   rq:
     image: python:3.11-alpine
-    env_file: ./api/.env
+    env_file: ./api/prod.env
     command: sh -c "pip install rq && rq worker-pool -u ${RQ_URL} -n 8"
     depends_on:
       - redis
 
   rq-dashboard:
     image: python:3.11-alpine
-    env_file: ./api/.env
+    env_file: ./api/prod.env
     command: sh -c "pip install rq-dashboard && rq-dashboard -u ${RQ_URL}"
     depends_on:
       - rq
@@ -43,6 +43,8 @@ services:
   api:
     build: ./api
     command: gunicorn main:app --workers 8 --worker-class uvicorn.workers.UvicornWorker --bind :8000
+    environment:
+      - ENV=prod
     depends_on:
       - database
       - rq
