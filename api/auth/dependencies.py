@@ -14,7 +14,7 @@ from .utils import oauth2_scheme, google_oauth_client
 
 AccessToken = Annotated[str, Depends(oauth2_scheme)]
 
-async def get_current_user(db: DBSession, redis: RedisSession, access_token: AccessToken):
+async def get_current_user(db: DBSession, redis: RedisSession, access_token: Annotated[str, Depends(oauth2_scheme)]):
     if await redis.sismember("blacklisted_access_tokens", access_token):
         raise HTTPException(401, "Invalid access token")
     try:

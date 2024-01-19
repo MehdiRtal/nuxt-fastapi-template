@@ -21,7 +21,7 @@ class Settings(BaseSettings):
 
     SIGNATURE_SECRET: str
 
-    SENTRY_DSN: HttpUrl
+    SENTRY_DSN: HttpUrl | None = None
 
     SELLIX_API_KEY: str
     SELLIX_SIGNATURE_SECRET: str
@@ -36,6 +36,16 @@ class Settings(BaseSettings):
 
 env = os.getenv("ENV", "dev")
 if env == "dev":
-    settings = Settings(_env_file=os.path.join(os.path.dirname(__file__), "dev.env"))
+    settings = Settings(
+        _env_file=(
+            os.path.join(os.path.dirname(__file__), "base.env"),
+            os.path.join(os.path.dirname(__file__), "dev.env")
+        )
+    )
 elif env == "prod":
-    settings = Settings(_env_file=os.path.join(os.path.dirname(__file__), "prod.env"))
+    settings = Settings(
+        _env_file=(
+            os.path.join(os.path.dirname(__file__), "base.env"),
+            os.path.join(os.path.dirname(__file__), "prod.env")
+        )
+    )

@@ -9,7 +9,7 @@ from config import settings
 target_metadata = SQLModel.metadata
 
 def run_migrations_offline() :
-    context.configure(url=str(settings.DATABASE_URL), target_metadata=target_metadata)
+    context.configure(url=str(settings.DB_URL), target_metadata=target_metadata)
     with context.begin_transaction():
         context.run_migrations()
 
