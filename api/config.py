@@ -21,8 +21,6 @@ class Settings(BaseSettings):
 
     SIGNATURE_SECRET: str
 
-    SENTRY_DSN: HttpUrl | None = None
-
     SELLIX_API_KEY: str
     SELLIX_SIGNATURE_SECRET: str
 
@@ -33,6 +31,8 @@ class Settings(BaseSettings):
 
     TURNSTILE_SECRET_KEY: str
     TURNSTILE_SITE_KEY: str
+
+    SENTRY_DSN: HttpUrl | None = None
 
 env = os.getenv("ENV", "dev")
 if env == "dev":
