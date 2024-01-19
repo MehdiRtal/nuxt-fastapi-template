@@ -4,8 +4,8 @@ from starlette.exceptions import HTTPException
 from fastapi.middleware.gzip import GZipMiddleware
 from starlette.middleware.errors import ServerErrorMiddleware
 from contextlib import asynccontextmanager
-from sentry import init_sentry
 
+from sentry import init_sentry
 from db import init_db
 from cache import init_cache
 from dependencies import valid_signature
