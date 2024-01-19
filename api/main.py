@@ -6,13 +6,13 @@ from starlette.middleware.errors import ServerErrorMiddleware
 from contextlib import asynccontextmanager
 from sentry import init_sentry
 
-from database import init_db
+from db import init_db
 from cache import init_cache
 from dependencies import valid_signature
 import auth
 import users
 import items
-from utils import CustomORJSONResponse, ORJSONResponse
+from utils import DefaultORJSONResponse, ORJSONResponse
 from config import env
 
 
@@ -27,7 +27,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="API",
     lifespan=lifespan,
-    default_response_class=CustomORJSONResponse,
+    default_response_class=DefaultORJSONResponse,
     dependencies=[Depends(valid_signature)],
     docs_url="/docs" if env == "dev" else None,
     redoc_url="/redoc" if env == "dev" else None

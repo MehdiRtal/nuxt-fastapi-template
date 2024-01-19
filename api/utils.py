@@ -6,7 +6,7 @@ from sellix import Sellix
 from config import settings
 
 
-class CustomORJSONResponse(ORJSONResponse):
+class DefaultORJSONResponse(ORJSONResponse):
     def render(self, content):
         return super().render({"status": "success", **content})
 

@@ -2,7 +2,7 @@ from alembic import context
 from sqlmodel import SQLModel
 import asyncio
 
-from database import engine
+from db import engine
 from config import settings
 
 

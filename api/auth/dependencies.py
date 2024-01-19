@@ -6,15 +6,15 @@ from httpx_oauth.integrations.fastapi import OAuth2AuthorizeCallback
 
 from config import settings
 from users.models import User
-from database import Database
-from redis_ import Redis
+from db import DBSession
+from redis_ import RedisSession
 
 from .utils import oauth2_scheme, google_oauth_client
 
 
 AccessToken = Annotated[str, Depends(oauth2_scheme)]
 
-async def get_current_user(db: Database, redis: Redis, access_token: AccessToken):
+async def get_current_user(db: DBSession, redis: RedisSession, access_token: AccessToken):
     if await redis.sismember("blacklisted_access_tokens", access_token):
         raise HTTPException(401, "Invalid access token")
     try:
@@ -31,7 +31,7 @@ async def get_current_user(db: Database, redis: Redis, access_token: AccessToken
 
 CurrentUser = Annotated[User, Depends(get_current_user)]
 
-async def get_verify_user(request: Request, db: Database, verify_token: str):
+async def get_verify_user(request: Request, db: DBSession, verify_token: str):
     try:
         headers = jwt.get_unverified_header(verify_token)
         payload = jwt.decode(verify_token, settings.JWT_SECRET, algorithms=headers.get("alg"), audience=request.scope["route"].name)
@@ -47,7 +47,7 @@ async def require_superuser(current_user: CurrentUser):
     if not current_user.is_superuser:
         raise HTTPException(401, "User does not have required permissions")
 
-async def blacklist_access_token(redis: Redis, access_token: AccessToken):
+async def blacklist_access_token(redis: RedisSession, access_token: AccessToken):
     await redis.sadd("blacklisted_access_tokens", access_token)
 
 class CustomOAuth2AuthorizeCallback(OAuth2AuthorizeCallback):

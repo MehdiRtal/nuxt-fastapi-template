@@ -3,7 +3,7 @@ from fastapi.exceptions import HTTPException
 from sqlmodel import select
 from sqlalchemy.exc import IntegrityError
 
-from database import Database
+from db import DBSession
 from auth.dependencies import require_superuser
 
 from .models import Item, ItemCreate, ItemRead, ItemUpdate
@@ -12,7 +12,7 @@ from .models import Item, ItemCreate, ItemRead, ItemUpdate
 router = APIRouter(tags=["Items"], prefix="/items", dependencies=[Depends(require_superuser)])
 
 @router.get("/")
-async def get_items(db: Database, limit: int = 100, offset: int = 0) -> list[ItemRead]:
+async def get_items(db: DBSession, limit: int = 100, offset: int = 0) -> list[ItemRead]:
     statement = select(Item).offset(offset).limit(limit)
     db_items = await db.exec(statement)
     db_items = db_items.all()
@@ -21,14 +21,14 @@ async def get_items(db: Database, limit: int = 100, offset: int = 0) -> list[Ite
     return db_items
 
 @router.get("/{item_id}")
-async def get_item(db: Database, item_id: int):
+async def get_item(db: DBSession, item_id: int):
     db_item = await db.get(Item, item_id)
     if not db_item:
         raise HTTPException(404, "Item not found")
     return db_item
 
 @router.post("/", status_code=201)
-async def add_item(db: Database, item: ItemCreate) -> ItemRead:
+async def add_item(db: DBSession, item: ItemCreate) -> ItemRead:
     try:
         db_item = Item(**item.model_dump())
         db.add(db_item)
@@ -39,7 +39,7 @@ async def add_item(db: Database, item: ItemCreate) -> ItemRead:
     return db_item
 
 @router.patch("/{item_id}")
-async def update_item(db: Database, item_id: int, item: ItemUpdate) -> ItemRead:
+async def update_item(db: DBSession, item_id: int, item: ItemUpdate) -> ItemRead:
     db_item = await db.get(Item, item_id)
     if not db_item:
         raise HTTPException(404, "Item not found")
@@ -51,7 +51,7 @@ async def update_item(db: Database, item_id: int, item: ItemUpdate) -> ItemRead:
     return db_item
 
 @router.delete("/{item_id}")
-async def delete_item(db: Database, item_id: int) -> ItemRead:
+async def delete_item(db: DBSession, item_id: int) -> ItemRead:
     db_item = await db.get(Item, item_id)
     if not db_item:
         raise HTTPException(404, "Item not found")

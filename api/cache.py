@@ -1,4 +1,4 @@
-from redis.asyncio import Redis
+from redis.asyncio.client import Redis
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend
 from fastapi.encoders import jsonable_encoder

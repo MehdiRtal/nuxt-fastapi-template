@@ -4,7 +4,7 @@ import os
 
 
 class Settings(BaseSettings):
-    DATABASE_URL: PostgresDsn
+    DB_URL: PostgresDsn
 
     REDIS_URL: RedisDsn
 

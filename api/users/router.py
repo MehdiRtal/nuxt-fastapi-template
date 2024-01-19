@@ -3,7 +3,7 @@ from fastapi.exceptions import HTTPException
 from sqlmodel import select
 from sqlalchemy.exc import IntegrityError
 
-from database import Database
+from db import DBSession
 from auth.utils import pwd_context, google_oauth_client
 from auth.dependencies import CurrentUser
 from items.models import Item, ItemCreate, ItemRead, ItemUpdate
@@ -19,7 +19,7 @@ from.dependencies import valid_sellix_signature
 router = APIRouter(tags=["Users"], prefix="/users")
 
 @router.get("/me/items")
-async def get_current_user_items(db: Database, current_user: CurrentUser, limit: int = 100, offset: int = 0) -> list[ItemRead]:
+async def get_current_user_items(db: DBSession, current_user: CurrentUser, limit: int = 100, offset: int = 0) -> list[ItemRead]:
     statement = select(Item).where(Item.user_id == current_user.id).offset(offset).limit(limit)
     db_items = await db.exec(statement)
     db_items = db_items.all()
@@ -28,7 +28,7 @@ async def get_current_user_items(db: Database, current_user: CurrentUser, limit:
     return db_items
 
 @router.get("/me/items/{item_id}")
-async def get_current_user_item(db: Database, current_user: CurrentUser, item_id: int) -> ItemRead:
+async def get_current_user_item(db: DBSession, current_user: CurrentUser, item_id: int) -> ItemRead:
     statement = select(Item).where(Item.user_id == current_user.id).where(Item.id == item_id)
     db_item = await db.exec(statement)
     db_item = db_item.first()
@@ -37,7 +37,7 @@ async def get_current_user_item(db: Database, current_user: CurrentUser, item_id
     return db_item
 
 @router.post("/me/items", status_code=201)
-async def add_current_user_item(db: Database, current_user: CurrentUser, item: ItemCreate) -> ItemRead:
+async def add_current_user_item(db: DBSession, current_user: CurrentUser, item: ItemCreate) -> ItemRead:
     item.user_id = current_user.id
     db_item = Item(**item.model_dump())
     db.add(db_item)
@@ -46,7 +46,7 @@ async def add_current_user_item(db: Database, current_user: CurrentUser, item: I
     return db_item
 
 @router.patch("/me/items/{item_id}")
-async def update_current_user_item(db: Database, current_user: CurrentUser, item_id: int, item: ItemUpdate) -> ItemRead:
+async def update_current_user_item(db: DBSession, current_user: CurrentUser, item_id: int, item: ItemUpdate) -> ItemRead:
     statement = select(Item).where(Item.user_id == current_user.id).where(Item.id == item_id)
     db_item = await db.exec(statement)
     db_item = db_item.first()
@@ -60,7 +60,7 @@ async def update_current_user_item(db: Database, current_user: CurrentUser, item
     return db_item
 
 @router.delete("/me/items/{item_id}")
-async def delete_current_user_item(db: Database, current_user: CurrentUser, item_id: int) -> ItemRead:
+async def delete_current_user_item(db: DBSession, current_user: CurrentUser, item_id: int) -> ItemRead:
     statement = select(Item).where(Item.user_id == current_user.id).where(Item.id == item_id)
     db_item = await db.exec(statement)
     db_item = db_item.first()
@@ -71,7 +71,7 @@ async def delete_current_user_item(db: Database, current_user: CurrentUser, item
     return db_item
 
 @router.post("/me/change-password")
-async def change_current_user_password(db: Database, current_user: CurrentUser, current_password: str, new_password: str) -> UserRead:
+async def change_current_user_password(db: DBSession, current_user: CurrentUser, current_password: str, new_password: str) -> UserRead:
     if not pwd_context.verify(current_password, current_user.password):
         raise HTTPException(400, "Incorrect password")
     current_user.password = pwd_context.hash(new_password)
@@ -87,7 +87,7 @@ async def add_current_user_payment(request: Request, current_user: CurrentUser, 
     return {"payment_url": payment["data"]["url"]}
 
 @router.get("/me/payment/callback", dependencies=[Depends(valid_sellix_signature)])
-async def current_user_payment_callback(request: Request, db: Database) -> DefaultResponse:
+async def current_user_payment_callback(request: Request, db: DBSession) -> DefaultResponse:
     body = await request.json()
     db_user = await db.get(User, body["data"]["custom_fields"]["user_id"])
     db_user.balance += body["data"]["value"]
@@ -96,7 +96,7 @@ async def current_user_payment_callback(request: Request, db: Database) -> Defau
     return {"message": "Payment received"}
 
 @router.post("/me/unlink/google")
-async def unlink_current_user_google(db: Database, current_user: CurrentUser) -> UserRead:
+async def unlink_current_user_google(db: DBSession, current_user: CurrentUser) -> UserRead:
     if not current_user.google_oauth_refresh_token:
         raise HTTPException(400, "Google OAuth not linked")
     await google_oauth_client.revoke_token(current_user.google_oauth_refresh_token, "refresh_token")
@@ -111,7 +111,7 @@ async def get_current_user(current_user: CurrentUser) -> UserRead:
     return current_user
 
 @router.patch("/me")
-async def update_current_user(db: Database, current_user: CurrentUser, user: UserUpdate) -> UserRead:
+async def update_current_user(db: DBSession, current_user: CurrentUser, user: UserUpdate) -> UserRead:
     for key, value in user.model_dump(exclude_unset=True).items():
         setattr(current_user, key, value)
     db.add(current_user)
@@ -120,7 +120,7 @@ async def update_current_user(db: Database, current_user: CurrentUser, user: Use
     return current_user
 
 @router.delete("/me")
-async def delete_current_user(db: Database, current_user: CurrentUser) -> UserRead:
+async def delete_current_user(db: DBSession, current_user: CurrentUser) -> UserRead:
     current_user.is_active = False
     db.add(current_user)
     await db.commit()
@@ -128,7 +128,7 @@ async def delete_current_user(db: Database, current_user: CurrentUser) -> UserRe
     return current_user
 
 @router.get("/", dependencies=[Depends(require_superuser)])
-async def get_users(db: Database, limit: int = 100, offset: int = 0) -> list[UserRead]:
+async def get_users(db: DBSession, limit: int = 100, offset: int = 0) -> list[UserRead]:
     statement = select(User).offset(offset).limit(limit)
     db_users = await db.exec(statement)
     db_users = db_users.all()
@@ -137,14 +137,14 @@ async def get_users(db: Database, limit: int = 100, offset: int = 0) -> list[Use
     return db_users
 
 @router.get("/{user_id}", dependencies=[Depends(require_superuser)])
-async def get_user(db: Database, user_id: int):
+async def get_user(db: DBSession, user_id: int):
     db_user = await db.get(User, user_id)
     if not db_user:
         raise HTTPException(404, "User not found")
     return db_user
 
 @router.post("/", status_code=201, dependencies=[Depends(require_superuser)])
-async def add_user(db: Database, user: UserCreate) -> UserRead:
+async def add_user(db: DBSession, user: UserCreate) -> UserRead:
     try:
         user.password = pwd_context.hash(user.password)
         db_user = User(**user.model_dump())
@@ -156,7 +156,7 @@ async def add_user(db: Database, user: UserCreate) -> UserRead:
     return db_user
 
 @router.patch("/{user_id}", dependencies=[Depends(require_superuser)])
-async def update_user(db: Database, user_id: int, user: UserUpdate) -> UserRead:
+async def update_user(db: DBSession, user_id: int, user: UserUpdate) -> UserRead:
     db_user = await db.get(User, user_id)
     if not db_user:
         raise HTTPException(404, "User not found")
@@ -168,7 +168,7 @@ async def update_user(db: Database, user_id: int, user: UserUpdate) -> UserRead:
     return db_user
 
 @router.delete("/{user_id}", dependencies=[Depends(require_superuser)])
-async def delete_user(db: Database, user_id: int) -> UserRead:
+async def delete_user(db: DBSession, user_id: int) -> UserRead:
     db_user = await db.get(User, user_id)
     if not db_user:
         raise HTTPException(404, "User not found")

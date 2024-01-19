@@ -1,5 +1,5 @@
 from fastapi import Depends
-from redis.asyncio import Redis as Redis_
+from redis.asyncio.client import Redis as Redis_
 from typing import Annotated
 
 from config import settings
@@ -11,4 +11,4 @@ async def get_redis_session():
     async with connection.client() as session:
         yield session
 
-Redis = Annotated[Redis_, Depends(get_redis_session)]
+RedisSession = Annotated[Redis_, Depends(get_redis_session)]

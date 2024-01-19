@@ -8,7 +8,7 @@ from typing import Annotated
 
 from models import DefaultResponse
 from users.models import User, UserCreate
-from database import Database
+from db import DBSession
 from utils import send_email
 from dependencies import valid_turnstile_token
 
@@ -20,7 +20,7 @@ from .dependencies import VerifyUser, blacklist_access_token, GoogleOAuthCallbac
 router = APIRouter(tags=["Authentication"], prefix="/auth")
 
 @router.post("/register", status_code=201, dependencies=[Depends(valid_turnstile_token)])
-async def register(db: Database, user: UserCreate) -> DefaultResponse:
+async def register(db: DBSession, user: UserCreate) -> DefaultResponse:
     try:
         user.password = pwd_context.hash(user.password)
         db_user = User(**user.model_dump())
@@ -34,7 +34,7 @@ async def register(db: Database, user: UserCreate) -> DefaultResponse:
     return {"message": "Verification email sent"}
 
 @router.post("/verify/{verify_token}")
-async def verify(db: Database, verify_user: VerifyUser) -> DefaultResponse:
+async def verify(db: DBSession, verify_user: VerifyUser) -> DefaultResponse:
     if verify_user.is_verified:
         raise HTTPException(400, "User already verified")
     verify_user.is_verified = True
@@ -43,7 +43,7 @@ async def verify(db: Database, verify_user: VerifyUser) -> DefaultResponse:
     return {"message": "User verified"}
 
 @router.post("/login", dependencies=[Depends(valid_turnstile_token)])
-async def login(db: Database, form_data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> AccessToken:
+async def login(db: DBSession, form_data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> AccessToken:
     statement = select(User).where(User.email == form_data.username)
     db_user = await db.exec(statement)
     db_user = db_user.first()
@@ -61,7 +61,7 @@ async def sso_google(request: Request) -> dict:
     return {"authorization_url": authorization_url}
 
 @router.get("/sso/google/callback")
-async def sso_google_callback(db: Database, callback: GoogleOAuthCallback) -> AccessToken | dict:
+async def sso_google_callback(db: DBSession, callback: GoogleOAuthCallback) -> AccessToken | dict:
     token, state = callback
     id, email = await google_oauth_client.get_id_email(token["access_token"])
     statement = select(User).where(User.email == email)
@@ -91,7 +91,7 @@ async def link_google(request: Request) -> dict:
     return {"authorization_url": authorization_url}
 
 @router.get("/link/google/callback")
-async def link_google_callback(db: Database, callback: GoogleOAuthCallback) -> DefaultResponse:
+async def link_google_callback(db: DBSession, callback: GoogleOAuthCallback) -> DefaultResponse:
     token, state = callback
     id, email = await google_oauth_client.get_id_email(token["access_token"])
     statement = select(User).where(User.email == email)
@@ -114,7 +114,7 @@ async def logout() -> DefaultResponse:
     return {"message": "User logged out"}
 
 @router.post("/forgot-password", dependencies=[Depends(valid_turnstile_token)])
-async def forgot_password(db: Database, email: EmailStr) -> DefaultResponse:
+async def forgot_password(db: DBSession, email: EmailStr) -> DefaultResponse:
     statement = select(User).where(User.email == email)
     db_user = await db.exec(statement)
     db_user = db_user.first()
@@ -127,7 +127,7 @@ async def forgot_password(db: Database, email: EmailStr) -> DefaultResponse:
     return {"message": "Password reset email sent"}
 
 @router.post("/reset-password/{verify_token}")
-async def reset_password(db: Database, verify_user: VerifyUser, password: str) -> DefaultResponse:
+async def reset_password(db: DBSession, verify_user: VerifyUser, password: str) -> DefaultResponse:
     verify_user.password = pwd_context.hash(password)
     db.add(verify_user)
     await db.commit()
