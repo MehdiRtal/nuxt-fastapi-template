@@ -1,9 +1,20 @@
 from pydantic import PostgresDsn, RedisDsn, HttpUrl
 from pydantic_settings import BaseSettings
 import os
+from enum import Enum
 
-from constants import Environment
 
+class Environment(str, Enum):
+    DEV = "DEV"
+    PROD = "PROD"
+
+    @property
+    def is_dev(self):
+        return self == self.DEV
+
+    @property
+    def is_prod(self) :
+        return self == self.PROD
 
 class Settings(BaseSettings):
     ENVIRONEMENT: Environment | None = None
