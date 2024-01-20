@@ -2,8 +2,12 @@ from pydantic import PostgresDsn, RedisDsn, HttpUrl
 from pydantic_settings import BaseSettings
 import os
 
+from constants import Environment
+
 
 class Settings(BaseSettings):
+    ENVIRONEMENT: Environment | None = None
+
     DB_URL: PostgresDsn
 
     REDIS_URL: RedisDsn
@@ -34,18 +38,19 @@ class Settings(BaseSettings):
 
     SENTRY_DSN: HttpUrl | None = None
 
-env = os.getenv("ENV", "dev")
-if env == "dev":
+environement = Environment(os.getenv("ENVIRONEMENT", Environment.DEV))
+if environement.is_dev:
     settings = Settings(
         _env_file=(
             os.path.join(os.path.dirname(__file__), "base.env"),
             os.path.join(os.path.dirname(__file__), "dev.env")
         )
     )
-elif env == "prod":
+elif environement.is_prod:
     settings = Settings(
         _env_file=(
             os.path.join(os.path.dirname(__file__), "base.env"),
             os.path.join(os.path.dirname(__file__), "prod.env")
         )
     )
+settings.ENVIRONEMENT = environement

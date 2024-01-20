@@ -3,20 +3,20 @@ version: "3.9"
 services:
   tunnel:
     image: cloudflare/cloudflared:latest
-    env_file: ./api/prod.env
+    env_file: ./.env
     environment:
       - TUNNEL_TOKEN=${TUNNEL_TOKEN}
     command: tunnel run
 
   db:
     image: postgres:alpine
-    env_file: ./api/prod.env
+    env_file: ./.env
     environment:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
 
   pgadmin:
     image: dpage/pgadmin4:latest
-    env_file: ./api/prod.env
+    env_file: ./.env
     environment:
       - PGADMIN_DEFAULT_EMAIL=${PGADMIN_EMAIL}
       - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASSWORD}
@@ -44,7 +44,7 @@ services:
     build: ./api
     command: gunicorn main:app --workers 8 --worker-class uvicorn.workers.UvicornWorker --bind :8000
     environment:
-      - ENV=prod
+      - ENVIRONEMENT=PROD
     depends_on:
       - db
       - rq

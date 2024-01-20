@@ -9,18 +9,18 @@ from sentry import init_sentry
 from db import init_db
 from cache import init_cache
 from dependencies import valid_signature
+from utils import DefaultORJSONResponse, ORJSONResponse
+from config import settings
 import auth
 import users
 import items
-from utils import DefaultORJSONResponse, ORJSONResponse
-from config import env
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await init_db()
     init_cache()
-    if env != "dev":
+    if settings.ENVIRONEMENT.is_prod:
         init_sentry()
     yield
 
@@ -29,13 +29,13 @@ app = FastAPI(
     lifespan=lifespan,
     default_response_class=DefaultORJSONResponse,
     dependencies=[Depends(valid_signature)],
-    docs_url="/docs" if env == "dev" else None,
-    redoc_url="/redoc" if env == "dev" else None
+    docs_url="/docs" if settings.ENVIRONEMENT.is_dev else None,
+    redoc_url="/redoc" if settings.ENVIRONEMENT.is_dev else None
 )
 
 app.add_middleware(GZipMiddleware)
 
-app.add_middleware(ServerErrorMiddleware, debug=True if env == "dev" else False)
+app.add_middleware(ServerErrorMiddleware, debug=True if settings.ENVIRONEMENT.is_dev else False)
 
 @app.exception_handler(HTTPException)
 def http_exception_handler(request: Request, exception: HTTPException):
@@ -55,6 +55,6 @@ if __name__ == "__main__":
         "main:app",
         host="localhost",
         port=8000,
-        log_level="debug" if env == "dev" else None,
+        log_level="debug" if settings.ENVIRONEMENT.is_dev else None,
         reload=True
     )
