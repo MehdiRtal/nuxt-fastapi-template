@@ -12,3 +12,9 @@ class UserNotActive(BadRequest):
 
 class UserNotVerified(BadRequest):
     DETAIL = "User not verified."
+
+class UserAlreadyVerified(BadRequest):
+    DETAIL = "User already verified."
+
+class UserOAuthNotLinked(BadRequest):
+    DETAIL = "User OAuth not linked."

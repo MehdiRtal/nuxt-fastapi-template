@@ -8,7 +8,7 @@ from typing import Annotated
 
 from models import DefaultResponse
 from users.models import User, UserCreate
-from users.exceptions import UserAlreadyExists, UserNotVerified, UserNotActive, UserNotFound
+from users.exceptions import UserAlreadyExists, UserNotVerified, UserNotActive, UserNotFound, UserAlreadyVerified, UserOAuthNotLinked
 from db import DBSession
 from utils import send_email
 from dependencies import valid_turnstile_token
@@ -38,7 +38,7 @@ async def register(db: DBSession, user: UserCreate) -> DefaultResponse:
 @router.post("/verify/{verify_token}")
 async def verify(db: DBSession, verify_user: VerifyUser) -> DefaultResponse:
     if verify_user.is_verified:
-        raise HTTPException(400, "User already verified")
+        raise UserAlreadyVerified()
     verify_user.is_verified = True
     db.add(verify_user)
     await db.commit()
@@ -71,7 +71,7 @@ async def sso_google_callback(db: DBSession, callback: GoogleOAuthCallback) -> A
     db_user = db_user.first()
     if db_user:
         if not db_user.google_oauth_refresh_token:
-            raise HTTPException(400, "Google OAuth not linked")
+            raise UserOAuthNotLinked()
         db_user.google_oauth_refresh_token = token["refresh_token"]
         db.add(db_user)
         await db.commit()

@@ -16,7 +16,7 @@ from models import DefaultResponse
 
 from .models import User, UserCreate, UserRead, UserUpdate
 from .dependencies import valid_sellix_signature
-from .exceptions import UserNotFound, UserAlreadyExists
+from .exceptions import UserNotFound, UserAlreadyExists, UserOAuthNotLinked
 
 
 router = APIRouter(tags=["Users"], prefix="/users")
@@ -101,7 +101,7 @@ async def current_user_payment_callback(request: Request, db: DBSession) -> Defa
 @router.post("/me/unlink/google")
 async def unlink_current_user_google(db: DBSession, current_user: CurrentUser) -> UserRead:
     if not current_user.google_oauth_refresh_token:
-        raise HTTPException(400, "Google OAuth not linked")
+        raise UserOAuthNotLinked()
     await google_oauth_client.revoke_token(current_user.google_oauth_refresh_token, "refresh_token")
     current_user.google_oauth_refresh_token = None
     db.add(current_user)
