@@ -35,7 +35,8 @@ app = FastAPI(
 
 app.add_middleware(GZipMiddleware)
 
-app.add_middleware(ServerErrorMiddleware, debug=True if settings.ENVIRONEMENT.is_dev else False)
+if settings.ENVIRONEMENT.is_dev:
+    app.add_middleware(ServerErrorMiddleware, debug=True)
 
 @app.exception_handler(HTTPException)
 def http_exception_handler(request: Request, exception: HTTPException):
@@ -55,6 +56,6 @@ if __name__ == "__main__":
         "main:app",
         host="localhost",
         port=8000,
-        log_level="debug" if settings.ENVIRONEMENT.is_dev else None,
+        log_level="debug",
         reload=True
     )
