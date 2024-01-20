@@ -1,5 +1,4 @@
 from fastapi import APIRouter, Depends
-from fastapi.exceptions import HTTPException
 from sqlmodel import select
 from sqlalchemy.exc import IntegrityError
 
@@ -7,6 +6,7 @@ from db import DBSession
 from auth.dependencies import require_superuser
 
 from .models import Item, ItemCreate, ItemRead, ItemUpdate
+from .exceptions import ItemNotFound, ItemAlreadyExists
 
 
 router = APIRouter(tags=["Items"], prefix="/items", dependencies=[Depends(require_superuser)])
@@ -17,14 +17,14 @@ async def get_items(db: DBSession, limit: int = 100, offset: int = 0) -> list[It
     db_items = await db.exec(statement)
     db_items = db_items.all()
     if not db_items:
-        raise HTTPException(404, "No items found")
+        raise ItemNotFound()
     return db_items
 
 @router.get("/{item_id}")
 async def get_item(db: DBSession, item_id: int):
     db_item = await db.get(Item, item_id)
     if not db_item:
-        raise HTTPException(404, "Item not found")
+        raise ItemNotFound()
     return db_item
 
 @router.post("/", status_code=201)
@@ -35,14 +35,14 @@ async def add_item(db: DBSession, item: ItemCreate) -> ItemRead:
         await db.commit()
         await db.refresh(db_item)
     except IntegrityError:
-        raise HTTPException(400, "Item already exists")
+        raise ItemAlreadyExists()
     return db_item
 
 @router.patch("/{item_id}")
 async def update_item(db: DBSession, item_id: int, item: ItemUpdate) -> ItemRead:
     db_item = await db.get(Item, item_id)
     if not db_item:
-        raise HTTPException(404, "Item not found")
+        raise ItemNotFound()
     for key, value in item.model_dump(exclude_unset=True).items():
         setattr(db_item, key, value)
     db.add(db_item)
@@ -54,7 +54,7 @@ async def update_item(db: DBSession, item_id: int, item: ItemUpdate) -> ItemRead
 async def delete_item(db: DBSession, item_id: int) -> ItemRead:
     db_item = await db.get(Item, item_id)
     if not db_item:
-        raise HTTPException(404, "Item not found")
+        raise ItemNotFound()
     db.delete(db_item)
     await db.commit()
     return db_item

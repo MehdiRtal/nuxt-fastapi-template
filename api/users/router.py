@@ -7,13 +7,16 @@ from db import DBSession
 from auth.utils import pwd_context, google_oauth_client
 from auth.dependencies import CurrentUser
 from items.models import Item, ItemCreate, ItemRead, ItemUpdate
+from items.exceptions import ItemNotFound
 from auth.dependencies import require_superuser
+from auth.exceptions import InvalidCredentials
 
 from utils import create_payment
 from models import DefaultResponse
 
 from .models import User, UserCreate, UserRead, UserUpdate
 from .dependencies import valid_sellix_signature
+from .exceptions import UserNotFound, UserAlreadyExists
 
 
 router = APIRouter(tags=["Users"], prefix="/users")
@@ -24,7 +27,7 @@ async def get_current_user_items(db: DBSession, current_user: CurrentUser, limit
     db_items = await db.exec(statement)
     db_items = db_items.all()
     if not db_items:
-        raise HTTPException(404, "No items found")
+        raise ItemNotFound()
     return db_items
 
 @router.get("/me/items/{item_id}")
@@ -33,7 +36,7 @@ async def get_current_user_item(db: DBSession, current_user: CurrentUser, item_i
     db_item = await db.exec(statement)
     db_item = db_item.first()
     if not db_item:
-        raise HTTPException(404, "Item not found")
+        raise ItemNotFound()
     return db_item
 
 @router.post("/me/items", status_code=201)
@@ -51,7 +54,7 @@ async def update_current_user_item(db: DBSession, current_user: CurrentUser, ite
     db_item = await db.exec(statement)
     db_item = db_item.first()
     if not db_item:
-        raise HTTPException(404, "Item not found")
+        raise ItemNotFound()
     for key, value in item.model_dump(exclude_unset=True).items():
         setattr(db_item, key, value)
     await db.add(db_item)
@@ -65,7 +68,7 @@ async def delete_current_user_item(db: DBSession, current_user: CurrentUser, ite
     db_item = await db.exec(statement)
     db_item = db_item.first()
     if not db_item:
-        raise HTTPException(404, "Item not found")
+        raise ItemNotFound()
     await db.delete(db_item)
     await db.commit()
     return db_item
@@ -73,7 +76,7 @@ async def delete_current_user_item(db: DBSession, current_user: CurrentUser, ite
 @router.post("/me/change-password")
 async def change_current_user_password(db: DBSession, current_user: CurrentUser, current_password: str, new_password: str) -> UserRead:
     if not pwd_context.verify(current_password, current_user.password):
-        raise HTTPException(400, "Incorrect password")
+        raise InvalidCredentials()
     current_user.password = pwd_context.hash(new_password)
     db.add(current_user)
     await db.commit()
@@ -133,14 +136,14 @@ async def get_users(db: DBSession, limit: int = 100, offset: int = 0) -> list[Us
     db_users = await db.exec(statement)
     db_users = db_users.all()
     if not db_users:
-        raise HTTPException(404, "No users found")
+        raise UserNotFound()
     return db_users
 
 @router.get("/{user_id}", dependencies=[Depends(require_superuser)])
 async def get_user(db: DBSession, user_id: int):
     db_user = await db.get(User, user_id)
     if not db_user:
-        raise HTTPException(404, "User not found")
+        raise UserNotFound()
     return db_user
 
 @router.post("/", status_code=201, dependencies=[Depends(require_superuser)])
@@ -152,14 +155,14 @@ async def add_user(db: DBSession, user: UserCreate) -> UserRead:
         await db.commit()
         await db.refresh(db_user)
     except IntegrityError:
-        raise HTTPException(400, "User already exists")
+        raise UserAlreadyExists()
     return db_user
 
 @router.patch("/{user_id}", dependencies=[Depends(require_superuser)])
 async def update_user(db: DBSession, user_id: int, user: UserUpdate) -> UserRead:
     db_user = await db.get(User, user_id)
     if not db_user:
-        raise HTTPException(404, "User not found")
+        raise UserNotFound()
     for key, value in user.model_dump(exclude_unset=True).items():
         setattr(db_user, key, value)
     db.add(db_user)
@@ -171,7 +174,7 @@ async def update_user(db: DBSession, user_id: int, user: UserUpdate) -> UserRead
 async def delete_user(db: DBSession, user_id: int) -> UserRead:
     db_user = await db.get(User, user_id)
     if not db_user:
-        raise HTTPException(404, "User not found")
+        raise UserNotFound()
     db.delete(db_user)
     await db.commit()
     return db_user

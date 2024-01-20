@@ -8,6 +8,7 @@ from typing import Annotated
 
 from models import DefaultResponse
 from users.models import User, UserCreate
+from users.exceptions import UserAlreadyExists, UserNotVerified, UserNotActive, UserNotFound
 from db import DBSession
 from utils import send_email
 from dependencies import valid_turnstile_token
@@ -15,6 +16,7 @@ from dependencies import valid_turnstile_token
 from .utils import generate_access_token, generate_verify_token, pwd_context, google_oauth_client
 from .models import AccessToken
 from .dependencies import VerifyUser, blacklist_access_token, GoogleOAuthCallback
+from .exceptions import InvalidCredentials
 
 
 router = APIRouter(tags=["Authentication"], prefix="/auth")
@@ -28,7 +30,7 @@ async def register(db: DBSession, user: UserCreate) -> DefaultResponse:
         await db.commit()
         await db.refresh(db_user)
     except IntegrityError:
-        raise HTTPException(400, "User already exists")
+        raise UserAlreadyExists()
     verify_token = generate_verify_token(db_user.id, audience="verify")
     send_email("", user.email, "d-9b9b2f1b5b4a4b8e9b9b2f1b5b4b8e9b", {"full_name": user.full_name, "token": verify_token})
     return {"message": "Verification email sent"}
@@ -48,9 +50,9 @@ async def login(db: DBSession, form_data: Annotated[OAuth2PasswordRequestForm, D
     db_user = await db.exec(statement)
     db_user = db_user.first()
     if not db_user or not pwd_context.verify(form_data.password, db_user.password):
-        raise HTTPException(400, "Incorrect username or password")
+        raise InvalidCredentials()
     if not db_user.is_verified:
-        raise HTTPException(400, "User not verified")
+        raise UserNotVerified()
     access_token = generate_access_token(db_user.id, secret=db_user.password)
     return {"access_token": access_token}
 
@@ -98,11 +100,11 @@ async def link_google_callback(db: DBSession, callback: GoogleOAuthCallback) -> 
     db_user = await db.exec(statement)
     db_user = db_user.first()
     if not db_user:
-        raise HTTPException(404, "User not found")
+        raise UserNotFound()
     if not db_user.is_verified:
-        raise HTTPException(400, "User not verified")
+        raise UserNotVerified()
     if not db_user.is_active:
-        raise HTTPException(400, "User not active")
+        raise UserNotActive()
     db_user.google_oauth_refresh_token = token["refresh_token"]
     db.add(db_user)
     await db.commit()
@@ -119,9 +121,9 @@ async def forgot_password(db: DBSession, email: EmailStr) -> DefaultResponse:
     db_user = await db.exec(statement)
     db_user = db_user.first()
     if not db_user:
-        raise HTTPException(404, "User not found")
+        raise UserNotFound()
     if not db_user.is_active:
-        raise HTTPException(400, "User not active")
+        raise UserNotActive()
     verify_token = generate_verify_token(db_user.id, audience="reset_password")
     send_email("", db_user.email, "d-9b9b2f1b5b4a4b8e9b9b2f1b5b4b8e9b", {"full_name": db_user.full_name, "token": verify_token})
     return {"message": "Password reset email sent"}

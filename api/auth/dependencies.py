@@ -6,27 +6,29 @@ from httpx_oauth.integrations.fastapi import OAuth2AuthorizeCallback
 
 from config import settings
 from users.models import User
+from users.exceptions import UserNotActive
 from db import DBSession
 from redis_ import RedisSession
 
 from .utils import oauth2_scheme, google_oauth_client
+from .exceptions import InvalidAccessToken, InvalidVerifyToken, PermissionRequired
 
 
 AccessToken = Annotated[str, Depends(oauth2_scheme)]
 
 async def get_current_user(db: DBSession, redis: RedisSession, access_token: Annotated[str, Depends(oauth2_scheme)]):
     if await redis.sismember("blacklisted_access_tokens", access_token):
-        raise HTTPException(401, "Invalid access token")
+        raise InvalidAccessToken()
     try:
         headers = jwt.get_unverified_header(access_token)
         payload = jwt.get_unverified_claims(access_token)
         db_user = await db.get(User, payload.get("sub"))
         jwt.decode(access_token, db_user.password, algorithms=headers.get("alg"))
     except JWTError:
-        raise HTTPException(401, "Invalid access token")
+        raise InvalidAccessToken()
     else:
         if not db_user.is_active:
-            raise HTTPException(400, "User not active")
+            raise UserNotActive()
         return db_user
 
 CurrentUser = Annotated[User, Depends(get_current_user)]
@@ -36,7 +38,7 @@ async def get_verify_user(request: Request, db: DBSession, verify_token: str):
         headers = jwt.get_unverified_header(verify_token)
         payload = jwt.decode(verify_token, settings.JWT_SECRET, algorithms=headers.get("alg"), audience=request.scope["route"].name)
     except JWTError:
-        raise HTTPException(401, "Invalid verify token")
+        raise InvalidVerifyToken()
     else:
         db_user = await db.get(User, payload.get("sub"))
         return db_user
@@ -45,7 +47,7 @@ VerifyUser = Annotated[User, Depends(get_verify_user)]
 
 async def require_superuser(current_user: CurrentUser):
     if not current_user.is_superuser:
-        raise HTTPException(401, "User does not have required permissions")
+        raise PermissionRequired()
 
 async def blacklist_access_token(redis: RedisSession, access_token: AccessToken):
     await redis.sadd("blacklisted_access_tokens", access_token)
