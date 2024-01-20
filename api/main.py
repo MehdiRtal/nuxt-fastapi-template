@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request, Depends
+from fastapi import FastAPI, Request, Depends, status
 from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import HTTPException
 from fastapi.middleware.gzip import GZipMiddleware
@@ -44,7 +44,7 @@ def http_exception_handler(request: Request, exception: HTTPException):
 
 @app.exception_handler(RequestValidationError)
 def validation_exception_handler(request: Request, exception: RequestValidationError):
-    return ORJSONResponse({"status": "error", "message": exception.errors()}, status_code=422)
+    return ORJSONResponse({"status": "error", "message": exception.errors()}, status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)
 
 app.include_router(auth.router)
 app.include_router(users.router)
