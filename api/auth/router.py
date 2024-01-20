@@ -9,10 +9,9 @@ from models import DefaultResponse
 from users.models import User, UserCreate
 from users.exceptions import UserAlreadyExists, UserNotVerified, UserNotActive, UserNotFound, UserAlreadyVerified, UserOAuthNotLinked
 from db import DBSession
-from utils import send_email
 from dependencies import valid_turnstile_token
 
-from .utils import generate_access_token, generate_verify_token, pwd_context, google_oauth_client
+from .utils import generate_access_token, generate_verify_token, pwd_context, google_oauth_client, send_email
 from .models import AccessToken
 from .dependencies import VerifyUser, blacklist_access_token, GoogleOAuthCallback
 from .exceptions import InvalidCredentials

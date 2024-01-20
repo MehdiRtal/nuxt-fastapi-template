@@ -10,12 +10,12 @@ from items.exceptions import ItemNotFound
 from auth.dependencies import require_superuser
 from auth.exceptions import InvalidCredentials
 
-from utils import create_payment
 from models import DefaultResponse
 
 from .models import User, UserCreate, UserRead, UserUpdate
 from .dependencies import valid_sellix_signature
 from .exceptions import UserNotFound, UserAlreadyExists, UserOAuthNotLinked
+from .utils import create_payment
 
 
 router = APIRouter(tags=["Users"], prefix="/users")
