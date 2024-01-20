@@ -1,5 +1,4 @@
 from fastapi import APIRouter, Depends, Request
-from fastapi.exceptions import HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlmodel import select
 from sqlalchemy.exc import IntegrityError
