@@ -9,7 +9,7 @@ from api.items.models import Item, ItemCreate, ItemRead, ItemUpdate
 from api.items.exceptions import ItemNotFound, ItemAlreadyExists
 
 
-router = APIRouter(tags=["Items"], prefix="/items", dependencies=[Depends(require_superuser)])
+router = APIRouter(tags=["Items"], prefix="/items")
 
 @router.get("/")
 async def get_items(db: DBSession, limit: int = 100, offset: int = 0) -> list[ItemRead]:
@@ -27,7 +27,7 @@ async def get_item(db: DBSession, item_id: int):
         raise ItemNotFound()
     return db_item
 
-@router.post("/", status_code=201)
+@router.post("/", status_code=201, dependencies=[Depends(require_superuser)])
 async def add_item(db: DBSession, item: ItemCreate) -> ItemRead:
     try:
         db_item = Item(**item.model_dump())
@@ -38,7 +38,7 @@ async def add_item(db: DBSession, item: ItemCreate) -> ItemRead:
         raise ItemAlreadyExists()
     return db_item
 
-@router.patch("/{item_id}")
+@router.patch("/{item_id}", dependencies=[Depends(require_superuser)])
 async def update_item(db: DBSession, item_id: int, item: ItemUpdate) -> ItemRead:
     db_item = await db.get(Item, item_id)
     if not db_item:
@@ -50,7 +50,7 @@ async def update_item(db: DBSession, item_id: int, item: ItemUpdate) -> ItemRead
     await db.refresh(db_item)
     return db_item
 
-@router.delete("/{item_id}")
+@router.delete("/{item_id}", dependencies=[Depends(require_superuser)])
 async def delete_item(db: DBSession, item_id: int) -> ItemRead:
     db_item = await db.get(Item, item_id)
     if not db_item:

@@ -128,7 +128,7 @@ async def delete_current_user(db: DBSession, current_user: CurrentUser) -> UserR
     await db.refresh(current_user)
     return current_user
 
-@router.get("/", dependencies=[Depends(require_superuser)])
+@router.get("/")
 async def get_users(db: DBSession, limit: int = 100, offset: int = 0) -> list[UserRead]:
     statement = select(User).offset(offset).limit(limit)
     db_users = await db.exec(statement)
@@ -137,7 +137,7 @@ async def get_users(db: DBSession, limit: int = 100, offset: int = 0) -> list[Us
         raise UserNotFound()
     return db_users
 
-@router.get("/{user_id}", dependencies=[Depends(require_superuser)])
+@router.get("/{user_id}")
 async def get_user(db: DBSession, user_id: int):
     db_user = await db.get(User, user_id)
     if not db_user:

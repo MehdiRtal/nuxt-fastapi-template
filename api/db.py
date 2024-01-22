@@ -13,7 +13,7 @@ async def init_db():
     async with engine.begin() as connection:
         await connection.run_sync(SQLModel.metadata.create_all)
 
-async def get_db_session() -> AsyncSession:
+async def get_db_session():
     async with AsyncSession(engine) as session:
         yield session
 

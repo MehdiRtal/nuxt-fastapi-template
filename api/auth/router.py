@@ -3,7 +3,9 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlmodel import select
 from sqlalchemy.exc import IntegrityError
 from pydantic import EmailStr
+from fastapi_limiter.depends import RateLimiter
 from typing import Annotated
+
 
 from api.models import DefaultResponse
 from api.users.models import User, UserCreate
@@ -19,7 +21,7 @@ from api.auth.exceptions import InvalidCredentials
 
 router = APIRouter(tags=["Authentication"], prefix="/auth")
 
-@router.post("/register", status_code=201, dependencies=[Depends(valid_turnstile_token)])
+@router.post("/register", status_code=201, dependencies=[Depends(valid_turnstile_token), Depends(RateLimiter(times=10, minutes=1))])
 async def register(db: DBSession, user: UserCreate) -> DefaultResponse:
     try:
         user.password = pwd_context.hash(user.password)
@@ -42,7 +44,7 @@ async def verify(db: DBSession, verify_user: VerifyUser) -> DefaultResponse:
     await db.commit()
     return {"message": "User verified"}
 
-@router.post("/login", dependencies=[Depends(valid_turnstile_token)])
+@router.post("/login", dependencies=[Depends(valid_turnstile_token), Depends(RateLimiter(times=10, minutes=1))])
 async def login(db: DBSession, form_data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> AccessToken:
     statement = select(User).where(User.email == form_data.username)
     db_user = await db.exec(statement)
@@ -113,7 +115,7 @@ async def link_google_callback(db: DBSession, callback: GoogleOAuthCallback) -> 
 async def logout() -> DefaultResponse:
     return {"message": "User logged out"}
 
-@router.post("/forgot-password", dependencies=[Depends(valid_turnstile_token)])
+@router.post("/forgot-password", dependencies=[Depends(valid_turnstile_token), Depends(RateLimiter(times=10, minutes=1))])
 async def forgot_password(db: DBSession, email: EmailStr) -> DefaultResponse:
     statement = select(User).where(User.email == email)
     db_user = await db.exec(statement)

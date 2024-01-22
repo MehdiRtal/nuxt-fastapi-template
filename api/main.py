@@ -3,6 +3,7 @@ from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import HTTPException
 from fastapi.middleware.gzip import GZipMiddleware
 from starlette.middleware.errors import ServerErrorMiddleware
+from fastapi_limiter.depends import RateLimiter
 from contextlib import asynccontextmanager
 
 from api.sentry import init_sentry
@@ -30,7 +31,7 @@ app = FastAPI(
     title="API",
     lifespan=lifespan,
     default_response_class=DefaultORJSONResponse,
-    dependencies=[Depends(valid_signature)],
+    dependencies=[Depends(valid_signature), Depends(RateLimiter(times=100, minutes=1))],
     docs_url="/docs" if settings.ENVIRONEMENT.is_dev else None,
     redoc_url="/redoc" if settings.ENVIRONEMENT.is_dev else None
 )
