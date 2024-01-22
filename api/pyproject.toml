@@ -28,6 +28,9 @@ pydantic-settings = "^2.1.0"
 sellix-python-sdk = "^1.0.9.1"
 sentry-sdk = "^1.39.2"
 httpx-oauth = "^0.13.1"
+pytest = "^7.4.4"
+pytest-asyncio = "^0.23.3"
+async-asgi-testclient = "^1.4.11"
 
 
 [build-system]

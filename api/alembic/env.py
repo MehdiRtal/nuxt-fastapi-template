@@ -2,8 +2,8 @@ from alembic import context
 from sqlmodel import SQLModel
 import asyncio
 
-from db import engine
-from config import settings
+from api.db import engine
+from api.config import settings
 
 
 target_metadata = SQLModel.metadata

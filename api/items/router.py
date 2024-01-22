@@ -2,8 +2,8 @@ from fastapi import APIRouter, Depends
 from sqlmodel import select
 from sqlalchemy.exc import IntegrityError
 
-from db import DBSession
-from auth.dependencies import require_superuser
+from api.db import DBSession
+from api.auth.dependencies import require_superuser
 
 from .models import Item, ItemCreate, ItemRead, ItemUpdate
 from .exceptions import ItemNotFound, ItemAlreadyExists

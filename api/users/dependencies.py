@@ -5,7 +5,7 @@ import hmac
 import hashlib
 from typing import Annotated
 
-from config import settings
+from api.config import settings
 
 
 async def valid_sellix_signature(request: Request, x_sellix_signature: Annotated[str, Header()] = None):

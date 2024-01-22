@@ -4,11 +4,11 @@ from jose import jwt, JWTError
 from typing import Annotated
 from httpx_oauth.integrations.fastapi import OAuth2AuthorizeCallback
 
-from config import settings
-from users.models import User
-from users.exceptions import UserNotActive
-from db import DBSession
-from redis_ import RedisSession
+from api.config import settings
+from api.users.models import User
+from api.users.exceptions import UserNotActive
+from api.db import DBSession
+from api.redis_ import RedisSession
 
 from .utils import oauth2_scheme, google_oauth_client
 from .exceptions import InvalidAccessToken, InvalidVerifyToken, PermissionRequired

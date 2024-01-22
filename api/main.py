@@ -5,15 +5,15 @@ from fastapi.middleware.gzip import GZipMiddleware
 from starlette.middleware.errors import ServerErrorMiddleware
 from contextlib import asynccontextmanager
 
-from sentry import init_sentry
-from db import init_db
-from cache import init_cache
-from dependencies import valid_signature
-from utils import DefaultORJSONResponse, ORJSONResponse
-from config import settings
-import auth
-import users
-import items
+from api.sentry import init_sentry
+from api.db import init_db
+from api.cache import init_cache
+from api.dependencies import valid_signature
+from api.utils import DefaultORJSONResponse, ORJSONResponse
+from api.config import settings
+import api.auth
+import api.users
+import api.items
 
 
 @asynccontextmanager
@@ -46,9 +46,9 @@ def http_exception_handler(request: Request, exception: HTTPException):
 def validation_exception_handler(request: Request, exception: RequestValidationError):
     return ORJSONResponse({"status": "error", "message": exception.errors()}, status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)
 
-app.include_router(auth.router)
-app.include_router(users.router)
-app.include_router(items.router)
+app.include_router(api.auth.router)
+app.include_router(api.users.router)
+app.include_router(api.items.router)
 
 if __name__ == "__main__":
     import uvicorn

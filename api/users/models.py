@@ -1,7 +1,7 @@
 from sqlmodel import Field, AutoString
 from pydantic import EmailStr
 
-from models import BaseModel
+from api.models import BaseModel
 
 
 class UserBase(BaseModel):

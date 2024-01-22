@@ -1,6 +1,6 @@
 import sentry_sdk
 
-from config import settings
+from api.config import settings
 
 
 def init_sentry():

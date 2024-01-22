@@ -1,4 +1,4 @@
-from exceptions import BadRequest
+from api.exceptions import BadRequest
 
 
 class UserNotFound(BadRequest):

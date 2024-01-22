@@ -5,11 +5,11 @@ from sqlalchemy.exc import IntegrityError
 from pydantic import EmailStr
 from typing import Annotated
 
-from models import DefaultResponse
-from users.models import User, UserCreate
-from users.exceptions import UserAlreadyExists, UserNotVerified, UserNotActive, UserNotFound, UserAlreadyVerified, UserOAuthNotLinked
-from db import DBSession
-from dependencies import valid_turnstile_token
+from api.models import DefaultResponse
+from api.users.models import User, UserCreate
+from api.users.exceptions import UserAlreadyExists, UserNotVerified, UserNotActive, UserNotFound, UserAlreadyVerified, UserOAuthNotLinked
+from api.db import DBSession
+from api.dependencies import valid_turnstile_token
 
 from .utils import generate_access_token, generate_verify_token, pwd_context, google_oauth_client, send_email
 from .models import AccessToken

@@ -2,15 +2,14 @@ from fastapi import APIRouter, Depends, Request
 from sqlmodel import select
 from sqlalchemy.exc import IntegrityError
 
-from db import DBSession
-from auth.utils import pwd_context, google_oauth_client
-from auth.dependencies import CurrentUser
-from items.models import Item, ItemCreate, ItemRead, ItemUpdate
-from items.exceptions import ItemNotFound
-from auth.dependencies import require_superuser
-from auth.exceptions import InvalidCredentials
-
-from models import DefaultResponse
+from api.db import DBSession
+from api.auth.utils import pwd_context, google_oauth_client
+from api.auth.dependencies import CurrentUser
+from api.items.models import Item, ItemCreate, ItemRead, ItemUpdate
+from api.items.exceptions import ItemNotFound
+from api.auth.dependencies import require_superuser
+from api.auth.exceptions import InvalidCredentials
+from api.models import DefaultResponse
 
 from .models import User, UserCreate, UserRead, UserUpdate
 from .dependencies import valid_sellix_signature

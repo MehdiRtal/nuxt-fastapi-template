@@ -1,6 +1,6 @@
 from sqlmodel import Field
 
-from models import BaseModel
+from api.models import BaseModel
 
 
 class ItemBase(BaseModel):
