@@ -10,8 +10,8 @@ from api.users.exceptions import UserNotActive
 from api.db import DBSession
 from api.redis_ import RedisSession
 
-from .utils import oauth2_scheme, google_oauth_client
-from .exceptions import InvalidAccessToken, InvalidVerifyToken, PermissionRequired
+from api.auth.utils import oauth2_scheme, google_oauth_client
+from api.auth.exceptions import InvalidAccessToken, InvalidVerifyToken, PermissionRequired
 
 
 AccessToken = Annotated[str, Depends(oauth2_scheme)]

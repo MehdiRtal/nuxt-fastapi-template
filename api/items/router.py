@@ -5,8 +5,8 @@ from sqlalchemy.exc import IntegrityError
 from api.db import DBSession
 from api.auth.dependencies import require_superuser
 
-from .models import Item, ItemCreate, ItemRead, ItemUpdate
-from .exceptions import ItemNotFound, ItemAlreadyExists
+from api.items.models import Item, ItemCreate, ItemRead, ItemUpdate
+from api.items.exceptions import ItemNotFound, ItemAlreadyExists
 
 
 router = APIRouter(tags=["Items"], prefix="/items", dependencies=[Depends(require_superuser)])

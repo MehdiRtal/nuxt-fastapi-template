@@ -1,1 +1,1 @@
-from .router import router
+from api.auth.router import router

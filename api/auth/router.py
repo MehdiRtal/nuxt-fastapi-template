@@ -11,10 +11,10 @@ from api.users.exceptions import UserAlreadyExists, UserNotVerified, UserNotActi
 from api.db import DBSession
 from api.dependencies import valid_turnstile_token
 
-from .utils import generate_access_token, generate_verify_token, pwd_context, google_oauth_client, send_email
-from .models import AccessToken
-from .dependencies import VerifyUser, blacklist_access_token, GoogleOAuthCallback
-from .exceptions import InvalidCredentials
+from api.auth.utils import generate_access_token, generate_verify_token, pwd_context, google_oauth_client, send_email
+from api.auth.models import AccessToken
+from api.auth.dependencies import VerifyUser, blacklist_access_token, GoogleOAuthCallback
+from api.auth.exceptions import InvalidCredentials
 
 
 router = APIRouter(tags=["Authentication"], prefix="/auth")

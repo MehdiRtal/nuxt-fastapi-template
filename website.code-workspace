@@ -1,15 +1,12 @@
 {
     "folders": [
         {
-            "name": "frontend",
             "path": "frontend"
         },
         {
-            "name": "api",
             "path": "api"
         },
         {
-            "name": "root",
             "path": "."
         }
     ],
@@ -22,11 +19,6 @@
         },
         "editor.defaultFormatter": "esbenp.prettier-vscode",
         "editor.formatOnSave": true,
-        "tailwindCSS.classAttributes": ["class", "className", "ngClass", "ui"],
-        "python.analysis.extraPaths": ["${workspaceFolder:root}"],
-        "python.autoComplete.extraPaths": ["${workspaceFolder:root}"],
-        "terminal.integrated.env.windows": {
-            "PYTHONPATH": "${workspaceFolder:root}"
-        }
+        "tailwindCSS.classAttributes": ["class", "className", "ngClass", "ui"]
     }
 }
