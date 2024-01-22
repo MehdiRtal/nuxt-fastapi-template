@@ -27,6 +27,8 @@ class Settings(BaseSettings):
 
     CACHE_URL: RedisDsn
 
+    LIMITER_URL: RedisDsn
+
     ACCESS_TOKEN_EXPIRE_MINUTES: int
 
     VERIFY_TOKEN_EXPIRE_MINUTES: int

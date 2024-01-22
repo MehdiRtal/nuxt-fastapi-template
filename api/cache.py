@@ -5,7 +5,7 @@ from fastapi.encoders import jsonable_encoder
 from fastapi_cache import Coder
 import orjson
 
-from .config import settings
+from api.config import settings
 
 
 class ORJSONCoder(Coder):

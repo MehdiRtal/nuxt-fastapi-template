@@ -2,7 +2,7 @@ from fastapi import Depends
 from redis.asyncio.client import Redis
 from typing import Annotated
 
-from .config import settings
+from api.config import settings
 
 
 connection = Redis.from_url(str(settings.REDIS_URL))

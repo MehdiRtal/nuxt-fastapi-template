@@ -8,6 +8,7 @@ from contextlib import asynccontextmanager
 from api.sentry import init_sentry
 from api.db import init_db
 from api.cache import init_cache
+from api.limiter import init_limiter
 from api.dependencies import valid_signature
 from api.utils import DefaultORJSONResponse, ORJSONResponse
 from api.config import settings
@@ -20,6 +21,7 @@ import api.items
 async def lifespan(app: FastAPI):
     await init_db()
     init_cache()
+    await init_limiter()
     if settings.ENVIRONEMENT.is_prod:
         init_sentry()
     yield
