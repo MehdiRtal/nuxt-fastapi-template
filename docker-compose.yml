@@ -37,6 +37,11 @@ services:
     depends_on:
       - rq
 
+  grafana:
+    image: grafana/grafana:latest
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
+
   api:
     build: ./api
     command: gunicorn main:app --workers 8 --worker-class uvicorn.workers.UvicornWorker --bind :8000
