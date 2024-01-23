@@ -5,8 +5,11 @@ from fastapi.middleware.gzip import GZipMiddleware
 from starlette.middleware.errors import ServerErrorMiddleware
 from fastapi_limiter.depends import RateLimiter
 from contextlib import asynccontextmanager
+from prometheus_fastapi_instrumentator import Instrumentator
+
 
 from api.sentry import init_sentry
+from api.prometheus import init_prometheus
 from api.db import init_db
 from api.cache import init_cache
 from api.limiter import init_limiter
@@ -18,23 +21,23 @@ import api.users
 import api.items
 
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    await init_db()
-    init_cache()
-    await init_limiter()
-    if settings.ENVIRONEMENT.is_prod:
-        init_sentry()
-    yield
-
 app = FastAPI(
     title="API",
-    lifespan=lifespan,
     default_response_class=DefaultORJSONResponse,
     dependencies=[Depends(valid_signature), Depends(RateLimiter(times=100, minutes=1))],
     docs_url="/docs" if settings.ENVIRONEMENT.is_dev else None,
     redoc_url="/redoc" if settings.ENVIRONEMENT.is_dev else None
 )
+
+@app.on_event("startup")
+async def startup():
+    await init_db()
+    init_cache()
+    await init_limiter()
+    if settings.ENVIRONEMENT.is_prod:
+        init_sentry()
+    Instrumentator().instrument(app, metric_namespace='myproject', metric_subsystem='myservice').expose(app)
+    # init_prometheus(app)
 
 app.add_middleware(GZipMiddleware)
 
