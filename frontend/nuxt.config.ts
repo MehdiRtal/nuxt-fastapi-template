@@ -12,6 +12,11 @@ export default defineNuxtConfig({
         "nuxt-security",
     ],
     telemetry: false,
+    eslint: {
+        lintOnStart: false,
+        emitWarning: false,
+        emitError: false,
+    },
     ui: {
         icons: ["mdi", "simple-icons"],
     },
