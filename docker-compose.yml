@@ -44,7 +44,7 @@ services:
 
   api:
     build: ./api
-    command: gunicorn main:app --workers 8 --worker-class uvicorn.workers.UvicornWorker --bind :8000
+    command: gunicorn main:app --workers 8 --worker-class uvicorn.workers.UvicornWorker --bind :8080
     environment:
       - ENVIRONEMENT=PROD
     depends_on:
