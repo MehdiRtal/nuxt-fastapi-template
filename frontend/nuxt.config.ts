@@ -10,6 +10,7 @@ export default defineNuxtConfig({
         "@nuxtseo/module",
         "@nuxt/ui",
         "nuxt-security",
+        "@artmizu/nuxt-prometheus",
     ],
     telemetry: false,
     eslint: {
@@ -33,5 +34,9 @@ export default defineNuxtConfig({
                 url: process.env.API_URL!,
             },
         },
+    },
+    prometheus: {
+        verbose: false,
+        healthCheck: false,
     },
 });
