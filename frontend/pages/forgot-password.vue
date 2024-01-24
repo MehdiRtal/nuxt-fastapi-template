@@ -2,7 +2,7 @@
     <UCard class="max-w-sm w-full">
         <UAuthForm
             :fields="fields"
-            title="Forgot password ?"
+            title="Forgot password?"
             align="top"
             :ui="{footer: 'text-center'}"
         >

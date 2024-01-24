@@ -25,9 +25,7 @@
                     <template #account="{item}">
                         <div class="text-left">
                             <p>Signed in as</p>
-                            <p
-                                class="truncate font-medium text-gray-900 dark:text-white"
-                            >
+                            <p class="font-medium dark:text-white">
                                 {{ item.label }}
                             </p>
                         </div>

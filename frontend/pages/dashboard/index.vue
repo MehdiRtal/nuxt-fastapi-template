@@ -2,17 +2,16 @@
     <div>
         <UPageHeader title="Overview" />
         <UPageBody>
-            <UPageGrid>
-                <UPageCard
+            <ULandingGrid>
+                <ULandingCard
                     v-for="(module, index) in modules"
                     :key="index"
-                    v-bind="module"
-                >
-                    <template #description>
-                        <span>{{ module.description }}</span>
-                    </template>
-                </UPageCard>
-            </UPageGrid>
+                    :title="module.title"
+                    :description="module.description"
+                    :icon="module.icon"
+                    :class="module.class"
+                />
+            </ULandingGrid>
         </UPageBody>
     </div>
 </template>
@@ -24,18 +23,32 @@
 
     const modules = [
         {
-            title: "VueUse",
+            title: "Color Palette",
             description:
-                "Collection of essential Vue Composition Utilities for Vue 2 and 3.",
+                "Choose a primary and a gray color from your Tailwind CSS color palette.",
+            icon: "i-heroicons-swatch",
+            class: "col-span-6 row-span-2",
         },
         {
-            title: "ESLint",
-            description: "ESLint module for Nuxt.",
+            title: "Fully Customizable",
+            description:
+                "Change the style of any component in your App Config or with ui prop.",
+            icon: "i-heroicons-wrench-screwdriver",
+            class: "col-span-6 row-span-4",
         },
         {
-            title: "Tailwind CSS",
+            title: "Icons",
             description:
-                "Add Tailwind CSS to your Nuxt application in seconds with PurgeCSS included for minimal CSS.",
+                "Choose any of the 100k+ icons from the most popular icon libraries.",
+            icon: "i-heroicons-face-smile",
+            class: "col-span-6 row-span-4",
+        },
+        {
+            title: "Keyboard Shortcuts",
+            description:
+                "Nuxt UI comes with a set of Vue composables to easily handle shortcuts.",
+            icon: "i-heroicons-computer-desktop",
+            class: "col-span-6 row-span-2",
         },
     ];
 </script>
