@@ -49,8 +49,6 @@ class Settings(BaseSettings):
     TURNSTILE_SECRET_KEY: str
     TURNSTILE_SITE_KEY: str
 
-    SENTRY_DSN: HttpUrl | None = None
-
 environement = Environment(os.getenv("ENVIRONEMENT", Environment.DEV))
 if environement.is_dev:
     settings = Settings(

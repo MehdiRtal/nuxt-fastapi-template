@@ -40,7 +40,7 @@ services:
     image: grafana/grafana:latest
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
-      - GF_INSTALL_PLUGINS=redis-datasource,grafana-sentry-datasource
+      - GF_INSTALL_PLUGINS=redis-datasource
 
   api:
     build: ./api
