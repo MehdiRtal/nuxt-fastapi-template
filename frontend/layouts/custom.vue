@@ -3,7 +3,6 @@
         <UHeader>
             <template #logo>Nuxt FastAPI</template>
             <template #right>
-                <UDocsSearchButton label="" />
                 <UPopover>
                     <UButton
                         icon="i-heroicons-bell-solid"
