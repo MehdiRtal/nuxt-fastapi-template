@@ -5,23 +5,25 @@
             <div
                 class="border rounded-md dark:border-gray-800 dark:bg-gray-900"
             >
-                <UTable v-model="selected" :rows="rows" />
+                <UTable :rows="rows" :columns="columns">
+                    <template #actions-data="{row}">
+                        <UDropdown :items="items(row)">
+                            <UButton
+                                color="gray"
+                                variant="ghost"
+                                icon="i-heroicons-ellipsis-horizontal-20-solid"
+                            />
+                        </UDropdown>
+                    </template>
+                </UTable>
                 <div
-                    class="flex justify-between px-3 py-3.5 border-t dark:border-gray-800"
+                    class="flex justify-end px-3 py-3.5 border-t dark:border-gray-800"
                 >
-                    <UInput v-model="q" placeholder="Filter people..." />
                     <UPagination
                         v-model="page"
                         :page-count="pageCount"
                         :total="people.length"
                     />
-                    <UDropdown :items="rows">
-                        <UButton
-                            color="gray"
-                            variant="ghost"
-                            icon="i-heroicons-ellipsis-horizontal-20-solid"
-                        />
-                    </UDropdown>
                 </div>
             </div>
         </UPageBody>
@@ -32,6 +34,36 @@
     definePageMeta({
         layout: "custom",
     });
+
+    const columns = [
+        {
+            key: "id",
+            label: "ID",
+        },
+        {
+            key: "name",
+            label: "Name",
+            sortable: true,
+        },
+        {
+            key: "title",
+            label: "Title",
+            sortable: true,
+        },
+        {
+            key: "email",
+            label: "Email",
+            sortable: true,
+        },
+        {
+            key: "role",
+            label: "Role",
+            sortable: true,
+        },
+        {
+            key: "actions",
+        },
+    ];
 
     const people = [
         {
@@ -77,64 +109,78 @@
             role: "Member",
         },
         {
-            id: 7,
-            name: "Emily Selman",
-            title: "VP, User Experience",
-            email: "floyd.miles@example.com",
-            role: "Admin",
-        },
-        {
-            id: 8,
-            name: "Kristin Watson",
-            title: "VP, Human Resources",
-            email: "floyd.miles@example.com",
-            role: "Member",
-        },
-        {
-            id: 9,
-            name: "Emma Watson",
+            id: 1,
+            name: "Lindsay Walton",
             title: "Front-end Developer",
-            email: "floyd.miles@example.com",
+            email: "lindsay.walton@example.com",
             role: "Member",
         },
         {
-            id: 10,
-            name: "John Doe",
+            id: 2,
+            name: "Courtney Henry",
             title: "Designer",
-            email: "floyd.miles@example.com",
+            email: "courtney.henry@example.com",
             role: "Admin",
         },
         {
-            id: 11,
-            name: "Jane Doe",
+            id: 3,
+            name: "Tom Cook",
             title: "Director of Product",
-            email: "floyd.miles@example.com",
+            email: "tom.cook@example.com",
             role: "Member",
         },
         {
-            id: 12,
-            name: "John Smith",
+            id: 4,
+            name: "Whitney Francis",
             title: "Copywriter",
-            email: "floyd.miles@example.com",
+            email: "whitney.francis@example.com",
             role: "Admin",
         },
         {
-            id: 13,
-            name: "Jane Smith",
+            id: 5,
+            name: "Leonard Krasner",
             title: "Senior Designer",
-            email: "floyd.miles@example.com",
+            email: "leonard.krasner@example.com",
             role: "Owner",
         },
         {
-            id: 14,
-            name: "John Smith",
+            id: 6,
+            name: "Floyd Miles",
             title: "Principal Designer",
             email: "floyd.miles@example.com",
             role: "Member",
         },
     ];
 
-    const selected = ref([people[1]]);
+    const items = (row) => [
+        [
+            {
+                label: "Edit",
+                icon: "i-heroicons-pencil-square-20-solid",
+                click: () => console.log("Edit", row.id),
+            },
+            {
+                label: "Duplicate",
+                icon: "i-heroicons-document-duplicate-20-solid",
+            },
+        ],
+        [
+            {
+                label: "Archive",
+                icon: "i-heroicons-archive-box-20-solid",
+            },
+            {
+                label: "Move",
+                icon: "i-heroicons-arrow-right-circle-20-solid",
+            },
+        ],
+        [
+            {
+                label: "Delete",
+                icon: "i-heroicons-trash-20-solid",
+            },
+        ],
+    ];
 
     const page = ref(1);
     const pageCount = 6;
