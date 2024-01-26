@@ -40,7 +40,6 @@
                         <UAside :links="links">
                             <template #bottom>
                                 <UDivider class="my-6" />
-
                                 <UAsideLinks :links="pageLinks" />
                             </template>
                         </UAside>
@@ -62,7 +61,7 @@
 
     const links = [
         {
-            label: "Overview",
+            label: "Home",
             icon: "i-heroicons-home",
             to: "/dashboard",
         },
@@ -77,7 +76,7 @@
         {
             label: "Settings",
             icon: "i-heroicons-cog",
-            to: "/",
+            to: "/dashboard/settings",
         },
     ];
 
