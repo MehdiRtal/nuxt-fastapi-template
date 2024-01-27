@@ -3,69 +3,68 @@
         <UHeader>
             <template #logo>Nuxt FastAPI</template>
             <template #right>
-                <UPopover :popper="{placement: 'bottom-end'}">
-                    <UButton
-                        icon="i-heroicons-bell-solid"
-                        color="gray"
-                        variant="ghost"
-                    />
-                    <template #panel>
-                        <UCard
-                            :ui="{
-                                strategy: 'override',
-                                header: {
-                                    padding: 'px-4 py-3',
-                                },
-                                body: {
-                                    padding: 'px-4 py-3',
-                                },
-                            }"
-                        >
-                            <template #header>
-                                <p class="font-semibold">Notifications</p>
-                            </template>
-                            <UAlert
+                <div class="flex gap-2">
+                    <UPopover :popper="{placement: 'bottom-end'}">
+                        <UChip color="red">
+                            <UButton
+                                icon="i-heroicons-bell-solid"
                                 color="gray"
-                                title="Heads up!"
-                                description="You can add components to your app using the cli."
-                                :close-button="{
-                                    icon: 'i-heroicons-x-mark-20-solid',
-                                    color: 'white',
-                                    variant: 'link',
-                                    padded: false,
-                                }"
+                            />
+                        </UChip>
+                        <template #panel>
+                            <UCard
                                 :ui="{
                                     strategy: 'override',
-                                    inner: 'w-full flex-1',
-                                    color: {
-                                        gray: {
-                                            solid: 'shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-700 text-gray-700 dark:text-gray-200 bg-gray-50 dark:bg-gray-800',
-                                        },
+                                    header: {
+                                        padding: 'px-4 py-3',
+                                    },
+                                    body: {
+                                        padding: 'px-4 py-3',
                                     },
                                 }"
                             >
-                            </UAlert>
-                        </UCard>
-                    </template>
-                </UPopover>
-                <UDropdown
-                    :items="account"
-                    :popper="{placement: 'bottom-start'}"
-                >
-                    <UButton
-                        icon="i-heroicons-user-solid"
-                        color="gray"
-                        variant="ghost"
-                    />
-                    <template #account="{item}">
-                        <div>
-                            <p class="text-left">Signed in as</p>
-                            <p class="font-medium dark:text-white">
-                                {{ item.label }}
-                            </p>
-                        </div>
-                    </template>
-                </UDropdown>
+                                <template #header>
+                                    <p class="font-semibold">Notifications</p>
+                                </template>
+                                <UAlert
+                                    color="gray"
+                                    title="Heads up!"
+                                    description="You can add components to your app using the cli."
+                                    :close-button="{
+                                        icon: 'i-heroicons-x-mark-20-solid',
+                                        color: 'white',
+                                        variant: 'link',
+                                        padded: false,
+                                    }"
+                                    :ui="{
+                                        strategy: 'override',
+                                        inner: 'w-full flex-1',
+                                        color: {
+                                            gray: {
+                                                solid: 'shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-700 text-gray-700 dark:text-gray-200 bg-gray-50 dark:bg-gray-800',
+                                            },
+                                        },
+                                    }"
+                                >
+                                </UAlert>
+                            </UCard>
+                        </template>
+                    </UPopover>
+                    <UDropdown
+                        :items="account"
+                        :popper="{placement: 'bottom-start'}"
+                    >
+                        <UButton icon="i-heroicons-user-solid" color="gray" />
+                        <template #account="{item}">
+                            <div>
+                                <p class="text-left">Signed in as</p>
+                                <p class="font-medium dark:text-white">
+                                    {{ item.label }}
+                                </p>
+                            </div>
+                        </template>
+                    </UDropdown>
+                </div>
             </template>
         </UHeader>
         <UMain>
