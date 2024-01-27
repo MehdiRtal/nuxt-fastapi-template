@@ -22,14 +22,14 @@
                             }"
                         >
                             <template #header>
-                                <p class="font-medium">Notifications</p>
+                                <p class="font-semibold">Notifications</p>
                             </template>
                             <UAlert
                                 color="gray"
                                 title="Heads up!"
                                 description="You can add components to your app using the cli."
                                 :close-button="{
-                                    icon: 'i-heroicons-x-mark-solid',
+                                    icon: 'i-heroicons-x-mark-20-solid',
                                     color: 'white',
                                     variant: 'link',
                                     padded: false,

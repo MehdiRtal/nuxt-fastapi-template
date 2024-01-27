@@ -19,9 +19,14 @@
                     <UInput
                         v-model="q"
                         icon="i-heroicons-magnifying-glass-solid"
-                        placeholder="Filter..."
+                        placeholder="Search..."
                     />
-                    <UButton icon="i-heroicons-plus" color="primary" />
+                    <UButton
+                        icon="i-heroicons-plus"
+                        label="Add"
+                        color="primary"
+                        @click="isAddOpen = true"
+                    />
                 </div>
                 <UTable
                     :rows="filteredRows"
@@ -65,6 +70,94 @@
                 </div>
             </div>
         </UPageBody>
+        <UModal v-model="isAddOpen" prevent-close>
+            <UCard
+                :ui="{
+                    strategy: 'override',
+                    header: {
+                        padding: 'px-4 py-3',
+                    },
+                    body: {
+                        padding: 'px-4 py-3',
+                    },
+                }"
+            >
+                <template #header>
+                    <p class="font-semibold">Add Item</p>
+                </template>
+                <div class="flex flex-col space-y-4">
+                    <UFormGroup label="Name">
+                        <UInput placeholder="Enter name" />
+                    </UFormGroup>
+                    <div class="flex justify-end gap-1.5">
+                        <UButton
+                            label="Cancel"
+                            color="gray"
+                            @click="isAddOpen = false"
+                        />
+                        <UButton label="Continue" />
+                    </div>
+                </div>
+            </UCard>
+        </UModal>
+        <UModal v-model="isDeleteOpen" prevent-close>
+            <UCard
+                :ui="{
+                    strategy: 'override',
+                    header: {
+                        padding: 'px-4 py-3',
+                    },
+                    body: {
+                        padding: 'px-4 py-3',
+                    },
+                }"
+            >
+                <template #header>
+                    <p class="font-semibold">Delete Item</p>
+                </template>
+                <div class="flex flex-col space-y-4">
+                    <p>Are you sure you want to delete this item?</p>
+                    <div class="flex justify-end gap-1.5">
+                        <UButton
+                            label="Cancel"
+                            color="gray"
+                            @click="isDeleteOpen = false"
+                        />
+                        <UButton label="Continue" />
+                    </div>
+                </div>
+            </UCard>
+        </UModal>
+        <UModal v-model="isEditOpen" prevent-close>
+            <UCard
+                :ui="{
+                    strategy: 'override',
+                    header: {
+                        padding: 'px-4 py-3',
+                    },
+                    body: {
+                        padding: 'px-4 py-3',
+                    },
+                }"
+            >
+                <template #header>
+                    <p class="font-semibold">Edit Item</p>
+                </template>
+                <div class="flex flex-col space-y-4">
+                    <UFormGroup label="Name">
+                        <UInput placeholder="Enter name" />
+                    </UFormGroup>
+                    <div class="flex justify-end gap-1.5">
+                        <UButton
+                            label="Cancel"
+                            color="gray"
+                            @click="isEditOpen = false"
+                        />
+                        <UButton label="Continue" />
+                    </div>
+                </div>
+            </UCard>
+        </UModal>
     </div>
 </template>
 
@@ -153,11 +246,12 @@
             {
                 label: "Edit",
                 icon: "i-heroicons-pencil-square-20-solid",
-                click: () => console.log("Edit", row.id),
+                click: () => (isEditOpen.value = true),
             },
             {
                 label: "Delete",
                 icon: "i-heroicons-trash-20-solid",
+                click: () => (isDeleteOpen.value = true),
             },
         ],
     ];
@@ -186,4 +280,8 @@
     const pageCount = 12;
 
     const q = ref("");
+
+    const isAddOpen = ref(false);
+    const isDeleteOpen = ref(false);
+    const isEditOpen = ref(false);
 </script>
