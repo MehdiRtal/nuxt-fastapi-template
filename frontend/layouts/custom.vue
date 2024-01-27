@@ -29,7 +29,7 @@
                                 title="Heads up!"
                                 description="You can add components to your app using the cli."
                                 :close-button="{
-                                    icon: 'i-heroicons-x-mark-20-solid',
+                                    icon: 'i-heroicons-x-mark-solid',
                                     color: 'white',
                                     variant: 'link',
                                     padded: false,
@@ -39,7 +39,7 @@
                                     inner: 'w-full flex-1',
                                     color: {
                                         gray: {
-                                            solid: 'shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-700 text-gray-700 dark:text-gray-200 bg-gray-50 hover:bg-gray-100 disabled:bg-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700/50 dark:disabled:bg-gray-800 focus-visible:ring-2 focus-visible:ring-primary-500 dark:focus-visible:ring-primary-400',
+                                            solid: 'shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-700 text-gray-700 dark:text-gray-200 bg-gray-50 dark:bg-gray-800',
                                         },
                                     },
                                 }"
@@ -72,10 +72,13 @@
             <UContainer>
                 <UPage>
                     <template #left>
-                        <UAside :links="links">
+                        <UAside>
+                            <template #links>
+                                <UAsideLinks :links="topLinks" />
+                            </template>
                             <template #bottom>
                                 <UDivider class="my-6" />
-                                <UAsideLinks :links="pageLinks" />
+                                <UAsideLinks :links="bottomLinks" />
                             </template>
                         </UAside>
                     </template>
@@ -83,18 +86,17 @@
                 </UPage>
             </UContainer>
         </UMain>
-        <UFooter />
     </div>
 </template>
 
 <script setup lang="ts">
     useHead({
         bodyAttrs: {
-            class: "dark:bg-gray-950",
+            class: "bg-gray-50 dark:bg-gray-950",
         },
     });
 
-    const links = [
+    const topLinks = [
         {
             label: "Home",
             icon: "i-heroicons-home",
@@ -107,7 +109,7 @@
         },
     ];
 
-    const pageLinks = [
+    const bottomLinks = [
         {
             label: "Settings",
             icon: "i-heroicons-cog",

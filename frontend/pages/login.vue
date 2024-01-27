@@ -1,9 +1,9 @@
 <template>
     <UCard class="max-w-sm w-full">
         <UAuthForm
+            title="Login"
             :fields="fields"
             :providers="providers"
-            title="Login"
             align="top"
             :ui="{footer: 'text-center'}"
         >
@@ -34,6 +34,7 @@
             type: "text",
             label: "Email",
             placeholder: "Enter your email",
+            icon: "i-heroicons-envelope-solid",
             required: true,
         },
         {
@@ -41,6 +42,7 @@
             label: "Password",
             type: "password",
             placeholder: "Enter your password",
+            icon: "i-heroicons-lock-closed-solid",
             required: true,
         },
     ];

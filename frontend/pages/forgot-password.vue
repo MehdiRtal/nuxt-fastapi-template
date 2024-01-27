@@ -7,7 +7,7 @@
             :ui="{footer: 'text-center'}"
         >
             <template #description>
-                Please provide your email to reset your password
+                Please provide your email to reset your password.
             </template>
         </UAuthForm>
     </UCard>
@@ -24,6 +24,7 @@
             type: "text",
             label: "Email",
             placeholder: "Enter your email",
+            icon: "i-heroicons-envelope-solid",
             required: true,
         },
     ];

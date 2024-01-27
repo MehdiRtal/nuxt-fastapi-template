@@ -2,23 +2,23 @@
     <div>
         <UPageHeader title="Items">
             <template #headline>
-                <p class="text-gray-400 truncate">Dashboard</p>
+                <p class="text-gray-500 dark:text-gray-400">Dashboard</p>
                 <p
-                    class="i-heroicons-chevron-right-20-solid w-5 h-5 text-gray-400"
+                    class="i-heroicons-chevron-right-20-solid w-5 h-5 text-gray-500 dark:text-gray-400"
                 ></p>
                 <p>Items</p>
             </template>
         </UPageHeader>
         <UPageBody>
             <div
-                class="border rounded-md dark:border-gray-800 dark:bg-gray-900"
+                class="border rounded-md bg-white dark:border-gray-800 dark:bg-gray-900"
             >
                 <div
-                    class="flex justify-between px-7 py-3.5 border-b border-gray-200 dark:border-gray-700"
+                    class="flex justify-between px-7 py-3.5 border-b dark:border-gray-700"
                 >
                     <UInput
                         v-model="q"
-                        icon="i-heroicons-magnifying-glass-16-solid"
+                        icon="i-heroicons-magnifying-glass-solid"
                         placeholder="Filter..."
                     />
                     <UButton icon="i-heroicons-plus" color="primary" />
@@ -39,7 +39,7 @@
                         <UDropdown :items="items(row)">
                             <UButton
                                 color="gray"
-                                icon="i-heroicons-ellipsis-horizontal-20-solid"
+                                icon="i-heroicons-ellipsis-horizontal-solid"
                             />
                         </UDropdown>
                     </template>

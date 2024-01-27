@@ -31,17 +31,11 @@
 
     const fields = [
         {
-            name: "firstName",
+            name: "fullName",
             type: "text",
-            label: "First Name",
-            placeholder: "Enter your first name",
-            required: true,
-        },
-        {
-            name: "lastName",
-            type: "text",
-            label: "Last Name",
-            placeholder: "Enter your last name",
+            label: "Full Name",
+            placeholder: "Enter your full name",
+            icon: "i-heroicons-user-solid",
             required: true,
         },
         {
@@ -49,6 +43,7 @@
             type: "text",
             label: "Email",
             placeholder: "Enter your email",
+            icon: "i-heroicons-envelope-solid",
             required: true,
         },
         {
@@ -56,6 +51,7 @@
             label: "Password",
             type: "password",
             placeholder: "Enter your password",
+            icon: "i-heroicons-lock-closed-solid",
             required: true,
         },
     ];
