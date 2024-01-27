@@ -10,7 +10,7 @@
             </template>
         </UPageHeader>
         <UPageBody>
-            <div class="flex justify-start items-center gap-2">
+            <div class="flex justify-start items-end gap-4">
                 <p class="font-medium">Color mode:</p>
                 <UColorModeSelect class="w-32" />
             </div>
