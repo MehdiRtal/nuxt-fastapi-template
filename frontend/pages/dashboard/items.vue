@@ -16,7 +16,11 @@
                 <div
                     class="flex justify-between px-7 py-3.5 border-b border-gray-200 dark:border-gray-700"
                 >
-                    <UInput v-model="q" placeholder="Filter..." />
+                    <UInput
+                        v-model="q"
+                        icon="i-heroicons-magnifying-glass-16-solid"
+                        placeholder="Filter..."
+                    />
                     <UButton icon="i-heroicons-plus" color="primary" />
                 </div>
                 <UTable
@@ -41,6 +45,7 @@
                     </template>
                 </UTable>
                 <div
+                    v-if="filteredRows.length > 0"
                     class="flex justify-end px-7 py-3.5 border-t dark:border-gray-800"
                 >
                     <UPagination
@@ -118,111 +123,6 @@
             name: "Tom Cook",
             title: "Director of Product",
             email: "tom.cook@example.com",
-            role: "Member",
-        },
-        {
-            id: 4,
-            name: "Whitney Francis",
-            title: "Copywriter",
-            email: "whitney.francis@example.com",
-            role: "Admin",
-        },
-        {
-            id: 5,
-            name: "Leonard Krasner",
-            title: "Senior Designer",
-            email: "leonard.krasner@example.com",
-            role: "Owner",
-        },
-        {
-            id: 6,
-            name: "Floyd Miles",
-            title: "Principal Designer",
-            email: "floyd.miles@example.com",
-            role: "Member",
-        },
-        {
-            id: 1,
-            name: "Lindsay Walton",
-            title: "Front-end Developer",
-            email: "lindsay.walton@example.com",
-            role: "Member",
-        },
-        {
-            id: 2,
-            name: "Courtney Henry",
-            title: "Designer",
-            email: "courtney.henry@example.com",
-            role: "Admin",
-        },
-        {
-            id: 3,
-            name: "Tom Cook",
-            title: "Director of Product",
-            email: "tom.cook@example.com",
-            role: "Member",
-        },
-        {
-            id: 4,
-            name: "Whitney Francis",
-            title: "Copywriter",
-            email: "whitney.francis@example.com",
-            role: "Admin",
-        },
-        {
-            id: 5,
-            name: "Leonard Krasner",
-            title: "Senior Designer",
-            email: "leonard.krasner@example.com",
-            role: "Owner",
-        },
-        {
-            id: 6,
-            name: "Floyd Miles",
-            title: "Principal Designer",
-            email: "floyd.miles@example.com",
-            role: "Member",
-        },
-        {
-            id: 7,
-            name: "Lindsay Walton",
-            title: "Front-end Developer",
-            email: "lindsay-walton@example.com",
-            role: "Member",
-        },
-        {
-            id: 2,
-            name: "Courtney Henry",
-            title: "Designer",
-            email: "courtney.henry@example.com",
-            role: "Admin",
-        },
-        {
-            id: 3,
-            name: "Tom Cook",
-            title: "Director of Product",
-            email: "tom.cook@example.com",
-            role: "Member",
-        },
-        {
-            id: 4,
-            name: "Whitney Francis",
-            title: "Copywriter",
-            email: "whitney.francis@example.com",
-            role: "Admin",
-        },
-        {
-            id: 5,
-            name: "Leonard Krasner",
-            title: "Senior Designer",
-            email: "leonard.krasner@example.com",
-            role: "Owner",
-        },
-        {
-            id: 6,
-            name: "Floyd Miles",
-            title: "Principal Designer",
-            email: "floyd.miles@example.com",
             role: "Member",
         },
         {

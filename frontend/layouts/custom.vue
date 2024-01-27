@@ -3,14 +3,49 @@
         <UHeader>
             <template #logo>Nuxt FastAPI</template>
             <template #right>
-                <UPopover>
+                <UPopover :popper="{placement: 'bottom-end'}">
                     <UButton
                         icon="i-heroicons-bell-solid"
                         color="gray"
                         variant="ghost"
                     />
                     <template #panel>
-                        <div class="p-4"></div>
+                        <UCard
+                            :ui="{
+                                strategy: 'override',
+                                header: {
+                                    padding: 'px-4 py-3',
+                                },
+                                body: {
+                                    padding: 'px-4 py-3',
+                                },
+                            }"
+                        >
+                            <template #header>
+                                <p class="font-medium">Notifications</p>
+                            </template>
+                            <UAlert
+                                color="gray"
+                                title="Heads up!"
+                                description="You can add components to your app using the cli."
+                                :close-button="{
+                                    icon: 'i-heroicons-x-mark-20-solid',
+                                    color: 'white',
+                                    variant: 'link',
+                                    padded: false,
+                                }"
+                                :ui="{
+                                    strategy: 'override',
+                                    inner: 'w-full flex-1',
+                                    color: {
+                                        gray: {
+                                            solid: 'shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-700 text-gray-700 dark:text-gray-200 bg-gray-50 hover:bg-gray-100 disabled:bg-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700/50 dark:disabled:bg-gray-800 focus-visible:ring-2 focus-visible:ring-primary-500 dark:focus-visible:ring-primary-400',
+                                        },
+                                    },
+                                }"
+                            >
+                            </UAlert>
+                        </UCard>
                     </template>
                 </UPopover>
                 <UDropdown
@@ -23,8 +58,8 @@
                         variant="ghost"
                     />
                     <template #account="{item}">
-                        <div class="text-left">
-                            <p>Signed in as</p>
+                        <div>
+                            <p class="text-left">Signed in as</p>
                             <p class="font-medium dark:text-white">
                                 {{ item.label }}
                             </p>
