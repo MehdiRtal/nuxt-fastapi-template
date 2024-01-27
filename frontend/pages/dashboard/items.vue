@@ -70,7 +70,13 @@
                 </div>
             </div>
         </UPageBody>
-        <UModal v-model="isAddOpen" prevent-close>
+        <UModal
+            v-model="isAddOpen"
+            prevent-close
+            :ui="{
+                width: 'sm:max-w-md',
+            }"
+        >
             <UCard
                 :ui="{
                     strategy: 'override',
@@ -100,7 +106,13 @@
                 </div>
             </UCard>
         </UModal>
-        <UModal v-model="isDeleteOpen" prevent-close>
+        <UModal
+            v-model="isDeleteOpen"
+            prevent-close
+            :ui="{
+                width: 'sm:max-w-md',
+            }"
+        >
             <UCard
                 :ui="{
                     strategy: 'override',
@@ -128,7 +140,13 @@
                 </div>
             </UCard>
         </UModal>
-        <UModal v-model="isEditOpen" prevent-close>
+        <UModal
+            v-model="isEditOpen"
+            prevent-close
+            :ui="{
+                width: 'sm:max-w-md',
+            }"
+        >
             <UCard
                 :ui="{
                     strategy: 'override',
