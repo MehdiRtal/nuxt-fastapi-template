@@ -5,11 +5,8 @@
             <template #right>
                 <div class="flex gap-2">
                     <UPopover :popper="{placement: 'bottom-end'}">
-                        <UChip color="red">
-                            <UButton
-                                icon="i-heroicons-bell-solid"
-                                color="gray"
-                            />
+                        <UChip color="green">
+                            <UButton icon="i-heroicons-bell" color="gray" />
                         </UChip>
                         <template #panel>
                             <UCard
@@ -54,7 +51,7 @@
                         :items="account"
                         :popper="{placement: 'bottom-start'}"
                     >
-                        <UButton icon="i-heroicons-user-solid" color="gray" />
+                        <UButton icon="i-heroicons-user" color="gray" />
                         <template #account="{item}">
                             <div>
                                 <p class="text-left">Signed in as</p>
@@ -122,6 +119,13 @@
                 label: "ben@example.com",
                 slot: "account",
                 disabled: true,
+            },
+        ],
+        [
+            {
+                label: "Account",
+                icon: "i-heroicons-user-circle",
+                to: "/dashboard/account",
             },
         ],
         [
