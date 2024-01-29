@@ -6,18 +6,50 @@
             </template>
         </UPageHeader>
         <UPageBody>
-            <div class="flex flex-col gap-2">
+            <h2 class="text-2xl font-bold text-white my-6">General</h2>
+            <div class="flex flex-col gap-4">
                 <UFormGroup label="Full Name">
                     <UInput v-model="fullName" placeholder="Enter name" />
                 </UFormGroup>
                 <UFormGroup label="Email">
                     <UInput v-model="email" placeholder="Enter email" />
                 </UFormGroup>
-                <UFormGroup label="Password">
-                    <UInput v-model="password" placeholder="Enter password" />
-                </UFormGroup>
+                <div class="flex justify-end">
+                    <UButton label="Save Changes" />
+                </div>
             </div>
-            <UButton label="Update Profile" />
+            <h2 class="text-2xl font-bold text-white my-6">Identity</h2>
+            <div class="flex flex-col gap-4">
+                <UFormGroup label="Full Name">
+                    <UInput v-model="fullName" placeholder="Enter name" />
+                </UFormGroup>
+                <UFormGroup label="Email">
+                    <UInput v-model="email" placeholder="Enter email" />
+                </UFormGroup>
+                <div class="flex justify-end">
+                    <UButton label="Save Changes" />
+                </div>
+            </div>
+            <h2 class="text-2xl font-bold text-white my-6">Security</h2>
+            <div class="flex flex-col gap-4">
+                <UFormGroup label="Current Password">
+                    <UInput placeholder="Enter current password" />
+                </UFormGroup>
+                <div class="flex gap-1.5">
+                    <UFormGroup class="w-full" label="New Password">
+                        <UInput placeholder="Enter new password" />
+                    </UFormGroup>
+                    <UFormGroup class="w-full" label="Confirm New Password">
+                        <UInput
+                            v-model="password"
+                            placeholder="Confirm new password"
+                        />
+                    </UFormGroup>
+                </div>
+                <div class="flex justify-end">
+                    <UButton label="Save Changes" />
+                </div>
+            </div>
         </UPageBody>
     </div>
 </template>

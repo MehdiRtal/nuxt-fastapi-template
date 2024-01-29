@@ -87,7 +87,7 @@
                 <template #header>
                     <p class="font-semibold">Add Item</p>
                 </template>
-                <div class="flex flex-col space-y-4">
+                <div class="flex flex-col gap-4">
                     <UFormGroup label="Name">
                         <UInput placeholder="Enter name" />
                     </UFormGroup>
@@ -123,7 +123,7 @@
                 <template #header>
                     <p class="font-semibold">Delete Item</p>
                 </template>
-                <div class="flex flex-col space-y-4">
+                <div class="flex flex-col gap-4">
                     <p>Are you sure you want to delete this item?</p>
                     <div class="flex justify-end gap-1.5">
                         <UButton
@@ -157,7 +157,7 @@
                 <template #header>
                     <p class="font-semibold">Edit Item</p>
                 </template>
-                <div class="flex flex-col space-y-4">
+                <div class="flex flex-col gap-4">
                     <UFormGroup label="Name">
                         <UInput placeholder="Enter name" />
                     </UFormGroup>
