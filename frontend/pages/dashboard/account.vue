@@ -2,14 +2,23 @@
     <div>
         <UPageHeader title="Account">
             <template #headline>
-                <p class="text-gray-500 dark:text-gray-400">Dashboard</p>
-                <p
-                    class="i-heroicons-chevron-right-20-solid w-5 h-5 text-gray-500 dark:text-gray-400"
-                ></p>
-                <p>Account</p>
+                <UBreadcrumb :links="breadcrumbLinks" />
             </template>
         </UPageHeader>
-        <UPageBody></UPageBody>
+        <UPageBody>
+            <div class="flex flex-col gap-2">
+                <UFormGroup label="Full Name">
+                    <UInput v-model="fullName" placeholder="Enter name" />
+                </UFormGroup>
+                <UFormGroup label="Email">
+                    <UInput v-model="email" placeholder="Enter email" />
+                </UFormGroup>
+                <UFormGroup label="Password">
+                    <UInput v-model="password" placeholder="Enter password" />
+                </UFormGroup>
+            </div>
+            <UButton label="Update Profile" />
+        </UPageBody>
     </div>
 </template>
 
@@ -17,4 +26,17 @@
     definePageMeta({
         layout: "custom",
     });
+
+    const breadcrumbLinks = [
+        {
+            label: "Dashboard",
+        },
+        {
+            label: "Account",
+        },
+    ];
+
+    const fullName = ref("Mehdi Rtal");
+    const email = ref("mehdirtal7@pm.me");
+    const password = ref("");
 </script>

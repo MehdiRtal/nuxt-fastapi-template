@@ -2,11 +2,7 @@
     <div>
         <UPageHeader title="Home">
             <template #headline>
-                <p class="text-gray-500 dark:text-gray-400">Dashboard</p>
-                <p
-                    class="i-heroicons-chevron-right-20-solid w-5 h-5 text-gray-500 dark:text-gray-400"
-                ></p>
-                <p>Home</p>
+                <UBreadcrumb :links="breadcrumbLinks" />
             </template>
         </UPageHeader>
         <UPageBody>
@@ -57,6 +53,15 @@
                 "Nuxt UI comes with a set of Vue composables to easily handle shortcuts.",
             icon: "i-heroicons-computer-desktop",
             class: "col-span-6 row-span-2",
+        },
+    ];
+
+    const breadcrumbLinks = [
+        {
+            label: "Dashboard",
+        },
+        {
+            label: "Home",
         },
     ];
 </script>
