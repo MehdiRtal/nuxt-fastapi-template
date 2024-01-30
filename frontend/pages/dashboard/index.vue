@@ -25,6 +25,10 @@
         layout: "custom",
     });
 
+    useHead({
+        title: "Home",
+    });
+
     const modules = [
         {
             title: "Color Palette",

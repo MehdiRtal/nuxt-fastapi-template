@@ -80,6 +80,9 @@
                         padding: 'px-4 py-3',
                     },
                     body: {
+                        padding: 'px-4 pt-4 pb-6',
+                    },
+                    footer: {
                         padding: 'px-4 py-3',
                     },
                 }"
@@ -91,6 +94,8 @@
                     <UFormGroup label="Name">
                         <UInput placeholder="Enter name" />
                     </UFormGroup>
+                </div>
+                <template #footer>
                     <div class="flex justify-end gap-1.5">
                         <UButton
                             label="Cancel"
@@ -99,7 +104,7 @@
                         />
                         <UButton label="Continue" />
                     </div>
-                </div>
+                </template>
             </UCard>
         </UModal>
         <UModal
@@ -116,6 +121,9 @@
                         padding: 'px-4 py-3',
                     },
                     body: {
+                        padding: 'px-4 pt-4 pb-6',
+                    },
+                    footer: {
                         padding: 'px-4 py-3',
                     },
                 }"
@@ -123,8 +131,8 @@
                 <template #header>
                     <p class="font-semibold">Delete Item</p>
                 </template>
-                <div class="flex flex-col gap-4">
-                    <p>Are you sure you want to delete this item?</p>
+                <p>Are you sure you want to delete this item?</p>
+                <template #footer>
                     <div class="flex justify-end gap-1.5">
                         <UButton
                             label="Cancel"
@@ -133,7 +141,7 @@
                         />
                         <UButton label="Continue" />
                     </div>
-                </div>
+                </template>
             </UCard>
         </UModal>
         <UModal
@@ -150,6 +158,9 @@
                         padding: 'px-4 py-3',
                     },
                     body: {
+                        padding: 'px-4 pt-4 pb-6',
+                    },
+                    footer: {
                         padding: 'px-4 py-3',
                     },
                 }"
@@ -161,6 +172,8 @@
                     <UFormGroup label="Name">
                         <UInput placeholder="Enter name" />
                     </UFormGroup>
+                </div>
+                <template #footer>
                     <div class="flex justify-end gap-1.5">
                         <UButton
                             label="Cancel"
@@ -169,7 +182,7 @@
                         />
                         <UButton label="Continue" />
                     </div>
-                </div>
+                </template>
             </UCard>
         </UModal>
     </div>
@@ -178,6 +191,10 @@
 <script setup lang="ts">
     definePageMeta({
         layout: "custom",
+    });
+
+    useHead({
+        title: "Items",
     });
 
     const columns = [

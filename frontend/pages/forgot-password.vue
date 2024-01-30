@@ -21,6 +21,10 @@
         layout: "auth",
     });
 
+    useHead({
+        title: "Forgot Password",
+    });
+
     const fields = [
         {
             name: "email",

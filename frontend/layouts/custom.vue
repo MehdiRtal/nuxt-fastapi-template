@@ -8,17 +8,7 @@
                         <UButton icon="i-heroicons-bell" color="gray" />
                     </UChip>
                     <template #panel>
-                        <UCard
-                            :ui="{
-                                strategy: 'override',
-                                header: {
-                                    padding: 'px-4 py-3',
-                                },
-                                body: {
-                                    padding: 'px-4 py-3',
-                                },
-                            }"
-                        >
+                        <UCard>
                             <template #header>
                                 <p class="font-semibold">Notifications</p>
                             </template>
@@ -61,14 +51,15 @@
                     </template>
                 </UDropdown>
             </template>
+
             <template #panel>
                 <UNavigationTree :links="topLinks" />
                 <UDivider class="my-6" />
                 <UNavigationTree :links="bottomLinks" />
             </template>
         </UHeader>
-        <UMain>
-            <UContainer>
+        <UContainer>
+            <UMain>
                 <UPage>
                     <template #left>
                         <UAside>
@@ -83,8 +74,8 @@
                     </template>
                     <slot />
                 </UPage>
-            </UContainer>
-        </UMain>
+            </UMain>
+        </UContainer>
     </div>
 </template>
 
@@ -126,18 +117,9 @@
         ],
         [
             {
-                label: "Account",
-                icon: "i-heroicons-user-circle",
-                to: "/dashboard/account",
-            },
-        ],
-        [
-            {
                 label: "Logout",
                 icon: "i-heroicons-arrow-left-on-rectangle",
             },
         ],
     ];
-
-    const isMenuOpen = ref(false);
 </script>

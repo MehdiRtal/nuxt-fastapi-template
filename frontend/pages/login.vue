@@ -33,6 +33,10 @@
         layout: "auth",
     });
 
+    useHead({
+        title: "Login",
+    });
+
     const fields = [
         {
             name: "email",

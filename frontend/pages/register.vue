@@ -32,6 +32,10 @@
         layout: "auth",
     });
 
+    useHead({
+        title: "Register",
+    });
+
     const fields = [
         {
             name: "fullName",
