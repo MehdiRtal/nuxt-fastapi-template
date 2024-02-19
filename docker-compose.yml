@@ -1,34 +1,14 @@
 version: "3.9"
 
+env_file:
+  - /.api/prod.env
+
 services:
   tunnel:
     image: cloudflare/cloudflared:latest
     environment:
-      - TUNNEL_TOKEN=${TUNNEL_TOKEN}
+      - TUNNEL_TOKEN=${TUNNEL_TOKEN?error}
     command: tunnel run
-
-  db:
-    image: postgres:alpine
-    environment:
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-
-  pgadmin:
-    image: dpage/pgadmin4:latest
-    environment:
-      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_EMAIL}
-      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASSWORD}
-    depends_on:
-      - db
-
-  redis:
-    image: redis/redis-stack:latest
-
-  rq:
-    image: python:3.11-alpine
-    env_file: ./api/prod.env
-    command: sh -c "pip install rq && rq worker-pool -u ${RQ_URL} -n 8"
-    depends_on:
-      - redis
 
   prometheus:
     image: prom/prometheus:latest
@@ -38,17 +18,43 @@ services:
   grafana:
     image: grafana/grafana:latest
     environment:
-      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD?error}
       - GF_INSTALL_PLUGINS=redis-datasource
+
+  db:
+    image: postgres:alpine
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD?error}
+
+  redis:
+    image: redis/redis-stack:latest
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_EMAIL?error}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASSWORD?error}
+    depends_on:
+      - db
+
+  rq:
+    image: ${COMPOSE_PROJECT_NAME}-api:latest
+    environment:
+      - ENVIRONEMENT=PROD
+    command: rq worker-pool -u ${RQ_URL?error} -n 8
+    depends_on:
+      - redis
+      - api
 
   api:
     build: ./api
-    command: gunicorn main:app --workers 8 --worker-class uvicorn.workers.UvicornWorker --bind :8080
+    image: ${COMPOSE_PROJECT_NAME}-api:latest
     environment:
       - ENVIRONEMENT=PROD
+    command: gunicorn main:app --workers 8 --worker-class uvicorn.workers.UvicornWorker --bind :8080
     depends_on:
       - db
-      - rq
+      - redis
 
   frontend:
     build: ./frontend

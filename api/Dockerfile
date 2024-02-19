@@ -1,4 +1,4 @@
-FROM python:3.11-alpine
+FROM python:3.12
 
 RUN pip install poetry
 
@@ -11,5 +11,3 @@ COPY pyproject.toml ./
 RUN poetry install --no-root --no-interaction --no-cache
 
 COPY ./ ./
-
-EXPOSE 8000

@@ -8,7 +8,17 @@
                         <UButton icon="i-heroicons-bell" color="gray" />
                     </UChip>
                     <template #panel>
-                        <UCard>
+                        <UCard
+                            :ui="{
+                                strategy: 'override',
+                                header: {
+                                    padding: 'px-4 py-3',
+                                },
+                                body: {
+                                    padding: 'px-4 pt-4 pb-6',
+                                },
+                            }"
+                        >
                             <template #header>
                                 <p class="font-semibold">Notifications</p>
                             </template>

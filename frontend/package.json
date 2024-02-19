@@ -9,10 +9,10 @@
     },
     "devDependencies": {
         "@artmizu/nuxt-prometheus": "^2.2.1",
-        "@iconify/json": "^2.2.174",
+        "@iconify/json": "^2.2.184",
         "@nuxt/devtools": "^1.0.8",
         "@nuxt/ui": "^2.13.0",
-        "@nuxt/ui-pro": "^0.7.3",
+        "@nuxt/ui-pro": "^0.7.5",
         "@nuxtjs/eslint-config-typescript": "^12.1.0",
         "@nuxtjs/eslint-module": "^4.1.0",
         "@nuxtjs/turnstile": "^0.6.3",
@@ -21,12 +21,12 @@
         "@vueuse/nuxt": "^10.7.2",
         "eslint": "^8.56.0",
         "eslint-config-prettier": "^9.1.0",
-        "eslint-plugin-vue": "^9.20.1",
-        "nuxt": "^3.9.3",
-        "nuxt-api-party": "^1.0.0",
+        "eslint-plugin-vue": "^9.21.1",
+        "nuxt": "^3.10.2",
+        "nuxt-api-party": "^1.0.1",
         "nuxt-lodash": "^2.5.3",
-        "nuxt-security": "^1.0.1",
-        "prettier": "^3.2.4",
+        "nuxt-security": "^1.1.2",
+        "prettier": "^3.2.5",
         "vue-eslint-parser": "^9.4.2"
     }
 }
