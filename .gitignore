@@ -4,5 +4,3 @@ node_modules
 .output
 .ruff_cache
 __pycache__
-package-lock.json
-poetry.lock
