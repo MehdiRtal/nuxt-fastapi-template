@@ -12,6 +12,9 @@ jobs:
             - name: Set up Just
               uses: taiki-e/install-action@just
 
+            - name: Install Poetry
+              run: pipx install poetry
+
             - name: Set up Python
               uses: actions/setup-python@v5
               with:
@@ -23,9 +26,6 @@ jobs:
               with:
                   node-version: "lts/*"
                   cache: "npm"
-
-            - name: Install Poetry
-              run: pip install poetry
 
             - name: Install Python dependencies
               env:
