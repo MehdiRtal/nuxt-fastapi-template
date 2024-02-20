@@ -16,13 +16,16 @@ jobs:
               uses: actions/setup-python@v5
               with:
                   python-version: "3.12"
-                  cache: "poetry"
+                  cache: "pip, poetry"
 
             - name: Set up Node.js
               uses: actions/setup-node@v4
               with:
                   node-version: "lts/*"
                   cache: "npm"
+
+            - name: Install Poetry
+              run: pip install poetry
 
             - name: Install Python dependencies
               env:
