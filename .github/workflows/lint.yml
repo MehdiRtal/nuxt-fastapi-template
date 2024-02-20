@@ -26,6 +26,7 @@ jobs:
               with:
                   node-version: "lts/*"
                   cache: "npm"
+                  cache-dependency-path: "/frontend"
 
             - name: Install Python dependencies
               env:
