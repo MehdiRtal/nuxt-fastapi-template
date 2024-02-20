@@ -6,7 +6,7 @@ from httpx_oauth.clients.google import GoogleOAuth2
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 
-from api.config import settings
+from src.config import settings
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")

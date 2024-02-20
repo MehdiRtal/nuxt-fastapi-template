@@ -2,11 +2,11 @@ from fastapi import APIRouter, Depends
 from sqlmodel import select
 from sqlalchemy.exc import IntegrityError
 
-from api.db import DBSession
-from api.auth.dependencies import require_superuser
+from src.db import DBSession
+from src.auth.dependencies import require_superuser
 
-from api.items.models import Item, ItemCreate, ItemRead, ItemUpdate
-from api.items.exceptions import ItemNotFound, ItemAlreadyExists
+from src.items.models import Item, ItemCreate, ItemRead, ItemUpdate
+from src.items.exceptions import ItemNotFound, ItemAlreadyExists
 
 
 router = APIRouter(tags=["Items"], prefix="/items")

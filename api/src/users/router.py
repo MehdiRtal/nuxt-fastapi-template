@@ -2,19 +2,19 @@ from fastapi import APIRouter, Depends, Request
 from sqlmodel import select
 from sqlalchemy.exc import IntegrityError
 
-from api.db import DBSession
-from api.auth.utils import pwd_context, google_oauth_client
-from api.auth.dependencies import CurrentUser
-from api.items.models import Item, ItemCreate, ItemRead, ItemUpdate
-from api.items.exceptions import ItemNotFound
-from api.auth.dependencies import require_superuser
-from api.auth.exceptions import InvalidCredentials
-from api.models import DefaultResponse
+from src.db import DBSession
+from src.auth.utils import pwd_context, google_oauth_client
+from src.auth.dependencies import CurrentUser
+from src.items.models import Item, ItemCreate, ItemRead, ItemUpdate
+from src.items.exceptions import ItemNotFound
+from src.auth.dependencies import require_superuser
+from src.auth.exceptions import InvalidCredentials
+from src.models import DefaultResponse
 
-from api.users.models import User, UserCreate, UserRead, UserUpdate
-from api.users.dependencies import valid_sellix_signature
-from api.users.exceptions import UserNotFound, UserAlreadyExists, UserOAuthNotLinked
-from api.users.utils import create_payment
+from src.users.models import User, UserCreate, UserRead, UserUpdate
+from src.users.dependencies import valid_sellix_signature
+from src.users.exceptions import UserNotFound, UserAlreadyExists, UserOAuthNotLinked
+from src.users.utils import create_payment
 
 
 router = APIRouter(tags=["Users"], prefix="/users")

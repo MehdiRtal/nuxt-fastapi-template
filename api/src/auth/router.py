@@ -7,16 +7,16 @@ from fastapi_limiter.depends import RateLimiter
 from typing import Annotated
 
 
-from api.models import DefaultResponse
-from api.users.models import User, UserCreate
-from api.users.exceptions import UserAlreadyExists, UserNotVerified, UserNotActive, UserNotFound, UserAlreadyVerified, UserOAuthNotLinked
-from api.db import DBSession
-from api.dependencies import valid_turnstile_token
+from src.models import DefaultResponse
+from src.users.models import User, UserCreate
+from src.users.exceptions import UserAlreadyExists, UserNotVerified, UserNotActive, UserNotFound, UserAlreadyVerified, UserOAuthNotLinked
+from src.db import DBSession
+from src.dependencies import valid_turnstile_token
 
-from api.auth.utils import generate_access_token, generate_verify_token, pwd_context, google_oauth_client, send_email
-from api.auth.models import AccessToken
-from api.auth.dependencies import VerifyUser, blacklist_access_token, GoogleOAuthCallback
-from api.auth.exceptions import InvalidCredentials
+from src.auth.utils import generate_access_token, generate_verify_token, pwd_context, google_oauth_client, send_email
+from src.auth.models import AccessToken
+from src.auth.dependencies import VerifyUser, blacklist_access_token, GoogleOAuthCallback
+from src.auth.exceptions import InvalidCredentials
 
 
 router = APIRouter(tags=["Authentication"], prefix="/auth")

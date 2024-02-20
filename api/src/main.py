@@ -5,16 +5,16 @@ from fastapi.middleware.gzip import GZipMiddleware
 from fastapi_limiter.depends import RateLimiter
 from contextlib import asynccontextmanager
 
-from api.prometheus import init_prometheus
-from api.db import init_db
-from api.cache import init_cache
-from api.limiter import init_limiter
-from api.dependencies import valid_signature
-from api.utils import DefaultORJSONResponse, ORJSONResponse
-from api.config import settings
-import api.auth
-import api.users
-import api.items
+from src.prometheus import init_prometheus
+from src.db import init_db
+from src.cache import init_cache
+from src.limiter import init_limiter
+from src.dependencies import valid_signature
+from src.utils import DefaultORJSONResponse, ORJSONResponse
+from src.config import settings
+import src.auth
+import src.users
+import src.items
 
 
 @asynccontextmanager
@@ -47,9 +47,9 @@ def http_exception_handler(request: Request, exception: HTTPException):
 def validation_exception_handler(request: Request, exception: RequestValidationError):
     return ORJSONResponse({"status": "error", "message": exception.errors()}, status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)
 
-app.include_router(api.auth.router)
-app.include_router(api.users.router)
-app.include_router(api.items.router)
+app.include_router(src.auth.router)
+app.include_router(src.users.router)
+app.include_router(src.items.router)
 
 if __name__ == "__main__":
     import uvicorn

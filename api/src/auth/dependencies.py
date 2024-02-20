@@ -4,14 +4,14 @@ from jose import jwt, JWTError
 from typing import Annotated
 from httpx_oauth.integrations.fastapi import OAuth2AuthorizeCallback
 
-from api.config import settings
-from api.users.models import User
-from api.users.exceptions import UserNotActive
-from api.db import DBSession
-from api.redis_ import RedisSession
+from src.config import settings
+from src.users.models import User
+from src.users.exceptions import UserNotActive
+from src.db import DBSession
+from src.redis_ import RedisSession
 
-from api.auth.utils import oauth2_scheme, google_oauth_client
-from api.auth.exceptions import InvalidAccessToken, InvalidVerifyToken, PermissionRequired
+from src.auth.utils import oauth2_scheme, google_oauth_client
+from src.auth.exceptions import InvalidAccessToken, InvalidVerifyToken, PermissionRequired
 
 
 AccessToken = Annotated[str, Depends(oauth2_scheme)]

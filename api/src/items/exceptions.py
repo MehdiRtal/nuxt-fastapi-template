@@ -1,4 +1,4 @@
-from api.exceptions import BadRequest
+from src.exceptions import BadRequest
 
 
 class ItemNotFound(BadRequest):

@@ -6,7 +6,7 @@ import hashlib
 from typing import Annotated
 import httpx
 
-from api.config import settings
+from src.config import settings
 
 
 async def valid_signature(request: Request, x_signature: Annotated[str, Header()] = None):

@@ -1,6 +1,6 @@
 from sellix import Sellix
 
-from api.config import settings
+from src.config import settings
 
 
 def create_payment(value: float, email: str, custom_fields: dict, callback_url: str, **kwargs):

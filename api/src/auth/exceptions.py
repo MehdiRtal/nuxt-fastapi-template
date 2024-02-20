@@ -1,4 +1,4 @@
-from api.exceptions import Unauthorized, Forbidden
+from src.exceptions import Unauthorized, Forbidden
 
 
 class InvalidAccessToken(Unauthorized):

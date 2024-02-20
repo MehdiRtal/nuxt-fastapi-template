@@ -1,7 +1,7 @@
 from redis.client import Redis
 from rq import Queue
 
-from api.config import settings
+from src.config import settings
 
 
 connection = Redis.from_url(str(settings.RQ_URL))

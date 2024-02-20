@@ -3,6 +3,7 @@ name = "api"
 version = "0.0.1"
 description = ""
 authors = ["Mehdi Rtal <mehdirtal7@pm.me>"]
+packages = [{include = "src", from = "."}]
 
 [tool.poetry.dependencies]
 python = "^3.11"
