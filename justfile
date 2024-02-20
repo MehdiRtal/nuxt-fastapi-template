@@ -28,8 +28,8 @@ downgrade *args:
     docker compose exec api alembic downgrade {{args}}
 
 lint:
-    -eslint ./frontend
-    -ruff check ./api/src
+    eslint ./frontend
+    ruff check ./api/src
 
 test:
-    -pytest ./api
+    pytest ./api
