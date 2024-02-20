@@ -11,5 +11,3 @@ COPY ./ ./
 RUN npx nuxi build
 
 RUN npm prune --production
-
-EXPOSE 3000
