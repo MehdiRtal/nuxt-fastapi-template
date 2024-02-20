@@ -4,7 +4,7 @@ on:
     workflow_dispatch:
 
 jobs:
-    test:
+    lint:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v4
@@ -15,8 +15,8 @@ jobs:
             - name: Set up Python
               uses: actions/setup-python@v5
               with:
-                  python-version: "3.x"
-                  cache: "pip"
+                  python-version: "3.12"
+                  cache: "poetry"
 
             - name: Set up Node.js
               uses: actions/setup-node@v4
@@ -24,8 +24,19 @@ jobs:
                   node-version: "lts/*"
                   cache: "npm"
 
-            - name: Install dependencies
-              run: pip install ruff && npm install -g eslint
+            - name: Install Python dependencies
+              env:
+                  POETRY_VIRTUALENVS_CREATE: 0
+              run: cd ./api && poetry install --no-interaction --no-root
+
+            - name: Install Node.js dependencies
+              run: cd ./frontend && npm install
+
+            - name: Install Ruff
+              run: pip install Ruff
+
+            - name: Install ESLint
+              run: npm install -g eslint
 
             - name: Lint
               run: just lint
