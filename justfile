@@ -32,4 +32,4 @@ lint:
     ruff check ./api/src
 
 test:
-    pytest ./api
+    docker compose exec api pytest

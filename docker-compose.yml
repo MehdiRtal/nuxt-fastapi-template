@@ -51,7 +51,7 @@ services:
     image: ${COMPOSE_PROJECT_NAME}-api:latest
     environment:
       - ENVIRONEMENT=PROD
-    command: gunicorn main:app --workers 8 --worker-class uvicorn.workers.UvicornWorker --bind :8080
+    command: gunicorn src.main:app --workers 8 --worker-class uvicorn.workers.UvicornWorker --bind :8080
     depends_on:
       - db
       - redis
