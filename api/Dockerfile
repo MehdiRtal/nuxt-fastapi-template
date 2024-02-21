@@ -8,6 +8,6 @@ WORKDIR /app
 
 COPY ./pyproject.toml ./
 
-RUN poetry install --no-interaction --no-cache
+RUN poetry install --no-root --no-interaction --no-cache
 
 COPY ./ ./

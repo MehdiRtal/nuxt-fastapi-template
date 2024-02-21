@@ -16,7 +16,7 @@ jobs:
               run: pip install poetry
 
             - name: Set up Python
-              id: python
+              id: setup-python
               uses: actions/setup-python@v5
               with:
                   python-version: "3.12"
@@ -24,7 +24,6 @@ jobs:
                   cache-dependency-path: "api/poetry.lock"
 
             - name: Set up Node.js
-              id: node
               uses: actions/setup-node@v4
               with:
                   node-version: "lts/*"
@@ -32,17 +31,16 @@ jobs:
                   cache-dependency-path: "frontend/package-lock.json"
 
             - name: Install Python dependencies
-              if: steps.python.outputs.cache-hit != 'true'
+              if: steps.setup-python.outputs.cache-hit != 'true'
               env:
                   POETRY_VIRTUALENVS_CREATE: 0
-              run: cd ./api && poetry install --no-interaction --no-root
+              run: cd ./api && poetry install --no-root --no-interaction --no-cache
 
             - name: Install Node.js dependencies
-              if: steps.node.outputs.cache-hit != 'true'
-              run: cd ./frontend && npm install
+              run: cd ./frontend && npm ci
 
             - name: Install Ruff
-              run: pip install Ruff
+              run: pip install ruff
 
             - name: Install ESLint
               run: npm install -g eslint

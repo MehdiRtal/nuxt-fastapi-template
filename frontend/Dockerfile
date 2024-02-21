@@ -2,9 +2,9 @@ FROM node:lts-alpine
 
 WORKDIR /app
 
-COPY package.json ./
+COPY ./package.json ./ ./package-lock.json ./
 
-RUN npm install --package-lock && npm cache clean --force
+RUN npm ci
 
 COPY ./ ./
 
