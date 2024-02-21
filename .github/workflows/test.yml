@@ -39,8 +39,8 @@ jobs:
             - name: Install Node.js dependencies
               run: cd ./frontend && npm ci
 
-            - name: Install Pytest
-              run: pip install pytest
+            - name: Install Pytest & async-asgi-testclient
+              run: pip install pytest async-asgi-testclient
 
             - name: Test
               run: just test
