@@ -1,0 +1,20 @@
+name: Production CI
+
+on:
+    workflow_dispatch:
+
+jobs:
+    test-and-deploy:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Set up Just
+              uses: taiki-e/install-action@just
+
+            - name: Start containers
+              run: just up
+
+            - name: Test code
+              run: just test

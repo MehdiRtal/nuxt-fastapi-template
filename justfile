@@ -1,22 +1,13 @@
-set windows-shell := ["powershell.exe", "-c"]
+set windows-shell := ["powershell", "-c"]
 
 default:
     just --list
 
-up:
-    docker compose up -d
+up *args:
+    docker compose --env-file ./.env --env-file ./api/prod.env up -d {{args}}
 
-build:
-    docker compose build
-
-kill:
-    docker compose kill
-
-ps:
-    docker compose ps
-
-logs *args:
-    docker-compose logs {{args}} -f
+build *args:
+    docker compose --env-file ./.env --env-file ./api/prod.env build {{args}}
 
 commit *args:
     docker compose exec api alembic revision --autogenerate -m "{{args}}"
@@ -27,9 +18,13 @@ upgrade:
 downgrade *args:
     docker compose exec api alembic downgrade {{args}}
 
+test:
+    docker compose exec api pytest
+
 lint:
     eslint ./frontend
     ruff check ./api/src
 
-test:
-    docker compose exec api pytest
+format:
+    prettier ./frontend
+    ruff format ./api/src

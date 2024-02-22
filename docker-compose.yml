@@ -1,8 +1,5 @@
 version: "3.9"
 
-env_file:
-  - /.api/prod.env
-
 services:
   tunnel:
     image: cloudflare/cloudflared:latest
@@ -55,9 +52,8 @@ services:
     depends_on:
       - db
       - redis
-
-  frontend:
-    build: ./frontend
-    command: node .output/server/index.mjs
-    depends_on:
-      - api
+  # frontend:
+  #   build: ./frontend
+  #   command: node .output/server/index.mjs
+  #   depends_on:
+  #     - api
