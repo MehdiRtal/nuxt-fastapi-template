@@ -1,10 +1,8 @@
-name: Production CI
-
 on:
     workflow_dispatch:
 
 jobs:
-    test-and-deploy:
+    test:
         runs-on: ubuntu-latest
         steps:
             - name: Checkout code
@@ -14,7 +12,7 @@ jobs:
               id: cache-docker
               uses: ScribeMD/docker-cache@0.3.7
               with:
-                key: docker-${{ runner.os }}-${{ hashFiles('**/docker-compose.yml') }}
+                key: docker-${{ runner.os }}-${{ hashFiles('docker-compose.yml') }}
 
             - name: Set up Just
               uses: taiki-e/install-action@just
