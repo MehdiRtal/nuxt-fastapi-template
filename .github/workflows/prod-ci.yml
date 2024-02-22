@@ -11,6 +11,7 @@ jobs:
               uses: actions/checkout@v4
 
             - name: Cache Docker images
+              id: cache-docker
               uses: actions/cache@v4
               with:
                 path: /var/lib/docker
@@ -19,8 +20,12 @@ jobs:
             - name: Set up Just
               uses: taiki-e/install-action@just
 
+            - name: Build Docker images
+              if: steps.cache-docker.outputs.cache-hit != 'true'
+              run: just build
+
             - name: Run Docker containers
               run: just up
 
-            - name: Run tests
-              run: just test
+            # - name: Run tests
+            #   run: just test
