@@ -10,11 +10,17 @@ jobs:
             - name: Checkout code
               uses: actions/checkout@v4
 
+            - name: Cache Docker images
+              uses: actions/cache@v4
+              with:
+                path: /var/lib/docker
+                key: ${{ runner.os }}-docker-${{ hashFiles('**/docker-compose.yml') }}
+
             - name: Set up Just
               uses: taiki-e/install-action@just
 
-            - name: Start containers
+            - name: Run Docker containers
               run: just up
 
-            - name: Test code
+            - name: Run tests
               run: just test
