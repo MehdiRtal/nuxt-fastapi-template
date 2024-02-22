@@ -26,5 +26,5 @@ jobs:
             - name: Run Docker containers
               run: just up
 
-            # - name: Run tests
-            #   run: just test
+            - name: Run tests
+              run: just test
