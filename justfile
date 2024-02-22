@@ -9,17 +9,20 @@ up *args:
 build *args:
     docker compose --env-file ./.env --env-file ./api/prod.env build {{args}}
 
+exec *args:
+    docker compose --env-file ./.env --env-file ./api/prod.env exec {{args}}
+
 commit *args:
-    docker compose exec api alembic revision --autogenerate -m "{{args}}"
+    just exec api alembic revision --autogenerate -m "{{args}}"
 
 upgrade:
-    docker compose exec api alembic upgrade head
+    just exec api alembic upgrade head
 
 downgrade *args:
-    docker compose exec api alembic downgrade {{args}}
+    just exec api alembic downgrade {{args}}
 
 test:
-    docker compose exec api pytest
+    just exec api pytest
 
 lint:
     eslint ./frontend
