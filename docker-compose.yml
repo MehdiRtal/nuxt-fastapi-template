@@ -22,9 +22,13 @@ services:
     image: postgres:alpine
     environment:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD?error}
+    volumes:
+      - ./backups:/backups
 
   redis:
-    image: redis/redis-stack:latest
+    image: redis:alpine
+    volumes:
+      - ./backups:/backups
 
   pgadmin:
     image: dpage/pgadmin4:latest
@@ -33,6 +37,11 @@ services:
       - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASSWORD?error}
     depends_on:
       - db
+
+  redisinsight:
+    image: redislabs/redisinsight:latest
+    depends_on:
+      - redis
 
   rq:
     image: ${COMPOSE_PROJECT_NAME}-api:latest
@@ -52,8 +61,9 @@ services:
     depends_on:
       - db
       - redis
-  # frontend:
-  #   build: ./frontend
-  #   command: node .output/server/index.mjs
-  #   depends_on:
-  #     - api
+
+  frontend:
+    build: ./frontend
+    command: node .output/server/index.mjs
+    depends_on:
+      - api
