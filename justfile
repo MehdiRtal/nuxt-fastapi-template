@@ -4,19 +4,19 @@ default:
     just --list
 
 up *args:
-    docker compose --env-file ./.env --env-file ./api/prod.env up -d {{args}}
+    docker compose --env-file ./.env --env-file ./api/.prod.env up -d {{args}}
 
 build *args:
-    docker compose --env-file ./.env --env-file ./api/prod.env build {{args}}
+    docker compose --env-file ./.env --env-file ./api/.prod.env build {{args}}
 
 stop *args:
-    docker compose --env-file ./.env --env-file ./api/prod.env stop {{args}}
+    docker compose --env-file ./.env --env-file ./api/.prod.env stop {{args}}
 
 start *args:
-    docker compose --env-file ./.env --env-file ./api/prod.env start {{args}}
+    docker compose --env-file ./.env --env-file ./api/.prod.env start {{args}}
 
 exec *args:
-    docker compose --env-file ./.env --env-file ./api/prod.env exec {{args}}
+    docker compose --env-file ./.env --env-file ./api/.prod.env exec {{args}}
 
 commit *args:
     just exec api alembic revision --autogenerate -m "{{args}}"
