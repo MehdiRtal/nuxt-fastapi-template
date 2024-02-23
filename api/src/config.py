@@ -54,14 +54,14 @@ environement = Environment(os.getenv("ENVIRONEMENT", Environment.DEV))
 if environement.is_dev:
     settings = Settings(
         _env_file=(
-            os.path.join(pathlib.Path(__file__).parent.parent, ".base.env"),
+            os.path.join(pathlib.Path(__file__).parent.parent, ".env"),
             os.path.join(pathlib.Path(__file__).parent.parent, ".dev.env")
         )
     )
 elif environement.is_prod:
     settings = Settings(
         _env_file=(
-            os.path.join(pathlib.Path(__file__).parent.parent, ".base.env"),
+            os.path.join(pathlib.Path(__file__).parent.parent, ".env"),
             os.path.join(pathlib.Path(__file__).parent.parent, ".prod.env")
         )
     )

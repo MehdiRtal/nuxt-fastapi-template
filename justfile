@@ -6,26 +6,29 @@ default:
 up *args:
     docker compose --env-file ./.env --env-file ./api/.prod.env up -d {{args}}
 
+down *args:
+    docker compose --env-file ./.env --env-file ./api/.prod.env down {{args}}
+
 build *args:
     docker compose --env-file ./.env --env-file ./api/.prod.env build {{args}}
-
-stop *args:
-    docker compose --env-file ./.env --env-file ./api/.prod.env stop {{args}}
 
 start *args:
     docker compose --env-file ./.env --env-file ./api/.prod.env start {{args}}
 
+stop *args:
+    docker compose --env-file ./.env --env-file ./api/.prod.env stop {{args}}
+
 exec *args:
     docker compose --env-file ./.env --env-file ./api/.prod.env exec {{args}}
 
-commit *args:
-    just exec api alembic revision --autogenerate -m "{{args}}"
+commit message:
+    just exec api alembic revision --autogenerate -m "{{message}}"
 
-upgrade *args:
-    just exec api alembic upgrade {{args}}
+upgrade id:
+    just exec api alembic upgrade {{id}}
 
-downgrade *args:
-    just exec api alembic downgrade {{args}}
+downgrade id:
+    just exec api alembic downgrade {{id}}
 
 backup:
     just exec db mkdir -p /backups
