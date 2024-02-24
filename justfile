@@ -1,5 +1,7 @@
 set windows-shell := ["powershell", "-c"]
 
+timestamp := if os_family() == "windows" {`[DateTimeOffset]::UtcNow.ToUnixTimeSeconds()`} else {`date +%s`}
+
 default:
     just --list
 
@@ -21,7 +23,7 @@ stop *args:
 exec *args:
     docker compose --env-file ./.env --env-file ./api/.prod.env exec {{args}}
 
-commit message:
+revision message:
     just exec api alembic revision --autogenerate -m "{{message}}"
 
 upgrade id:
@@ -31,15 +33,12 @@ downgrade id:
     just exec api alembic downgrade {{id}}
 
 backup:
-    just exec db mkdir -p /backups
-    just exec db pg_dump -Ft -U postgres -f /backups/dump.tar
-    just exec redis redis-cli SAVE
-    just exec redis mkdir -p /backups
-    just exec redis cp /data/dump.rdb /backups/dump.rdb
+    just exec db /scripts/backup.sh {{timestamp}}
+    just exec redis /scripts/backup.sh {{timestamp}}
 
-restore:
-    just exec db pg_restore /backups/dump.tar -Ft -U postgres -d postgres
-    just exec redis cp /backups/dump.rdb /data/dump.rdb
+restore id:
+    just exec db /scripts/restore.sh {{id}}
+    just exec redis /scripts/restore.sh {{id}}
     just stop redis
     just start redis
 

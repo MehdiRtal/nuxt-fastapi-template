@@ -23,12 +23,14 @@ services:
     environment:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD?error}
     volumes:
-      - ./backups:/backups
+      - ./backups/db:/backups
+      - ./scripts/db:/scripts
 
   redis:
     image: redis:alpine
     volumes:
-      - ./backups:/backups
+      - ./backups/redis:/backups
+      - ./scripts/redis:/scripts
 
   pgadmin:
     image: dpage/pgadmin4:latest
