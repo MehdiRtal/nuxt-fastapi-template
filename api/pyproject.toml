@@ -7,7 +7,7 @@ packages = [{include = "src", from = "."}]
 
 [tool.poetry.dependencies]
 python = "^3.11"
-fastapi = "^0.109.0"
+fastapi = "^0.110.0"
 sqlmodel = "^0.0.14"
 gunicorn = "^21.2.0"
 uvicorn = "^0.26.0"
