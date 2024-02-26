@@ -9,7 +9,7 @@
     },
     "devDependencies": {
         "@artmizu/nuxt-prometheus": "^2.2.1",
-        "@iconify/json": "^2.2.186",
+        "@iconify/json": "^2.2.187",
         "@nuxt/devtools": "^1.0.8",
         "@nuxt/ui": "^2.14.1",
         "@nuxt/ui-pro": "^0.7.5",
