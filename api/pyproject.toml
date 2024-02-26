@@ -16,7 +16,7 @@ alembic = "^1.12.1"
 fastapi-restful = "^0.5.0"
 fastapi-cache2 = "^0.2.1"
 redis = {extras = ["hiredis"], version = "^5.0.1"}
-rq = "^1.15.1"
+rq = "^1.16.0"
 python-jose = {extras = ["cryptography"], version = "^3.3.0"}
 passlib = {extras = ["bcrypt"], version = "^1.7.4"}
 sendgrid = "^6.10.0"
