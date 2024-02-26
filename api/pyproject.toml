@@ -20,7 +20,7 @@ rq = "^1.15.1"
 python-jose = {extras = ["cryptography"], version = "^3.3.0"}
 passlib = {extras = ["bcrypt"], version = "^1.7.4"}
 sendgrid = "^6.10.0"
-orjson = "^3.9.10"
+orjson = "^3.9.15"
 email-validator = "^2.1.0.post1"
 python-multipart = "^0.0.7"
 python-dotenv = "^1.0.0"
