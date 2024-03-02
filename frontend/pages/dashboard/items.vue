@@ -1,194 +1,77 @@
 <template>
-    <div>
-        <UPageHeader title="Items">
-            <template #headline>
-                <UBreadcrumb :links="breadcrumbLinks" />
-            </template>
-        </UPageHeader>
-        <UPageBody>
-            <div
-                class="border rounded-md bg-white dark:border-gray-800 dark:bg-gray-900"
-            >
-                <div
-                    class="flex justify-between px-7 py-3.5 border-b dark:border-gray-700"
-                >
+    <UDashboardPage>
+        <UDashboardPanel grow>
+            <UDashboardNavbar title="Items" :badge="items.length">
+                <template #right>
                     <UInput
+                        ref="input"
                         v-model="q"
-                        icon="i-heroicons-magnifying-glass-solid"
-                        placeholder="Search..."
+                        icon="i-heroicons-funnel"
+                        autocomplete="off"
+                        placeholder="Filter items..."
                     />
+
                     <UButton
-                        icon="i-heroicons-plus"
-                        label="Add"
-                        color="primary"
-                        @click="isAddOpen = true"
+                        label="New item"
+                        trailing-icon="i-heroicons-plus"
+                        color="gray"
+                        @click="isNewItemModalOpen = true"
                     />
-                </div>
-                <UTable
-                    :rows="filteredRows"
-                    :columns="columns"
-                    :ui="{
-                        th: {
-                            padding: 'pl-8',
-                        },
-                        td: {
-                            padding: 'pl-8',
-                        },
-                    }"
+                </template>
+            </UDashboardNavbar>
+
+            <UDashboardModal
+                v-model="isNewItemModalOpen"
+                title="New item"
+                description="Add a new item to your database"
+            >
+                <UForm
+                    :validate="validate"
+                    :validate-on="['submit']"
+                    :state="state"
+                    class="space-y-4"
+                    @submit="onSubmit"
                 >
-                    <template #actions-data="{row}">
-                        <UDropdown :items="items(row)">
-                            <UButton
-                                color="gray"
-                                icon="i-heroicons-ellipsis-horizontal-solid"
-                            />
-                        </UDropdown>
-                    </template>
-                </UTable>
-                <div
-                    v-if="filteredRows.length > 0"
-                    class="flex justify-end px-7 py-3.5 border-t dark:border-gray-800"
-                >
-                    <UPagination
-                        v-model="page"
-                        :page-count="pageCount"
-                        :total="people.length"
-                        :next-button="{
-                            color: 'gray',
-                        }"
-                        :prev-button="{
-                            color: 'gray',
-                        }"
-                        :inactive-button="{
-                            color: 'gray',
-                        }"
-                    />
-                </div>
-            </div>
-        </UPageBody>
-        <UModal
-            v-model="isAddOpen"
-            prevent-close
-            :ui="{
-                width: 'sm:max-w-sm',
-            }"
-        >
-            <UCard
-                :ui="{
-                    strategy: 'override',
-                    header: {
-                        padding: 'px-4 py-3',
-                    },
-                    body: {
-                        padding: 'px-4 pt-4 pb-6',
-                    },
-                    footer: {
-                        padding: 'px-4 py-3',
-                    },
-                }"
-            >
-                <template #header>
-                    <p class="font-semibold">Add Item</p>
-                </template>
-                <div class="flex flex-col gap-4">
-                    <UFormGroup label="Name">
-                        <UInput placeholder="Enter name" />
+                    <UFormGroup label="Name" name="name">
+                        <UInput
+                            v-model="state.name"
+                            placeholder="John Doe"
+                            autofocus
+                        />
                     </UFormGroup>
-                </div>
-                <template #footer>
-                    <div class="flex justify-end gap-1.5">
-                        <UButton
-                            label="Cancel"
-                            color="gray"
-                            @click="isAddOpen = false"
+
+                    <UFormGroup label="Email" name="email">
+                        <UInput
+                            v-model="state.email"
+                            type="email"
+                            placeholder="john.doe@example.com"
                         />
-                        <UButton label="Continue" />
-                    </div>
-                </template>
-            </UCard>
-        </UModal>
-        <UModal
-            v-model="isDeleteOpen"
-            prevent-close
-            :ui="{
-                width: 'sm:max-w-sm',
-            }"
-        >
-            <UCard
-                :ui="{
-                    strategy: 'override',
-                    header: {
-                        padding: 'px-4 py-3',
-                    },
-                    body: {
-                        padding: 'px-4 pt-4 pb-6',
-                    },
-                    footer: {
-                        padding: 'px-4 py-3',
-                    },
-                }"
-            >
-                <template #header>
-                    <p class="font-semibold">Delete Item</p>
-                </template>
-                <p>Are you sure you want to delete this item?</p>
-                <template #footer>
-                    <div class="flex justify-end gap-1.5">
-                        <UButton
-                            label="Cancel"
-                            color="gray"
-                            @click="isDeleteOpen = false"
-                        />
-                        <UButton label="Continue" />
-                    </div>
-                </template>
-            </UCard>
-        </UModal>
-        <UModal
-            v-model="isEditOpen"
-            prevent-close
-            :ui="{
-                width: 'sm:max-w-sm',
-            }"
-        >
-            <UCard
-                :ui="{
-                    strategy: 'override',
-                    header: {
-                        padding: 'px-4 py-3',
-                    },
-                    body: {
-                        padding: 'px-4 pt-4 pb-6',
-                    },
-                    footer: {
-                        padding: 'px-4 py-3',
-                    },
-                }"
-            >
-                <template #header>
-                    <p class="font-semibold">Edit Item</p>
-                </template>
-                <div class="flex flex-col gap-4">
-                    <UFormGroup label="Name">
-                        <UInput placeholder="Enter name" />
                     </UFormGroup>
-                </div>
-                <template #footer>
+
                     <div class="flex justify-end gap-1.5">
                         <UButton
                             label="Cancel"
-                            color="gray"
-                            @click="isEditOpen = false"
+                            color="white"
+                            @click="isNewItemModalOpen = false"
                         />
-                        <UButton label="Continue" />
+                        <UButton type="submit" label="Save" />
                     </div>
-                </template>
-            </UCard>
-        </UModal>
-    </div>
+                </UForm>
+            </UDashboardModal>
+
+            <UTable
+                v-model="selected"
+                :rows="rows"
+                :columns="columns"
+                :loading="pending"
+                :ui="{divide: 'divide-gray-200 dark:divide-gray-800'}"
+                @select="onSelect"
+            />
+        </UDashboardPanel>
+    </UDashboardPage>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
     definePageMeta({
         layout: "custom",
     });
@@ -205,101 +88,26 @@
         {
             key: "name",
             label: "Name",
-            sortable: true,
         },
         {
-            key: "title",
-            label: "Title",
-            sortable: true,
-        },
-        {
-            key: "email",
-            label: "Email",
-            sortable: true,
-        },
-        {
-            key: "role",
-            label: "Role",
-            sortable: true,
-        },
-        {
-            key: "actions",
+            key: "user_id",
+            label: "User ID",
         },
     ];
 
-    const people = [
-        {
-            id: 1,
-            name: "Lindsay Walton",
-            title: "Front-end Developer",
-            email: "lindsay.walton@example.com",
-            role: "Member",
-        },
-        {
-            id: 2,
-            name: "Courtney Henry",
-            title: "Designer",
-            email: "courtney.henry@example.com",
-            role: "Admin",
-        },
-        {
-            id: 3,
-            name: "Tom Cook",
-            title: "Director of Product",
-            email: "tom.cook@example.com",
-            role: "Member",
-        },
-        {
-            id: 4,
-            name: "Whitney Francis",
-            title: "Copywriter",
-            email: "whitney.francis@example.com",
-            role: "Admin",
-        },
-        {
-            id: 5,
-            name: "Leonard Krasner",
-            title: "Senior Designer",
-            email: "leonard.krasner@example.com",
-            role: "Owner",
-        },
-        {
-            id: 6,
-            name: "Floyd Miles",
-            title: "Principal Designer",
-            email: "floyd.miles@example.com",
-            role: "Member",
-        },
-    ];
+    const q = ref("");
+    const selected = ref([]);
+    const isNewItemModalOpen = ref(false);
 
-    const items = (row) => [
-        [
-            {
-                label: "Edit",
-                icon: "i-heroicons-pencil-square-20-solid",
-                click: () => (isEditOpen.value = true),
-            },
-            {
-                label: "Delete",
-                icon: "i-heroicons-trash-20-solid",
-                click: () => (isDeleteOpen.value = true),
-            },
-        ],
-    ];
+    const {data: items, pending} = await $api("/items");
 
     const rows = computed(() => {
-        return people.slice(
-            (page.value - 1) * pageCount,
-            page.value * pageCount,
-        );
-    });
-
-    const filteredRows = computed(() => {
         if (!q.value) {
-            return rows.value;
+            return items;
         }
-        return people.filter((rows) => {
-            return Object.values(rows).some((value) => {
+
+        return items.filter((items) => {
+            return Object.values(items).some((value) => {
                 return String(value)
                     .toLowerCase()
                     .includes(q.value.toLowerCase());
@@ -307,21 +115,44 @@
         });
     });
 
-    const page = ref(1);
-    const pageCount = 10;
+    function onSelect(row) {
+        const index = selected.value.findIndex((item) => item.id === row.id);
+        if (index === -1) {
+            selected.value.push(row);
+        } else {
+            selected.value.splice(index, 1);
+        }
+    }
 
-    const q = ref("");
+    const state = reactive({
+        name: undefined,
+        email: undefined,
+    });
 
-    const isAddOpen = ref(false);
-    const isDeleteOpen = ref(false);
-    const isEditOpen = ref(false);
+    const validate = (state) => {
+        const errors = [];
+        if (!state.name)
+            errors.push({path: "name", message: "Please enter a name."});
+        if (!state.email)
+            errors.push({path: "email", message: "Please enter an email."});
+        return errors;
+    };
 
-    const breadcrumbLinks = [
-        {
-            label: "Dashboard",
-        },
-        {
-            label: "Items",
-        },
-    ];
+    const toast = useToast();
+
+    const loading = ref(false);
+
+    function onSubmit(event) {
+        console.log(event.data);
+
+        setTimeout(() => {
+            loading.value = false;
+            toast.add({
+                icon: "i-heroicons-check-circle",
+                title: "Your item has been added",
+                color: "green",
+            });
+            isNewItemModalOpen.value = false;
+        }, 2000);
+    }
 </script>

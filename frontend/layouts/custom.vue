@@ -1,102 +1,79 @@
 <template>
-    <div>
-        <UHeader>
-            <template #logo>Nuxt FastAPI</template>
-            <template #right>
-                <UPopover :popper="{placement: 'bottom-end'}">
-                    <UChip color="green">
-                        <UButton icon="i-heroicons-bell" color="gray" />
-                    </UChip>
-                    <template #panel>
-                        <UCard
-                            :ui="{
-                                strategy: 'override',
-                                header: {
-                                    padding: 'px-4 py-3',
-                                },
-                                body: {
-                                    padding: 'px-4 pt-4 pb-6',
-                                },
-                            }"
-                        >
-                            <template #header>
-                                <p class="font-semibold">Notifications</p>
-                            </template>
-                            <UAlert
-                                color="gray"
-                                title="Heads up!"
-                                description="You can add components to your app using the cli."
-                                :close-button="{
-                                    icon: 'i-heroicons-x-mark-20-solid',
-                                    color: 'white',
-                                    variant: 'link',
-                                    padded: false,
-                                }"
-                                :ui="{
-                                    strategy: 'override',
-                                    inner: 'w-full flex-1',
-                                    color: {
-                                        gray: {
-                                            solid: 'shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-700 text-gray-700 dark:text-gray-200 bg-gray-50 dark:bg-gray-800',
-                                        },
-                                    },
-                                }"
-                            >
-                            </UAlert>
-                        </UCard>
-                    </template>
-                </UPopover>
-                <UDropdown
-                    :items="account"
-                    :popper="{placement: 'bottom-start'}"
-                >
-                    <UButton icon="i-heroicons-user" color="gray" />
-                    <template #account="{item}">
-                        <div>
-                            <p class="text-left">Signed in as</p>
-                            <p class="font-medium dark:text-white">
-                                {{ item.label }}
-                            </p>
-                        </div>
-                    </template>
-                </UDropdown>
-            </template>
+    <UDashboardLayout>
+        <UDashboardPanel :width="300" collapsible>
+            <UDashboardNavbar title="Nuxt FastAPI" />
 
-            <template #panel>
-                <UNavigationTree :links="topLinks" />
-                <UDivider class="my-6" />
-                <UNavigationTree :links="bottomLinks" />
-            </template>
-        </UHeader>
-        <UContainer>
-            <UMain>
-                <UPage>
-                    <template #left>
-                        <UAside>
-                            <template #links>
-                                <UAsideLinks :links="topLinks" />
-                            </template>
-                            <template #bottom>
-                                <UDivider class="my-6" />
-                                <UAsideLinks :links="bottomLinks" />
-                            </template>
-                        </UAside>
-                    </template>
-                    <slot />
-                </UPage>
-            </UMain>
-        </UContainer>
-    </div>
+            <UDashboardSidebar>
+                <UDashboardSidebarLinks :links="links" />
+
+                <div class="flex-1" />
+
+                <UDashboardSidebarLinks :links="footerLinks" />
+
+                <UDivider />
+
+                <template #footer>
+                    <UDropdown
+                        mode="hover"
+                        :items="items"
+                        :ui="{
+                            width: 'w-full',
+                            item: {disabled: 'cursor-text select-text'},
+                        }"
+                        :popper="{strategy: 'absolute', placement: 'top'}"
+                        class="w-full"
+                    >
+                        <template #default="{open}">
+                            <UButton
+                                color="gray"
+                                variant="ghost"
+                                class="w-full"
+                                label="Mehdi Rtal"
+                                :class="[open && 'bg-gray-50 dark:bg-gray-800']"
+                            >
+                                <template #leading>
+                                    <UAvatar
+                                        src="https://avatars.githubusercontent.com/u/739984?v=4"
+                                        alt="M"
+                                        size="xs"
+                                    />
+                                </template>
+
+                                <template #trailing>
+                                    <UIcon
+                                        name="i-heroicons-ellipsis-vertical"
+                                        class="w-5 h-5 ml-auto"
+                                    />
+                                </template>
+                            </UButton>
+                        </template>
+
+                        <template #account>
+                            <div class="text-left">
+                                <p>Signed in as</p>
+                                <p
+                                    class="truncate font-medium text-gray-900 dark:text-white"
+                                >
+                                    mehdirtal7@pm.me
+                                </p>
+                            </div>
+                        </template>
+                    </UDropdown>
+                </template>
+            </UDashboardSidebar>
+        </UDashboardPanel>
+        <slot />
+    </UDashboardLayout>
 </template>
 
 <script setup lang="ts">
-    useHead({
-        bodyAttrs: {
-            class: "bg-gray-50 dark:bg-gray-950",
-        },
-    });
+    // useHead({
+    //     bodyAttrs: {
+    //         class: "bg-gray-50 dark:bg-gray-950",
+    //     },
+    // });
 
-    const topLinks = [
+    const links = [
         {
             label: "Home",
             icon: "i-heroicons-home",
@@ -109,27 +86,39 @@
         },
     ];
 
-    const bottomLinks = [
+    const footerLinks = [
         {
-            label: "Settings",
-            icon: "i-heroicons-cog",
-            to: "/dashboard/settings",
+            label: "Documentation",
+            icon: "i-heroicons-book-open",
+            to: "https://ui.nuxt.com/pro/getting-started",
+        },
+        {
+            label: "Help & Support",
+            icon: "i-heroicons-question-mark-circle",
+            target: "_blank",
         },
     ];
 
-    const account = [
+    const items = ref([
         [
             {
-                label: "mehdirtal7@pm.me",
                 slot: "account",
+                label: "",
                 disabled: true,
             },
         ],
         [
             {
-                label: "Logout",
+                label: "Settings",
+                icon: "i-heroicons-cog-8-tooth",
+                to: "/dashboard/settings",
+            },
+        ],
+        [
+            {
+                label: "Log out",
                 icon: "i-heroicons-arrow-left-on-rectangle",
             },
         ],
-    ];
+    ]);
 </script>

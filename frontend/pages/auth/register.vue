@@ -11,7 +11,7 @@
             >
                 <template #description>
                     Already have an account?
-                    <NuxtLink to="/login" class="text-primary font-medium"
+                    <NuxtLink to="/auth/login" class="text-primary font-medium"
                         >Login</NuxtLink
                     >.
                 </template>

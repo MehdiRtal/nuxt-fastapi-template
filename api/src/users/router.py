@@ -3,7 +3,7 @@ from sqlmodel import select
 from sqlalchemy.exc import IntegrityError
 
 from src.db import DBSession
-from src.auth.utils import pwd_context, google_oauth_client
+from src.auth.utils import verify_password, hash_password, google_oauth_client
 from src.auth.dependencies import CurrentUser
 from src.items.models import Item, ItemCreate, ItemRead, ItemUpdate
 from src.items.exceptions import ItemNotFound
@@ -21,9 +21,9 @@ router = APIRouter(tags=["Users"], prefix="/users")
 
 @router.post("/me/change-password")
 async def change_current_user_password(db: DBSession, current_user: CurrentUser, current_password: str, new_password: str) -> UserRead:
-    if not pwd_context.verify(current_password, current_user.password):
+    if not verify_password(current_password, current_user.password):
         raise InvalidCredentials()
-    current_user.password = pwd_context.hash(new_password)
+    current_user.password = hash_password(new_password)
     db.add(current_user)
     await db.commit()
     await db.refresh(current_user)
@@ -147,7 +147,7 @@ async def get_user(db: DBSession, user_id: int):
 @router.post("/", status_code=201, dependencies=[Depends(require_superuser)])
 async def add_user(db: DBSession, user: UserCreate) -> UserRead:
     try:
-        user.password = pwd_context.hash(user.password)
+        user.password = hash_password(user.password)
         db_user = User(**user.model_dump())
         db.add(db_user)
         await db.commit()

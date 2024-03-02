@@ -13,7 +13,7 @@ from src.users.exceptions import UserAlreadyExists, UserNotVerified, UserNotActi
 from src.db import DBSession
 from src.dependencies import valid_turnstile_token
 
-from src.auth.utils import generate_access_token, generate_verify_token, pwd_context, google_oauth_client, send_email
+from src.auth.utils import generate_access_token, generate_verify_token, google_oauth_client, send_email, hash_password, verify_password
 from src.auth.models import AccessToken
 from src.auth.dependencies import VerifyUser, blacklist_access_token, GoogleOAuthCallback
 from src.auth.exceptions import InvalidCredentials
@@ -24,7 +24,7 @@ router = APIRouter(tags=["Authentication"], prefix="/auth")
 @router.post("/register", status_code=201, dependencies=[Depends(valid_turnstile_token), Depends(RateLimiter(times=10, minutes=1))])
 async def register(db: DBSession, user: UserCreate) -> DefaultResponse:
     try:
-        user.password = pwd_context.hash(user.password)
+        user.password = hash_password(user.password)
         db_user = User(**user.model_dump())
         db.add(db_user)
         await db.commit()
@@ -49,7 +49,7 @@ async def login(db: DBSession, form_data: Annotated[OAuth2PasswordRequestForm, D
     statement = select(User).where(User.email == form_data.username)
     db_user = await db.exec(statement)
     db_user = db_user.first()
-    if not db_user or not pwd_context.verify(form_data.password, db_user.password):
+    if not db_user or not verify_password(form_data.password, db_user.password):
         raise InvalidCredentials()
     if not db_user.is_verified:
         raise UserNotVerified()
@@ -130,7 +130,7 @@ async def forgot_password(db: DBSession, email: EmailStr) -> DefaultResponse:
 
 @router.post("/reset-password/{verify_token}")
 async def reset_password(db: DBSession, verify_user: VerifyUser, password: str) -> DefaultResponse:
-    verify_user.password = pwd_context.hash(password)
+    verify_user.password = hash_password(password)
     db.add(verify_user)
     await db.commit()
     return {"message": "Password reset"}

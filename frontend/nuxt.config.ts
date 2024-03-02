@@ -32,6 +32,7 @@ export default defineNuxtConfig({
         endpoints: {
             api: {
                 url: process.env.API_URL!,
+                schema: process.env.API_URL + "/openapi.json",
             },
         },
     },

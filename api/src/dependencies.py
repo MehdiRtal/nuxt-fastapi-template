@@ -10,14 +10,16 @@ from src.config import settings
 
 
 async def valid_signature(request: Request, x_signature: Annotated[str, Header()] = None):
-    return
+    if settings.ENVIRONEMENT.is_dev:
+        return
     body = await request.body()
     signature = hmac.new(bytes(settings.SIGNATURE_SECRET), body, hashlib.sha512).hexdigest()
     if not hmac.compare_digest(signature, x_signature):
         raise HTTPException(403, "Invalid signature")
 
 def valid_turnstile_token(turnstile_token: str = None):
-    return
+    if settings.ENVIRONEMENT.is_dev:
+        return
     body = {
         "secret": settings.TURNSTILE_SECRET_KEY,
         "response": turnstile_token,

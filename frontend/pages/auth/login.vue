@@ -11,14 +11,16 @@
             >
                 <template #description>
                     Don't have an account?
-                    <NuxtLink to="/register" class="text-primary font-medium"
+                    <NuxtLink
+                        to="/auth/register"
+                        class="text-primary font-medium"
                         >Register</NuxtLink
                     >.
                 </template>
 
                 <template #password-hint>
                     <NuxtLink
-                        to="/forgot-password"
+                        to="/auth/forgot-password"
                         class="text-primary font-medium"
                         >Forgot password?</NuxtLink
                     >

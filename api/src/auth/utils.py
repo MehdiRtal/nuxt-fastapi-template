@@ -1,5 +1,5 @@
 from fastapi.security import OAuth2PasswordBearer
-from passlib.context import CryptContext
+import bcrypt
 from jose import jwt
 from datetime import datetime, timedelta
 from httpx_oauth.clients.google import GoogleOAuth2
@@ -11,7 +11,16 @@ from src.config import settings
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+def hash_password(password: str):
+    pwd_bytes = password.encode("utf-8")
+    salt = bcrypt.gensalt()
+    hashed_password = bcrypt.hashpw(pwd_bytes, salt).decode("utf-8")
+    return hashed_password
+
+def verify_password(plain_password: str, hashed_password: str):
+    plain_pwd_bytes = plain_password.encode("utf-8")
+    hashed_pwd_bytes = hashed_password.encode("utf-8")
+    return bcrypt.checkpw(plain_pwd_bytes, hashed_pwd_bytes)
 
 google_oauth_client = GoogleOAuth2(
     client_id=settings.GOOGLE_CLIENT_ID,
