@@ -11,7 +11,7 @@ class ItemsService:
     def __init__(self, db: DBSession):
         self.db = db
 
-    async def get_items(self, limit: int = 100, offset: int = 0) -> list[ItemRead]:
+    async def get_items(self, limit: int, offset: int) -> list[ItemRead]:
         statement = select(Item).offset(offset).limit(limit)
         db_items = await self.db.exec(statement)
         db_items = db_items.all()

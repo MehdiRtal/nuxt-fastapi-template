@@ -116,7 +116,7 @@ class UsersService:
         await self.db.refresh(current_user)
         return current_user
 
-    async def get_users(self, limit: int = 100, offset: int = 0) -> list[UserRead]:
+    async def get_users(self, limit: int, offset: int) -> list[UserRead]:
         statement = select(User).offset(offset).limit(limit)
         db_users = await self.db.exec(statement)
         db_users = db_users.all()
