@@ -9,10 +9,19 @@ from src.users.models import User
 from src.users.exceptions import UserNotActive
 from src.db import DBSession
 from src.redis_ import RedisSession
+from src.users.repository import UsersRepository
 
 from src.auth.utils import oauth2_scheme, google_oauth_client
 from src.auth.exceptions import InvalidAccessToken, InvalidVerifyToken, PermissionRequired
+from src.auth.service import AuthService
 
+
+def get_auth_service_session(db: DBSession):
+    users_repository = UsersRepository(db)
+    auth_service = AuthService(users_repository)
+    return auth_service
+
+AuthServiceSession = Annotated[AuthService, Depends(get_auth_service_session)]
 
 AccessToken = Annotated[str, Depends(oauth2_scheme)]
 
@@ -20,10 +29,10 @@ async def get_current_user(db: DBSession, redis: RedisSession, access_token: Ann
     if await redis.sismember("blacklisted_access_tokens", access_token):
         raise InvalidAccessToken()
     try:
-        headers = jwt.get_unverified_header(access_token)
         payload = jwt.get_unverified_claims(access_token)
-        db_user = await db.get(User, payload.get("sub"))
-        jwt.decode(access_token, db_user.password, algorithms=headers.get("alg"))
+        user_id = int(payload.get("sub"))
+        db_user = await db.get(User, user_id)
+        jwt.decode(access_token, db_user.password, algorithms=settings.JWT_ALGORITHM)
     except JWTError:
         raise InvalidAccessToken()
     else:
@@ -35,12 +44,12 @@ CurrentUser = Annotated[User, Depends(get_current_user)]
 
 async def get_verify_user(request: Request, db: DBSession, verify_token: str):
     try:
-        headers = jwt.get_unverified_header(verify_token)
-        payload = jwt.decode(verify_token, settings.JWT_SECRET, algorithms=headers.get("alg"), audience=request.scope["route"].name)
+        payload = jwt.decode(verify_token, settings.JWT_SECRET, algorithms=settings.JWT_ALGORITHM, audience=request.scope["route"].name)
     except JWTError:
         raise InvalidVerifyToken()
     else:
-        db_user = await db.get(User, payload.get("sub"))
+        user_id = int(payload.get("sub"))
+        db_user = await db.get(User, user_id)
         return db_user
 
 VerifyUser = Annotated[User, Depends(get_verify_user)]

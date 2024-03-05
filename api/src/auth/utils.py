@@ -34,10 +34,10 @@ def generate_jwt(payload: dict, secret: str, expire_minutes: int, audience: str 
     return jwt.encode(payload, secret, algorithm=settings.JWT_ALGORITHM)
 
 def generate_access_token(user_id: int, secret: str):
-    return generate_jwt({"sub": user_id}, expire_minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES, secret=secret)
+    return generate_jwt({"sub": str(user_id)}, expire_minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES, secret=secret)
 
 def generate_verify_token(user_id: int, audience: str):
-    return generate_jwt({"sub": user_id}, secret=settings.JWT_SECRET, expire_minutes=settings.VERIFY_TOKEN_EXPIRE_MINUTES, audience=audience)
+    return generate_jwt({"sub": str(user_id)}, secret=settings.JWT_SECRET, expire_minutes=settings.VERIFY_TOKEN_EXPIRE_MINUTES, audience=audience)
 
 def send_email(email_from: str, email_to: str, template_id: str, dynamic_template_data: dict = None):
     message = Mail(from_email=email_from, to_emails=email_to)

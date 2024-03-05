@@ -1,8 +1,8 @@
-from src.exceptions import BadRequest
+from src.exceptions import EntityNotFound, EntityAlreadyExists
 
 
-class ItemNotFound(BadRequest):
+class ItemNotFound(EntityNotFound):
     DETAIL = "Item not found."
 
-class ItemAlreadyExists(BadRequest):
+class ItemAlreadyExists(EntityAlreadyExists):
     DETAIL = "Item already exists."
