@@ -1,13 +1,16 @@
 from sqlmodel import select
 from sqlalchemy.exc import IntegrityError
+from typing import Type, TypeVar, Generic
 
 from src.db import AsyncSession
 from src.models import BaseModel
 from src.exceptions import EntityNotFound, EntityAlreadyExists
 
 
-class BaseRepository:
-    def __init__(self, db: AsyncSession, model: BaseModel):
+T = TypeVar("T", bound=BaseModel)
+
+class BaseRepository(Generic[T]):
+    def __init__(self, db: AsyncSession, model: Type[T]):
         self.db = db
         self.model = model
 
@@ -25,7 +28,7 @@ class BaseRepository:
             raise EntityNotFound()
         return db_entity
 
-    async def add(self, entity: BaseModel, refresh: bool = True):
+    async def add(self, entity: T, refresh: bool = True):
         try:
             db_entity = self.model(**entity.model_dump())
             self.db.add(db_entity)
@@ -43,7 +46,7 @@ class BaseRepository:
             await self.db.refresh(instance)
         return instance
 
-    async def update_by_id(self, entity_id: int, entity: BaseModel, refresh: bool = True):
+    async def update_by_id(self, entity_id: int, entity: T, refresh: bool = True):
         db_entity = self.get_by_id(entity_id)
         for key, value in entity.model_dump(exclude_unset=True).items():
             setattr(db_entity, key, value)

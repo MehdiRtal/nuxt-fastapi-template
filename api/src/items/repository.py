@@ -7,7 +7,7 @@ from src.items.models import Item
 from src.items.exceptions import ItemNotFound
 
 
-class ItemsRepository(BaseRepository):
+class ItemsRepository(BaseRepository[Item]):
     def __init__(self, db: AsyncSession):
         super().__init__(db, Item)
 
@@ -27,9 +27,9 @@ class ItemsRepository(BaseRepository):
             raise ItemNotFound()
         return db_item
 
-    async def update_by_id_by_user_id(self, user_id: int, item_id: int, entity, refresh: bool = True):
+    async def update_by_id_by_user_id(self, user_id: int, item_id: int, item: Item, refresh: bool = True):
         db_item = self.get_by_id_by_user_id(user_id, item_id)
-        for key, value in entity.model_dump(exclude_unset=True).items():
+        for key, value in item.model_dump(exclude_unset=True).items():
             setattr(db_item, key, value)
         await self.db.add(db_item)
         await self.db.commit()

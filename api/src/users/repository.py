@@ -7,7 +7,7 @@ from src.db import AsyncSession
 from src.users.models import User
 
 
-class UsersRepository(BaseRepository):
+class UsersRepository(BaseRepository[User]):
     def __init__(self, db: AsyncSession):
         super().__init__(db, User)
 
