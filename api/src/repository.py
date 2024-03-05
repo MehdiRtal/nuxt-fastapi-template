@@ -39,7 +39,7 @@ class BaseRepository(Generic[T]):
             raise EntityAlreadyExists()
         return db_entity
 
-    async def update(self, instance: object, refresh: bool = True):
+    async def update(self, instance: object, refresh: bool = True) -> T:
         self.db.add(instance)
         await self.db.commit()
         if refresh:
