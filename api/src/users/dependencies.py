@@ -6,14 +6,14 @@ import hashlib
 from typing import Annotated
 
 from src.config import settings
-from src.db import DBSession
+from src.postgres import PostgresSession
 from src.items.repository import ItemsRepository
 
 from src.users.repository import UsersRepository
 from src.users.service import UsersService
 
 
-def get_users_service_session(db: DBSession):
+def get_users_service_session(db: PostgresSession):
     users_repository = UsersRepository(db)
     items_repository = ItemsRepository(db)
     users_service = UsersService(users_repository, items_repository)

@@ -22,7 +22,6 @@ class ItemsService:
         except EntityNotFound:
             raise ItemNotFound()
         return db_item
-
     async def add_item(self, item: Item):
         try:
             db_item = await self.items_repository.add(item)

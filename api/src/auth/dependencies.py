@@ -7,7 +7,7 @@ from httpx_oauth.integrations.fastapi import OAuth2AuthorizeCallback
 from src.config import settings
 from src.users.models import User
 from src.users.exceptions import UserNotActive
-from src.db import DBSession
+from src.postgres import PostgresSession
 from src.redis_ import RedisSession
 from src.users.repository import UsersRepository
 
@@ -16,7 +16,7 @@ from src.auth.exceptions import InvalidAccessToken, InvalidVerifyToken, Permissi
 from src.auth.service import AuthService
 
 
-def get_auth_service_session(db: DBSession):
+def get_auth_service_session(db: PostgresSession):
     users_repository = UsersRepository(db)
     auth_service = AuthService(users_repository)
     return auth_service
@@ -25,7 +25,7 @@ AuthServiceSession = Annotated[AuthService, Depends(get_auth_service_session)]
 
 AccessToken = Annotated[str, Depends(oauth2_scheme)]
 
-async def get_current_user(db: DBSession, redis: RedisSession, access_token: Annotated[str, Depends(oauth2_scheme)]):
+async def get_current_user(db: PostgresSession, redis: RedisSession, access_token: Annotated[str, Depends(oauth2_scheme)]):
     if await redis.sismember("blacklisted_access_tokens", access_token):
         raise InvalidAccessToken()
     try:
@@ -42,7 +42,7 @@ async def get_current_user(db: DBSession, redis: RedisSession, access_token: Ann
 
 CurrentUser = Annotated[User, Depends(get_current_user)]
 
-async def get_verify_user(request: Request, db: DBSession, verify_token: str):
+async def get_verify_user(request: Request, db: PostgresSession, verify_token: str):
     try:
         payload = jwt.decode(verify_token, settings.JWT_SECRET, algorithms=settings.JWT_ALGORITHM, audience=request.scope["route"].name)
     except JWTError:

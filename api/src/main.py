@@ -6,7 +6,7 @@ from fastapi_limiter.depends import RateLimiter
 from contextlib import asynccontextmanager
 
 from src.prometheus import init_prometheus
-from src.db import init_db
+from src.postgres import init_postgres
 from src.cache import init_cache
 from src.limiter import init_limiter
 from src.dependencies import valid_signature
@@ -19,7 +19,7 @@ import src.items
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    await init_db()
+    await init_postgres()
     init_cache()
     await init_limiter()
     yield

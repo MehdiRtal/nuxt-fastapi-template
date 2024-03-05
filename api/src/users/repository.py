@@ -2,7 +2,7 @@ from sqlmodel import select
 from pydantic import EmailStr
 
 from src.repository import BaseRepository
-from src.db import AsyncSession
+from src.postgres import AsyncSession
 
 from src.users.models import User
 

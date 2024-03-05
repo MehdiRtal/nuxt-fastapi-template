@@ -20,7 +20,7 @@ class Environment(str, Enum):
 class Settings(BaseSettings):
     ENVIRONEMENT: Environment | None = None
 
-    DB_URL: PostgresDsn
+    POSTGRES_URL: PostgresDsn
 
     REDIS_URL: RedisDsn
 

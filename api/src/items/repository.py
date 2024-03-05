@@ -1,7 +1,7 @@
 from sqlmodel import select
 
 from src.repository import BaseRepository
-from src.db import AsyncSession
+from src.postgres import AsyncSession
 
 from src.items.models import Item
 from src.items.exceptions import ItemNotFound

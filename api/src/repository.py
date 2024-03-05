@@ -2,7 +2,7 @@ from sqlmodel import select
 from sqlalchemy.exc import IntegrityError
 from typing import Type, TypeVar, Generic
 
-from src.db import AsyncSession
+from src.postgres import AsyncSession
 from src.models import BaseModel
 from src.exceptions import EntityNotFound, EntityAlreadyExists
 

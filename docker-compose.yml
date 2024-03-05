@@ -18,13 +18,13 @@ services:
       - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD?error}
       - GF_INSTALL_PLUGINS=redis-datasource
 
-  db:
+  postgres:
     image: postgres:alpine
     environment:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD?error}
     volumes:
-      - ./backups/db:/backups
-      - ./scripts/db:/scripts
+      - ./backups/postgres:/backups
+      - ./scripts/postgres:/scripts
 
   redis:
     image: redis:alpine
@@ -38,7 +38,7 @@ services:
       - PGADMIN_DEFAULT_EMAIL=${PGADMIN_EMAIL?error}
       - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASSWORD?error}
     depends_on:
-      - db
+      - postgres
 
   redisinsight:
     image: redislabs/redisinsight:latest
@@ -61,7 +61,7 @@ services:
       - ENVIRONEMENT=PROD
     command: gunicorn src.main:app --workers 8 --worker-class uvicorn.workers.UvicornWorker --bind :8080
     depends_on:
-      - db
+      - postgres
       - redis
 
   frontend:
