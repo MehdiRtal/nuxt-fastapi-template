@@ -11,6 +11,11 @@ from src.config import settings
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
+google_oauth_client = GoogleOAuth2(
+    client_id=settings.GOOGLE_CLIENT_ID,
+    client_secret=settings.GOOGLE_CLIENT_SECRET,
+)
+
 def hash_password(password: str):
     pwd_bytes = password.encode("utf-8")
     salt = bcrypt.gensalt()
@@ -21,11 +26,6 @@ def verify_password(plain_password: str, hashed_password: str):
     plain_pwd_bytes = plain_password.encode("utf-8")
     hashed_pwd_bytes = hashed_password.encode("utf-8")
     return bcrypt.checkpw(plain_pwd_bytes, hashed_pwd_bytes)
-
-google_oauth_client = GoogleOAuth2(
-    client_id=settings.GOOGLE_CLIENT_ID,
-    client_secret=settings.GOOGLE_CLIENT_SECRET,
-)
 
 def generate_jwt(payload: dict, secret: str, expire_minutes: int, audience: str = None):
     payload.update({"exp": datetime.utcnow() + timedelta(minutes=expire_minutes)})
