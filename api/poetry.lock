@@ -649,6 +649,22 @@ memcache = ["aiomcache"]
 redis = ["redis (>=4.2.0rc1,<5.0.0)"]
 
 [[package]]
+name = "fastapi-events"
+version = "0.11.0"
+description = "Event dispatching library for FastAPI"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "fastapi-events-0.11.0.tar.gz", hash = "sha256:437d0c7629013e5f5faab609562bdc20e93563b6d20b66413830322671e2c9f7"},
+    {file = "fastapi_events-0.11.0-py3-none-any.whl", hash = "sha256:86b5a6306b79711ccb552bcc36f6b661197596dd18c658e625198b9f192626e4"},
+]
+
+[package.extras]
+aws = ["boto3 (>=1.14)"]
+google = ["google-cloud-pubsub (>=2.13.6)"]
+otel = ["opentelemetry-api (>=1.12.0,<2.0)"]
+
+[[package]]
 name = "fastapi-limiter"
 version = "0.1.6"
 description = "A request rate limiter for fastapi"
@@ -2200,4 +2216,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "c6c7ecd671dd751c94cf2ab0b3dd5d8d5c4ae99e0ccca0bba6c97af41f76c701"
+content-hash = "b47a006371363c83d7c98b66b9f95fad26d4b19981aff4e676ea1785ef66c271"

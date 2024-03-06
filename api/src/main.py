@@ -4,6 +4,8 @@ from starlette.exceptions import HTTPException
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi_limiter.depends import RateLimiter
 from contextlib import asynccontextmanager
+from fastapi_events.middleware import EventHandlerASGIMiddleware
+from fastapi_events.handlers.local import local_handler
 
 from src.prometheus import init_prometheus
 from src.postgres import init_postgres
@@ -38,6 +40,8 @@ if settings.ENVIRONEMENT.is_prod:
     init_prometheus(app)
 
 app.add_middleware(GZipMiddleware)
+
+app.add_middleware(EventHandlerASGIMiddleware, handlers=[local_handler])
 
 @app.exception_handler(HTTPException)
 def http_exception_handler(request: Request, exception: HTTPException):
