@@ -14,7 +14,7 @@ class ItemRead(ItemBase):
     id: int
 
 class ItemCreate(ItemBase):
-    pass
+    user_id: int | None = None
 
 class ItemUpdate(BaseModel):
     user_id: int | None = None
