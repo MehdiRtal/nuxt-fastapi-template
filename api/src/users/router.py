@@ -7,7 +7,6 @@ from src.models import DefaultResponse
 
 from src.users.models import UserCreate, UserRead, UserUpdate
 from src.users.dependencies import valid_sellix_signature, UsersServiceSession
-from src.users.service import UsersService
 
 
 router = APIRouter(tags=["Users"], prefix="/users")
@@ -49,8 +48,7 @@ async def delete_current_user_item(users_service: UsersServiceSession, current_u
     return await users_service.delete_current_user_item(current_user, item_id)
 
 @router.get("/me")
-async def get_current_user(current_user: CurrentUser) -> UserRead:
-    users_service = UsersService()
+async def get_current_user(users_service: UsersServiceSession, current_user: CurrentUser) -> UserRead:
     return await users_service.get_current_user(current_user)
 
 @router.patch("/me")
