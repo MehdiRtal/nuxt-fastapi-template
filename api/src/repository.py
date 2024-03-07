@@ -16,28 +16,28 @@ class BaseRepository(Generic[T]):
 
     async def get(self, limit: int, offset: int):
         statement = select(self.model).offset(offset).limit(limit)
-        postgres_entity = await self.postgres.exec(statement)
-        postgres_entity = postgres_entity.all()
-        if not postgres_entity:
+        db_entity = await self.postgres.exec(statement)
+        db_entity = db_entity.all()
+        if not db_entity:
             raise EntityNotFound()
-        return postgres_entity
+        return db_entity
 
     async def get_by_id(self, entity_id: int):
-        postgres_entity = await self.postgres.get(self.model, entity_id)
-        if not postgres_entity:
+        db_entity = await self.postgres.get(self.model, entity_id)
+        if not db_entity:
             raise EntityNotFound()
-        return postgres_entity
+        return db_entity
 
     async def add(self, entity: T, refresh: bool = True):
         try:
-            postgres_entity = self.model(**entity.model_dump())
-            self.postgres.add(postgres_entity)
+            db_entity = self.model(**entity.model_dump())
+            self.postgres.add(db_entity)
             await self.postgres.commit()
             if refresh:
-                await self.postgres.refresh(postgres_entity)
+                await self.postgres.refresh(db_entity)
         except IntegrityError:
             raise EntityAlreadyExists()
-        return postgres_entity
+        return db_entity
 
     async def update(self, instance: object, refresh: bool = True) -> T:
         self.postgres.add(instance)
@@ -47,17 +47,17 @@ class BaseRepository(Generic[T]):
         return instance
 
     async def update_by_id(self, entity_id: int, entity: T, refresh: bool = True):
-        postgres_entity = self.get_by_id(entity_id)
+        db_entity = self.get_by_id(entity_id)
         for key, value in entity.model_dump(exclude_unset=True).items():
-            setattr(postgres_entity, key, value)
-        self.postgres.add(postgres_entity)
+            setattr(db_entity, key, value)
+        self.postgres.add(db_entity)
         await self.postgres.commit()
         if refresh:
-            await self.postgres.refresh(postgres_entity)
-        return postgres_entity
+            await self.postgres.refresh(db_entity)
+        return db_entity
 
     async def delete_by_id(self, entity_id: int):
-        postgres_entity = self.get_by_id(entity_id)
-        self.postgres.delete(postgres_entity)
+        db_entity = self.get_by_id(entity_id)
+        self.postgres.delete(db_entity)
         await self.postgres.commit()
-        return postgres_entity
+        return db_entity
