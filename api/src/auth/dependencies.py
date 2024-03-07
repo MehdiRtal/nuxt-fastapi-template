@@ -25,13 +25,13 @@ AuthServiceSession = Annotated[AuthService, Depends(get_auth_service_session)]
 
 AccessToken = Annotated[str, Depends(oauth2_scheme)]
 
-async def get_current_user(db: PostgresSession, redis: RedisSession, access_token: Annotated[str, Depends(oauth2_scheme)]):
+async def get_current_user(postgres: PostgresSession, redis: RedisSession, access_token: Annotated[str, Depends(oauth2_scheme)]):
     if await redis.sismember("blacklisted_access_tokens", access_token):
         raise InvalidAccessToken()
     try:
         payload = jwt.get_unverified_claims(access_token)
         user_id = int(payload.get("sub"))
-        db_user = await db.get(User, user_id)
+        db_user = await postgres.get(User, user_id)
         jwt.decode(access_token, db_user.password, algorithms=settings.JWT_ALGORITHM)
     except JWTError:
         raise InvalidAccessToken()
@@ -42,14 +42,14 @@ async def get_current_user(db: PostgresSession, redis: RedisSession, access_toke
 
 CurrentUser = Annotated[User, Depends(get_current_user)]
 
-async def get_verify_user(request: Request, db: PostgresSession, verify_token: str):
+async def get_verify_user(request: Request, postgres: PostgresSession, verify_token: str):
     try:
         payload = jwt.decode(verify_token, settings.JWT_SECRET, algorithms=settings.JWT_ALGORITHM, audience=request.scope["route"].name)
     except JWTError:
         raise InvalidVerifyToken()
     else:
         user_id = int(payload.get("sub"))
-        db_user = await db.get(User, user_id)
+        db_user = await postgres.get(User, user_id)
         return db_user
 
 VerifyUser = Annotated[User, Depends(get_verify_user)]
