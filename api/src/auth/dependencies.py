@@ -16,8 +16,8 @@ from src.auth.exceptions import InvalidAccessToken, InvalidVerifyToken, Permissi
 from src.auth.service import AuthService
 
 
-def get_auth_service_session(db: PostgresSession):
-    users_repository = UsersRepository(db)
+def get_auth_service_session(postgres: PostgresSession):
+    users_repository = UsersRepository(postgres)
     auth_service = AuthService(users_repository)
     return auth_service
 

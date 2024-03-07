@@ -13,9 +13,9 @@ from src.users.repository import UsersRepository
 from src.users.service import UsersService
 
 
-def get_users_service_session(db: PostgresSession):
-    users_repository = UsersRepository(db)
-    items_repository = ItemsRepository(db)
+def get_users_service_session(postgres: PostgresSession):
+    users_repository = UsersRepository(postgres)
+    items_repository = ItemsRepository(postgres)
     users_service = UsersService(users_repository, items_repository)
     return users_service
 
