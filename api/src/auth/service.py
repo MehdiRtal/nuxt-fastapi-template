@@ -33,8 +33,11 @@ class AuthService:
         return {"message": "User verified"}
 
     async def login(self, form_data: OAuth2PasswordRequestForm):
-        db_user = await self.users_repository.get_by_email(form_data.username)
-        if not db_user or not verify_password(form_data.password, db_user.password):
+        try:
+            db_user = await self.users_repository.get_by_email(form_data.username)
+        except UserNotFound:
+            raise InvalidCredentials()
+        if not verify_password(form_data.password, db_user.password):
             raise InvalidCredentials()
         if not db_user.is_verified:
             raise UserNotVerified()
@@ -49,19 +52,20 @@ class AuthService:
     async def sso_google_callback(self, callback):
         token, state = callback
         id, email = await google_oauth_client.get_id_email(token["access_token"])
-        db_user = await self.users_repository.get_by_email(email)
-        if db_user:
+        try:
+            db_user = await self.users_repository.get_by_email(email)
+        except UserNotFound:
+            db_user = User(full_name="", email=email, password="", google_oauth_refresh_token=token["refresh_token"])
+            db_user = await self.users_repository.update(db_user)
+            verify_token = generate_verify_token(db_user.id, audience="reset_password")
+            return {"verify_token": verify_token}
+        else:
             if not db_user.google_oauth_refresh_token:
                 raise UserOAuthNotLinked()
             db_user.google_oauth_refresh_token = token["refresh_token"]
             db_user = await self.users_repository.update(db_user)
             access_token = generate_access_token(db_user.id, secret=db_user.password)
             return {"access_token": access_token}
-        else:
-            db_user = User(full_name="", email=email, password="", google_oauth_refresh_token=token["refresh_token"])
-            db_user = await self.users_repository.update(db_user)
-            verify_token = generate_verify_token(db_user.id, audience="reset_password")
-            return {"verify_token": verify_token}
 
     async def link_google(self, request: Request):
         callback_url = request.url_for("link_google_callback")
@@ -72,8 +76,6 @@ class AuthService:
         token, state = callback
         id, email = await google_oauth_client.get_id_email(token["access_token"])
         db_user = await self.users_repository.get_by_email(email)
-        if not db_user:
-            raise UserNotFound()
         if not db_user.is_verified:
             raise UserNotVerified()
         if not db_user.is_active:
@@ -87,8 +89,6 @@ class AuthService:
 
     async def forgot_password(self, email: EmailStr):
         db_user = await self.users_repository.get_by_email(email)
-        if not db_user:
-            raise UserNotFound()
         if not db_user.is_active:
             raise UserNotActive()
         verify_token = generate_verify_token(db_user.id, audience="reset_password")

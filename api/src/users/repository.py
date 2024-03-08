@@ -5,6 +5,7 @@ from src.repository import BaseRepository
 from src.postgres import AsyncSession
 
 from src.users.models import User
+from src.users.exceptions import UserNotFound
 
 
 class UsersRepository(BaseRepository[User]):
@@ -13,6 +14,8 @@ class UsersRepository(BaseRepository[User]):
 
     async def get_by_email(self, email: EmailStr):
         statement = select(User).where(User.email == email)
-        postgres_user = await self.postgres.exec(statement)
-        postgres_user = postgres_user.first()
-        return postgres_user
+        db_user = await self.postgres.exec(statement)
+        db_user = db_user.first()
+        if not db_user:
+            raise UserNotFound()
+        return db_user
