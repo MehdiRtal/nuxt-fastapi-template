@@ -1,5 +1,3 @@
-from fastapi_events.dispatcher import dispatch
-
 from src.exceptions import EntityNotFound, EntityAlreadyExists
 
 from src.items.models import Item
@@ -12,7 +10,6 @@ class ItemsService:
         self.items_repository = items_repository
 
     async def get_items(self, limit: int, offset: int):
-        dispatch("cat_is_spotted", self.items_repository.db)
         try:
             db_items = await self.items_repository.get(limit, offset)
         except EntityNotFound:
