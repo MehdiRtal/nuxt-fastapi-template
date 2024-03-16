@@ -1,7 +1,7 @@
 from fastapi.security import OAuth2PasswordBearer
 import bcrypt
 from jose import jwt
-from datetime import datetime, timedelta
+import datetime
 from httpx_oauth.clients.google import GoogleOAuth2
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
@@ -28,7 +28,7 @@ def verify_password(plain_password: str, hashed_password: str):
     return bcrypt.checkpw(plain_pwd_bytes, hashed_pwd_bytes)
 
 def generate_jwt(payload: dict, secret: str, expire_minutes: int, audience: str = None):
-    payload.update({"exp": datetime.utcnow() + timedelta(minutes=expire_minutes)})
+    payload.update({"exp": datetime.datetime.now(datetime.UTC) + datetime.timedelta(minutes=expire_minutes)})
     if audience:
         payload.update({"aud": audience})
     return jwt.encode(payload, secret, algorithm=settings.JWT_ALGORITHM)
