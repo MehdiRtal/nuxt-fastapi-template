@@ -37,7 +37,7 @@ async def get_current_user(postgres: PostgresSession, redis: RedisSession, acces
         raise InvalidAccessToken()
     else:
         if not db_user.is_active:
-            raise UserNotActive()
+            raise UserNotActive
         return db_user
 
 CurrentUser = Annotated[User, Depends(get_current_user)]

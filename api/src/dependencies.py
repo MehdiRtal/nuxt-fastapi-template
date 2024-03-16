@@ -7,15 +7,16 @@ from typing import Annotated
 import httpx
 
 from src.config import settings
+from src.exceptions import InvalidSignature
 
 
 async def valid_signature(request: Request, x_signature: Annotated[str, Header()] = None):
     if settings.ENVIRONEMENT.is_dev:
         return
     body = await request.body()
-    signature = hmac.new(bytes(settings.SIGNATURE_SECRET), body, hashlib.sha512).hexdigest()
+    signature = hmac.new(settings.SIGNATURE_SECRET.encode(), str(body).encode(), hashlib.sha512).hexdigest()
     if not hmac.compare_digest(signature, x_signature):
-        raise HTTPException(403, "Invalid signature")
+        raise InvalidSignature
 
 def valid_turnstile_token(turnstile_token: str = None):
     if settings.ENVIRONEMENT.is_dev:

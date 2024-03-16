@@ -19,13 +19,13 @@ class BaseRepository(Generic[T]):
         db_entity = await self.postgres.exec(statement)
         db_entity = db_entity.all()
         if not db_entity:
-            raise EntityNotFound()
+            raise EntityNotFound
         return db_entity
 
     async def get_by_id(self, entity_id: int):
         db_entity = await self.postgres.get(self.model, entity_id)
         if not db_entity:
-            raise EntityNotFound()
+            raise EntityNotFound
         return db_entity
 
     async def add(self, entity: T, refresh: bool = True):
@@ -36,7 +36,7 @@ class BaseRepository(Generic[T]):
             if refresh:
                 await self.postgres.refresh(db_entity)
         except IntegrityError:
-            raise EntityAlreadyExists()
+            raise EntityAlreadyExists
         return db_entity
 
     async def update(self, instance: object, refresh: bool = True) -> T:

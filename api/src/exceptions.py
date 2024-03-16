@@ -27,6 +27,9 @@ class Unauthorized(CustomHTTPException):
     def __init__(self):
         super().__init__(headers={"WWW-Authenticate": "Bearer"})
 
+class InvalidSignature(Unauthorized):
+    DETAIL = "Invalid signature."
+
 class EntityNotFound(BadRequest):
     pass
 

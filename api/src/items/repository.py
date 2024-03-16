@@ -16,7 +16,7 @@ class ItemsRepository(BaseRepository[Item]):
         db_items = await self.postgres.exec(statement)
         db_items = db_items.all()
         if not db_items:
-            raise ItemNotFound()
+            raise ItemNotFound
         return db_items
 
     async def get_by_id_by_user_id(self, user_id: int, item_id: int):
@@ -24,7 +24,7 @@ class ItemsRepository(BaseRepository[Item]):
         db_item = await self.postgres.exec(statement)
         db_item = db_item.first()
         if not db_item:
-            raise ItemNotFound()
+            raise ItemNotFound
         return db_item
 
     async def update_by_id_by_user_id(self, user_id: int, item_id: int, item: Item, refresh: bool = True):
