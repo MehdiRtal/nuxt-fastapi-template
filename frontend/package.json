@@ -22,7 +22,7 @@
         "eslint": "^8.57.0",
         "eslint-config-prettier": "^9.1.0",
         "eslint-plugin-vue": "^9.23.0",
-        "nuxt": "^3.11.0",
+        "nuxt": "^3.11.1",
         "nuxt-api-party": "^1.0.1",
         "nuxt-lodash": "^2.5.3",
         "nuxt-security": "^1.2.2",
