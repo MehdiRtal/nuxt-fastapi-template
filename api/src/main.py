@@ -1,6 +1,5 @@
-from fastapi import FastAPI, Request, Depends, status
-from fastapi.exceptions import RequestValidationError
-from starlette.exceptions import HTTPException
+from fastapi import FastAPI, Depends
+from fastapi.responses import ORJSONResponse
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi_limiter.depends import RateLimiter
 from contextlib import asynccontextmanager
@@ -12,7 +11,6 @@ from src.postgres import init_postgres
 from src.cache import init_cache
 from src.limiter import init_limiter
 from src.dependencies import valid_signature
-from src.utils import DefaultORJSONResponse, ORJSONResponse
 from src.config import settings
 import src.auth
 import src.users
@@ -30,7 +28,7 @@ app = FastAPI(
     debug=True if settings.ENVIRONEMENT.is_dev else False,
     title="API",
     lifespan=lifespan,
-    default_response_class=DefaultORJSONResponse,
+    default_response_class=ORJSONResponse,
     dependencies=[Depends(valid_signature), Depends(RateLimiter(times=100, minutes=1))],
     docs_url="/docs" if settings.ENVIRONEMENT.is_dev else None,
     redoc_url="/redoc" if settings.ENVIRONEMENT.is_dev else None
@@ -42,14 +40,6 @@ if settings.ENVIRONEMENT.is_prod:
 app.add_middleware(GZipMiddleware)
 
 app.add_middleware(EventHandlerASGIMiddleware, handlers=[local_handler])
-
-@app.exception_handler(HTTPException)
-def http_exception_handler(request: Request, exception: HTTPException):
-    return ORJSONResponse({"status": "error", "message": exception.detail}, status_code=exception.status_code)
-
-@app.exception_handler(RequestValidationError)
-def validation_exception_handler(request: Request, exception: RequestValidationError):
-    return ORJSONResponse({"status": "error", "message": exception.errors()}, status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)
 
 app.include_router(src.auth.router)
 app.include_router(src.users.router)

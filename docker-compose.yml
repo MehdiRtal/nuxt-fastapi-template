@@ -54,6 +54,12 @@ services:
       - redis
       - api
 
+  rq-scheduler:
+    image: python:3.12-slim
+    command: sh -c "pip install rq-scheduler && rqscheduler -u ${RQ_URL}"
+    depends_on:
+      - rq
+
   api:
     build: ./api
     image: ${COMPOSE_PROJECT_NAME}-api:latest

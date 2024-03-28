@@ -34,7 +34,7 @@ async def get_current_user(postgres: PostgresSession, redis: RedisSession, acces
         db_user = await postgres.get(User, user_id)
         jwt.decode(access_token, db_user.password, algorithms=settings.JWT_ALGORITHM)
     except JWTError:
-        raise InvalidAccessToken()
+        raise InvalidAccessToken
     else:
         if not db_user.is_active:
             raise UserNotActive
@@ -46,7 +46,7 @@ async def get_verify_user(request: Request, postgres: PostgresSession, verify_to
     try:
         payload = jwt.decode(verify_token, settings.JWT_SECRET, algorithms=settings.JWT_ALGORITHM, audience=request.scope["route"].name)
     except JWTError:
-        raise InvalidVerifyToken()
+        raise InvalidVerifyToken
     else:
         user_id = int(payload.get("sub"))
         db_user = await postgres.get(User, user_id)
@@ -56,7 +56,7 @@ VerifyUser = Annotated[User, Depends(get_verify_user)]
 
 async def require_superuser(current_user: CurrentUser):
     if not current_user.is_superuser:
-        raise PermissionRequired()
+        raise PermissionRequired
 
 async def blacklist_access_token(redis: RedisSession, access_token: AccessToken):
     await redis.sadd("blacklisted_access_tokens", access_token)

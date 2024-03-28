@@ -5,4 +5,4 @@ class BaseModel(SQLModel):
     pass
 
 class DefaultResponse(BaseModel):
-    message: str
+    detail: str
