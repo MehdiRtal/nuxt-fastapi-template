@@ -25,7 +25,7 @@ AuthServiceSession = Annotated[AuthService, Depends(get_auth_service_session)]
 
 AccessToken = Annotated[str, Depends(oauth2_scheme)]
 
-async def get_current_user(postgres: PostgresSession, redis: RedisSession, access_token: Annotated[str, Depends(oauth2_scheme)]):
+async def get_current_user(postgres: PostgresSession, redis: RedisSession, access_token: AccessToken):
     if await redis.sismember("blacklisted_access_tokens", access_token):
         raise InvalidAccessToken()
     try:
@@ -68,8 +68,8 @@ class CustomOAuth2AuthorizeCallback(OAuth2AuthorizeCallback):
         self.redirect_url = redirect_url
 
     async def __call__(self, request: Request, code: str = None, code_verifier: str = None, state: str = None, error: str = None):
-        if code is None or error is not None:
-            raise HTTPException(400, error if error is not None else None)
+        if not code or error:
+            raise HTTPException(400, error if error else None)
         if self.route_name:
             redirect_url = str(request.url_for(self.route_name))
         elif self.redirect_url:
