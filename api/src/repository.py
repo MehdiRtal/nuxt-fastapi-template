@@ -36,6 +36,7 @@ class BaseRepository(Generic[T]):
             if refresh:
                 await self.postgres.refresh(db_entity)
         except IntegrityError:
+            self.postgres.rollback()
             raise EntityAlreadyExists
         return db_entity
 
