@@ -1,13 +1,9 @@
 FROM python:3.12-slim
 
-RUN pip install poetry
-
-ENV POETRY_VIRTUALENVS_CREATE=0
-
 WORKDIR /app
 
-COPY ./pyproject.toml ./ ./poetry.lock ./
+COPY ./requirements.lock ./
 
-RUN poetry install --no-root --no-interaction --no-cache
+RUN PYTHONDONTWRITEBYTECODE=1 pip install --no-cache-dir -r requirements.lock
 
 COPY ./ ./
