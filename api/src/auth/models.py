@@ -7,3 +7,6 @@ class AccessToken(BaseModel):
 
 class VerifyToken(BaseModel):
     verify_token: str
+
+class AuthorizationUrl(BaseModel):
+    authorization_url: str

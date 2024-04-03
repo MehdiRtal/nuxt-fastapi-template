@@ -8,7 +8,7 @@ from src.models import DefaultResponse
 from src.users.models import UserCreate
 from src.dependencies import valid_turnstile_token
 
-from src.auth.models import AccessToken, VerifyToken
+from src.auth.models import AccessToken, VerifyToken, AuthorizationUrl
 from src.auth.dependencies import VerifyUser, blacklist_access_token, GoogleOAuthCallback, AuthServiceSession
 
 
@@ -27,7 +27,7 @@ async def login(auth_service: AuthServiceSession, form_data: Annotated[OAuth2Pas
     return await auth_service.login(form_data)
 
 @router.get("/sso/google")
-async def sso_google(auth_service: AuthServiceSession, request: Request) -> dict:
+async def sso_google(auth_service: AuthServiceSession, request: Request) -> AuthorizationUrl:
     return await auth_service.sso_google(request)
 
 @router.get("/sso/google/callback")
@@ -35,7 +35,7 @@ async def sso_google_callback(auth_service: AuthServiceSession, callback: Google
     return await auth_service.sso_google_callback(callback)
 
 @router.get("/link/google")
-async def link_google(auth_service: AuthServiceSession, request: Request) -> dict:
+async def link_google(auth_service: AuthServiceSession, request: Request) -> AuthorizationUrl:
     return await auth_service.link_google(request)
 
 @router.get("/link/google/callback")
