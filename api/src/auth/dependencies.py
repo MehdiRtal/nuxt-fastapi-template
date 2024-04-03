@@ -27,7 +27,7 @@ AccessToken = Annotated[str, Depends(oauth2_scheme)]
 
 async def get_current_user(postgres: PostgresSession, redis: RedisSession, access_token: AccessToken):
     if await redis.sismember("blacklisted_access_tokens", access_token):
-        raise InvalidAccessToken()
+        raise InvalidAccessToken
     try:
         payload = jwt.get_unverified_claims(access_token)
         user_id = int(payload.get("sub"))

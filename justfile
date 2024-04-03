@@ -47,8 +47,8 @@ test:
 
 lint:
     eslint ./frontend
-    ruff check ./api/src
+    rye lint --pyproject ./api/pyproject.toml
 
 format:
     prettier ./frontend
-    ruff format ./api/src
+    rye format --pyproject ./api/pyproject.toml
