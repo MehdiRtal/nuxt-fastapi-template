@@ -1,0 +1,39 @@
+[project]
+name = "api"
+version = "0.1.0"
+authors = [
+    { name = "MehdiRtal", email = "mehdirtal7@pm.me" }
+]
+dependencies = [
+    "fastapi>=0.111.0",
+    "python-jose[cryptography]>=3.3.0",
+    "pydantic-settings>=2.2.1",
+    "pydantic[email]>=2.7.1",
+    "sqlmodel>=0.0.18",
+    "orjson>=3.10.0",
+    "fastapi-limiter>=0.1.6",
+    "redis[hiredis]>=5.0.3",
+    "bcrypt>=4.1.2",
+    "sendgrid>=6.11.0",
+    "httpx-oauth>=0.13.2",
+    "python-binance>=1.0.19",
+    "asyncpg>=0.29.0",
+    "python-multipart>=0.0.9",
+    "arq>=0.25.0",
+    "aenum>=3.1.15",
+    "logfire[fastapi,system-metrics,sqlalchemy,redis,aiohttp,httpx]>=0.35.0",
+    "pytest>=8.2.0",
+    "async-asgi-testclient>=1.4.11",
+    "pytest-asyncio>=0.23.6",
+    "loguru>=0.7.2",
+    "opentelemetry-exporter-otlp>=1.24.0",
+    "opentelemetry-exporter-prometheus>=0.45b0",
+    "pandas>=2.2.2",
+    "websockets>=12.0",
+]
+requires-python = ">= 3.12"
+
+[tool.rye]
+managed = true
+virtual = true
+dev-dependencies = []
