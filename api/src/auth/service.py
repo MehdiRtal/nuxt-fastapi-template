@@ -4,7 +4,7 @@ from pydantic import EmailStr
 from redis.asyncio.client import Redis
 from jose import JWTError, jwt
 
-from src.users.models import User
+from src.users.models import User, UserCreate
 from src.users.exceptions import UserAlreadyExists, UserNotVerified, UserNotActive, UserAlreadyVerified
 from src.users.repository import UsersRepository
 from src.config import settings
@@ -82,15 +82,26 @@ class AuthService:
 
     async def link_google_callback(self, callback):
         token, state = callback
-        email = await google_oauth_client.get_email(token["access_token"])
+        id, email = await google_oauth_client.get_id_email(token["access_token"])
         db_user = await self.users_repository.get_by_email(email)
-        if not db_user.is_verified:
-            raise UserNotVerified
-        if not db_user.is_active:
-            raise UserNotActive
-        db_user.google_oauth_refresh_token = token["refresh_token"]
-        db_user = await self.users_repository.update(db_user)
-        return {"detail": "google OAuth linked"}
+        if db_user:
+            if not db_user.is_verified:
+                raise UserNotVerified
+            if not db_user.is_active:
+                raise UserNotActive
+            db_user.google_oauth_refresh_token = token["refresh_token"]
+            db_user = await self.users_repository.update(db_user)
+            return {"detail": "Google OAuth linked"}
+        else:
+            db_user = UserCreate(
+                full_name="",
+                email=email,
+                is_verified=True,
+                google_oauth_refresh_token=token["refresh_token"]
+            )
+            db_user = await self.users_repository.add(db_user)
+            access_token = generate_access_token(db_user.id, secret=db_user.password)
+            return {"access_token": access_token}
 
     async def logout(self, access_token: str):
         await self.redis.sadd("blacklisted_access_tokens", access_token)

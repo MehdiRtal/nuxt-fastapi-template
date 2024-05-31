@@ -31,7 +31,7 @@ async def link_google(auth_service: AuthServiceSession, request: Request) -> Aut
     return await auth_service.link_google(request)
 
 @router.get("/link/google/callback")
-async def link_google_callback(auth_service: AuthServiceSession, callback: GoogleOAuthCallback) -> DefaultResponse:
+async def link_google_callback(auth_service: AuthServiceSession, callback: GoogleOAuthCallback) -> DefaultResponse | AccessToken:
     return await auth_service.link_google_callback(callback)
 
 @router.post("/logout")
