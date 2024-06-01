@@ -10,7 +10,7 @@ from src.users.repository import UsersRepository
 from src.config import settings
 from src.utils import send_email
 
-from src.auth.utils import generate_access_token, generate_verify_token, hash_password, verify_password, verify_access_token, verify_verify_token, google_oauth_client
+from src.auth.utils import generate_access_token, generate_verify_token, hash_password, verify_password, verify_access_token, verify_verify_token, google_oauth_client, apple_oauth_client
 from src.auth.exceptions import InvalidCredentials, InvalidAccessToken, InvalidVerifyToken
 
 
@@ -98,6 +98,34 @@ class AuthService:
                 email=email,
                 is_verified=True,
                 google_oauth_refresh_token=token["refresh_token"]
+            )
+            db_user = await self.users_repository.add(db_user)
+            access_token = generate_access_token(db_user.id, secret=db_user.password)
+            return {"access_token": access_token}
+
+    async def link_apple(self, request: Request):
+        callback_url = request.url_for("link_google_callback")
+        authorization_url = await apple_oauth_client.get_authorization_url(callback_url)
+        return {"authorization_url": authorization_url}
+
+    async def link_apple_callback(self, callback):
+        token, state = callback
+        id, email = await apple_oauth_client.get_id_email(token["access_token"])
+        db_user = await self.users_repository.get_by_email(email)
+        if db_user:
+            if not db_user.is_verified:
+                raise UserNotVerified
+            if not db_user.is_active:
+                raise UserNotActive
+            db_user.apple_oauth_refresh_token = token["refresh_token"]
+            db_user = await self.users_repository.update(db_user)
+            return {"detail": "Apple OAuth linked"}
+        else:
+            db_user = UserCreate(
+                full_name="",
+                email=email,
+                is_verified=True,
+                apple_oauth_refresh_token=token["refresh_token"]
             )
             db_user = await self.users_repository.add(db_user)
             access_token = generate_access_token(db_user.id, secret=db_user.password)

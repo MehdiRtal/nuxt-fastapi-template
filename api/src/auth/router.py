@@ -9,7 +9,7 @@ from src.users.models import UserCreatePublic
 from src.dependencies import valid_turnstile_token
 
 from src.auth.models import AccessToken, AuthorizationUrl, VerifyToken
-from src.auth.dependencies import VerifyUser, AuthServiceSession, GoogleOAuthCallback
+from src.auth.dependencies import VerifyUser, AuthServiceSession, GoogleOAuthCallback, AppleOAuthCallback
 
 
 router = APIRouter(tags=["Authentication"], prefix="/auth")
@@ -33,6 +33,14 @@ async def link_google(auth_service: AuthServiceSession, request: Request) -> Aut
 @router.get("/link/google/callback")
 async def link_google_callback(auth_service: AuthServiceSession, callback: GoogleOAuthCallback) -> DefaultResponse | AccessToken:
     return await auth_service.link_google_callback(callback)
+
+@router.get("/link/apple")
+async def link_apple(auth_service: AuthServiceSession, request: Request) -> AuthorizationUrl:
+    return await auth_service.link_apple(request)
+
+@router.get("/link/apple/callback")
+async def link_apple_callback(auth_service: AuthServiceSession, callback: AppleOAuthCallback) -> DefaultResponse | AccessToken:
+    return await auth_service.link_apple_callback(callback)
 
 @router.post("/logout")
 async def logout(auth_service: AuthServiceSession) -> DefaultResponse:

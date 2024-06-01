@@ -50,6 +50,9 @@ class Settings(BaseSettings):
     GOOGLE_CLIENT_ID: str
     GOOGLE_CLIENT_SECRET: str
 
+    APPLE_CLIENT_ID: str
+    APPLE_CLIENT_SECRET: str
+
     OTLP_COLLECTOR_URL: HttpUrl
 
 environement = Environment(os.getenv("ENVIRONEMENT", Environment.DEV))

@@ -2,8 +2,10 @@ from src.auth.utils import verify_password, hash_password
 from src.auth.exceptions import InvalidCredentials
 
 from src.users.models import User
-from src.users.exceptions import UserNotFound, UserAlreadyExists
+from src.users.exceptions import UserNotFound, UserAlreadyExists, UserOAuthNotLinked
 from src.users.repository import UsersRepository
+
+from src.auth.utils import google_oauth_client, apple_oauth_client
 
 
 class UsersService:
@@ -14,6 +16,22 @@ class UsersService:
         if not verify_password(current_password, current_user.password):
             raise InvalidCredentials
         current_user.password = hash_password(password)
+        current_user = await self.users_repository.update(current_user)
+        return current_user
+
+    async def unlink_current_user_google(self, current_user: User):
+        if not current_user.google_oauth_refresh_token:
+            raise UserOAuthNotLinked
+        await google_oauth_client.revoke_token(current_user.google_oauth_refresh_token, "refresh_token")
+        current_user.google_oauth_refresh_token = None
+        current_user = await self.users_repository.update(current_user)
+        return current_user
+
+    async def unlink_current_user_apple(self, current_user: User):
+        if not current_user.apple_oauth_refresh_token:
+            raise UserOAuthNotLinked
+        await apple_oauth_client.revoke_token(current_user.apple_oauth_refresh_token, "refresh_token")
+        current_user.apple_oauth_refresh_token = None
         current_user = await self.users_repository.update(current_user)
         return current_user
 

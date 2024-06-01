@@ -11,7 +11,7 @@ from src.redis_ import RedisSession
 
 from src.auth.exceptions import PermissionRequired
 from src.auth.service import AuthService
-from src.auth.utils import google_oauth_client
+from src.auth.utils import google_oauth_client, apple_oauth_client
 
 
 def get_auth_service_session(postgres: PostgresSession, redis: RedisSession):
@@ -59,3 +59,7 @@ class CustomOAuth2AuthorizeCallback(OAuth2AuthorizeCallback):
 google_oauth_callback = CustomOAuth2AuthorizeCallback(google_oauth_client)
 
 GoogleOAuthCallback = Annotated[CustomOAuth2AuthorizeCallback, Depends(google_oauth_callback)]
+
+apple_oauth_callback = CustomOAuth2AuthorizeCallback(apple_oauth_client)
+
+AppleOAuthCallback = Annotated[CustomOAuth2AuthorizeCallback, Depends(apple_oauth_callback)]

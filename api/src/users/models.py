@@ -14,6 +14,7 @@ class UserBase(UserBasePublic):
     is_active: bool = Field(True)
     is_superuser: bool = Field(False)
     google_oauth_refresh_token: str | None = Field(None)
+    apple_oauth_refresh_token: str | None = Field(None)
 
 class User(UserBase, table=True):
     id: int | None = Field(None, primary_key=True)
@@ -48,3 +49,4 @@ class UserUpdate(BaseModel):
     is_active: bool | None = None
     is_superuser: bool | None = None
     google_oauth_refresh_token: str | None = None
+    apple_oauth_refresh_token: str | None = None

@@ -2,9 +2,43 @@ import bcrypt
 from jose import jwt
 import datetime
 from httpx_oauth.clients.google import GoogleOAuth2
+from httpx_oauth.oauth2 import OAuth2
+from httpx_oauth.errors import GetIdEmailError
 
 from src.config import settings
 
+class AppleOAuth2(OAuth2):
+    def __init__(
+        self,
+        client_id: str,
+        client_secret: str,
+        scopes: list[str] = ["name", "email"],
+        name="apple",
+    ):
+        super().__init__(
+            client_id,
+            client_secret,
+            "https://appleid.apple.com/auth/authorize",
+            "https://appleid.apple.com/auth/token",
+            "https://appleid.apple.com/auth/revoke",
+            name=name,
+            base_scopes=scopes,
+        )
+
+    async def get_id_email(self, token: str) -> tuple:
+        async with self.get_httpx_client() as client:
+            response = await client.post(
+                "https://appleid.apple.com/auth/keys",
+                headers={**self.request_headers, "Authorization": f"Bearer {token}"},
+            )
+            if response.status_code >= 400:
+                raise GetIdEmailError(response.json())
+            data= response.json()
+            user_id = data.get("sub", "")
+            user_email = data.get("email", None)
+            return user_id, user_email
+
+apple_oauth_client = AppleOAuth2(settings.APPLE_CLIENT_ID, settings.APPLE_CLIENT_SECRET)
 
 google_oauth_client = GoogleOAuth2(settings.GOOGLE_CLIENT_ID, settings.GOOGLE_CLIENT_SECRET)
 
